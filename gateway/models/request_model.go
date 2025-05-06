@@ -13,10 +13,12 @@ type Request struct {
 // Login 登录请求数据
 type Login struct {
 	ServiceToken string `json:"service_token"`    // 验证用户是否登录
-	AppID        uint32 `json:"app_id,omitempty"` // 0:挖矿未传 1:未定义 2:钓鱼 3:酒馆故事 4:meme_battle
+	AppID        uint32 `json:"app_id,omitempty"` // 0:挖矿未传 1:未定义 2:钓鱼 3:酒馆故事 4:
 	Token        string `json:"token,omitempty"`
-	Nickname     string `json:"nickname,omitempty"` //新版本 不需要传
-	UserID       string `json:"user_id,omitempty"`  //新版本 不需要传
+	Nickname     string `json:"nickname,omitempty"`  //
+	UserName     string `json:"user_name,omitempty"` //
+	Password     string `json:"pass_word,omitempty"` //
+	UserID       string `json:"user_id,omitempty"`   //
 	LoginDouYin
 }
 

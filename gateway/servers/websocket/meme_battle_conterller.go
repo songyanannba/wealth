@@ -825,7 +825,7 @@ func MebInviteFriend(client *Client, seq string, message []byte) (code uint32, m
 	beInviterFriendClientInfo := GetUserClient(common.AppId10, request.UserID)
 	if beInviterFriendClientInfo == nil || beInviterFriendClientInfo.UserID != request.UserID {
 		global.GVA_LOG.Infof("MebInviteFriend 用户没有客户端,用户可能没登陆 UserID:%v ", userID)
-		code = common.BeInviteFriendNotLogin
+
 		return
 	}
 
@@ -1284,7 +1284,7 @@ func MebHandbookList(client *Client, seq string, message []byte) (code uint32, m
 	}
 	if err != nil || response == nil {
 		global.GVA_LOG.Error("could not call method:", zap.Error(err))
-		code = common.RpcCallRespErr
+
 		return
 	}
 
@@ -1292,7 +1292,7 @@ func MebHandbookList(client *Client, seq string, message []byte) (code uint32, m
 	err = proto.Unmarshal(respData, resp)
 	if err != nil {
 		global.GVA_LOG.Error("Unmarshal MebHandbookList  :", zap.Error(err))
-		code = common.RpcCallRespDataErr
+
 		return
 	}
 	global.GVA_LOG.Infof("MebHandbookList: %v", &resp)
@@ -1392,7 +1392,6 @@ func MebUnpackCard(client *Client, seq string, message []byte) (code uint32, msg
 	}
 	if err != nil || response == nil {
 		global.GVA_LOG.Error("could not call method:", zap.Error(err))
-		code = common.RpcCallRespErr
 		return
 	}
 
@@ -1400,7 +1399,6 @@ func MebUnpackCard(client *Client, seq string, message []byte) (code uint32, msg
 	err = proto.Unmarshal(respData, resp)
 	if err != nil {
 		global.GVA_LOG.Error("Unmarshal MebUnpackCard :", zap.Error(err))
-		code = common.RpcCallRespDataErr
 		return
 	}
 	global.GVA_LOG.Infof("MebUnpackCard: %v", &resp)
@@ -1458,7 +1456,7 @@ func MebCardVersionList(client *Client, seq string, message []byte) (code uint32
 	}
 	if err != nil || response == nil {
 		global.GVA_LOG.Error("could not call method:", zap.Error(err))
-		code = common.RpcCallRespErr
+
 		return
 	}
 
@@ -1466,7 +1464,6 @@ func MebCardVersionList(client *Client, seq string, message []byte) (code uint32
 	err = proto.Unmarshal(respData, resp)
 	if err != nil {
 		global.GVA_LOG.Error("Unmarshal MebFriendList :", zap.Error(err))
-		code = common.RpcCallRespDataErr
 		return
 	}
 	global.GVA_LOG.Infof("MebCardVersionList: %v", &resp)
@@ -1527,7 +1524,7 @@ func MebAuditUserList(client *Client, seq string, message []byte) (code uint32, 
 	}
 	if err != nil || response == nil {
 		global.GVA_LOG.Error("could not call method:", zap.Error(err))
-		code = common.RpcCallRespErr
+
 		return
 	}
 
@@ -1535,7 +1532,7 @@ func MebAuditUserList(client *Client, seq string, message []byte) (code uint32, 
 	err = proto.Unmarshal(respData, resp)
 	if err != nil {
 		global.GVA_LOG.Error("Unmarshal MebAuditUserList  :", zap.Error(err))
-		code = common.RpcCallRespDataErr
+
 		return
 	}
 	global.GVA_LOG.Infof("MebAuditUserList: %v", &resp)
@@ -1595,7 +1592,6 @@ func MebFriendList(client *Client, seq string, message []byte) (code uint32, msg
 	}
 	if err != nil || response == nil {
 		global.GVA_LOG.Error("could not call method:", zap.Error(err))
-		code = common.RpcCallRespErr
 		return
 	}
 
@@ -1603,7 +1599,6 @@ func MebFriendList(client *Client, seq string, message []byte) (code uint32, msg
 	err = proto.Unmarshal(respData, resp)
 	if err != nil {
 		global.GVA_LOG.Error("Unmarshal MebFriendList :", zap.Error(err))
-		code = common.RpcCallRespDataErr
 		return
 	}
 	global.GVA_LOG.Infof("MebFriendList: %v", &resp)
@@ -1689,7 +1684,6 @@ func MebAddFriend(client *Client, seq string, message []byte) (code uint32, msg 
 	}
 	if err != nil || response == nil {
 		global.GVA_LOG.Error("could not call method:", zap.Error(err))
-		code = common.RpcCallRespErr
 		return
 	}
 
@@ -1697,7 +1691,6 @@ func MebAddFriend(client *Client, seq string, message []byte) (code uint32, msg 
 	err = proto.Unmarshal(respData, resp)
 	if err != nil {
 		global.GVA_LOG.Error("Unmarshal MebAddFriend :", zap.Error(err))
-		code = common.RpcCallRespDataErr
 		return
 	}
 	global.GVA_LOG.Infof("MebAddFriend: %v", &resp)
@@ -1783,7 +1776,6 @@ func MebDelFriend(client *Client, seq string, message []byte) (code uint32, msg 
 	}
 	if err != nil || response == nil {
 		global.GVA_LOG.Error("could not call method:", zap.Error(err))
-		code = common.RpcCallRespErr
 		return
 	}
 
@@ -1791,7 +1783,6 @@ func MebDelFriend(client *Client, seq string, message []byte) (code uint32, msg 
 	err = proto.Unmarshal(respData, resp)
 	if err != nil {
 		global.GVA_LOG.Error("Unmarshal MebDelFriend :", zap.Error(err))
-		code = common.RpcCallRespDataErr
 		return
 	}
 	global.GVA_LOG.Infof("MebDelFriend: %v", &resp)
@@ -1876,7 +1867,6 @@ func MebAuthFriend(client *Client, seq string, message []byte) (code uint32, msg
 	}
 	if err != nil || response == nil {
 		global.GVA_LOG.Error("could not call method:", zap.Error(err))
-		code = common.RpcCallRespErr
 		return
 	}
 
@@ -1884,7 +1874,6 @@ func MebAuthFriend(client *Client, seq string, message []byte) (code uint32, msg
 	err = proto.Unmarshal(respData, resp)
 	if err != nil {
 		global.GVA_LOG.Error("Unmarshal MebAuthFriend :", zap.Error(err))
-		code = common.RpcCallRespDataErr
 		return
 	}
 	global.GVA_LOG.Infof("MebAuthFriend: %v", &resp)
@@ -1967,7 +1956,6 @@ func MebUserDetail(client *Client, seq string, message []byte) (code uint32, msg
 	}
 	if err != nil || response == nil {
 		global.GVA_LOG.Error("could not call method:", zap.Error(err))
-		code = common.RpcCallRespErr
 		return
 	}
 
@@ -1975,7 +1963,6 @@ func MebUserDetail(client *Client, seq string, message []byte) (code uint32, msg
 	err = proto.Unmarshal(respData, resp)
 	if err != nil {
 		global.GVA_LOG.Error("Unmarshal MebUserDetail :", zap.Error(err))
-		code = common.RpcCallRespDataErr
 		return
 	}
 	global.GVA_LOG.Infof("MebUserDetail: %v", &resp)
@@ -2059,7 +2046,6 @@ func MebGetCoinExperience(client *Client, seq string, message []byte) (code uint
 	}
 	if err != nil || response == nil {
 		global.GVA_LOG.Error("could not call method:", zap.Error(err))
-		code = common.RpcCallRespErr
 		return
 	}
 
@@ -2067,7 +2053,6 @@ func MebGetCoinExperience(client *Client, seq string, message []byte) (code uint
 	err = proto.Unmarshal(respData, resp)
 	if err != nil {
 		global.GVA_LOG.Error("Unmarshal MebAuthFriend :", zap.Error(err))
-		code = common.RpcCallRespDataErr
 		return
 	}
 	global.GVA_LOG.Infof("MebAuthFriend: %v", &resp)

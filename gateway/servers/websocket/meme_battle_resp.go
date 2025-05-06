@@ -9,7 +9,7 @@ import (
 )
 
 func MtHeartResp(msgId int32, message []byte) (respMsgId uint32, code uint32, data interface{}) {
-	return uint32(msgId), common.WebOK, nil
+	return uint32(msgId), common.OK, nil
 }
 
 func MemeCreateRoomAck(msgId int32, message []byte) (respMsgId uint32, code uint32, data interface{}) {

@@ -1,10 +1,10 @@
 app:
   logFile: log/gin.log
-  httpPort: 80
+  httpPort: 8000
   webSocketPort: 8080
   rpcPort: 8101
   slotRpcUrl: 127.0.0.1:8101
-  httpUrl: 127.0.0.1:80
+  httpUrl: 127.0.0.1:8000
   webSocketUrl: 127.0.0.1:8080
   natsUrl: nats://127.0.0.1:4222
   svName : gateway_wealth
@@ -52,20 +52,6 @@ mysql:
   engine: ""
   max-idle-conns: 10
   max-open-conns: 100
-  log-mode: info
-  log-zap: false
-mysqlMemeBattle:
-  path: 47.97.182.65
-  port: "3307"
-  config: charset=utf8mb4&parseTime=True&loc=Asia%2FShanghai
-  db-name: "meme_battle"
-  username: "root"
-  password: "mysql_hiEnCx"
-  prefix: ""
-  singular: false
-  engine: ""
-  max-idle-conns: 6
-  max-open-conns: 60
   log-mode: info
   log-zap: false
 redis:

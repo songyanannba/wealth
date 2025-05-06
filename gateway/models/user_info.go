@@ -2,6 +2,12 @@ package models
 
 import "gateway/helper"
 
+type UserInfoResp struct {
+	UserName string  `json:"user_name"` // 用户名称
+	Amount   float64 `json:"amount"`    // 金额
+	City     string  `json:"city"`      // 城市
+}
+
 type UserInfo struct {
 	UserID       string       `json:"user_id"`
 	Nickname     string       `json:"nickname"`

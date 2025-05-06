@@ -10,8 +10,8 @@ import (
 func BaseInit() {
 	ConfInit()
 	//mysql
-	global.GVA_USER_DB = initialize.Gorm()            // gorm连接数据库
-	global.GVA_MEME_DB = initialize.MemeBattleMysql() // gorm连接数据库
+	global.GVA_USER_DB = initialize.Gorm() // gorm连接数据库
+	//global.GVA_MEME_DB = initialize.MemeBattleMysql() // gorm连接数据库
 	//initialize.DBList()
 
 	initialize.Timer()
@@ -37,13 +37,13 @@ func CloseDB() {
 	global.GVA_LOG.Infof("GVA_USER_DB 关闭数据库连接")
 
 	//骗子酒馆库
-	CloseMemeDB()
+	//CloseMemeDB()
 }
 
-func CloseMemeDB() {
-
-	TSdb, _ := global.GVA_MEME_DB.DB()
-	TSdb.Close()
-	global.GVA_LOG.Infof("GVA_MEME_DB 关闭数据库连接")
-
-}
+//func CloseMemeDB() {
+//
+//	TSdb, _ := global.GVA_MEME_DB.DB()
+//	TSdb.Close()
+//	global.GVA_LOG.Infof("GVA_MEME_DB 关闭数据库连接")
+//
+//}

@@ -1,6 +1,7 @@
 package test
 
 import (
+	"gateway/servers/websocket"
 	"testing"
 )
 

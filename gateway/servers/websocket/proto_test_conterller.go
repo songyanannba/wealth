@@ -37,7 +37,7 @@ func ProtoTestController(client *Client, msgId int32, message []byte) (respMsgId
 	//
 	//ackMarshal, _ := proto.Marshal(ack)
 
-	return msgId + 1, common.WebOK, ackMarshal
+	return msgId + 1, common.OK, ackMarshal
 }
 
 func ProtoTest2Controller(client *Client, msgId int32, message []byte) (respMsgId int32, code uint32, data []byte) {

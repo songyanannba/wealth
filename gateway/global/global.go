@@ -18,22 +18,19 @@ var (
 	GVA_USER_DB *gorm.DB // 读写库
 
 	//meme
-	GVA_MEME_DB *gorm.DB // 读写库
-
+	//GVA_MEME_DB *gorm.DB // 读写库
 	//GVA_REDIS *redis.ClusterClient
+
 	GVA_REDIS *redis.Client
 
 	GVA_CONFIG config.Server
 	GVA_VP     *viper.Viper
 	GVA_LOG    *ZapLogger
 
-	GVA_Timer timer.Timer = timer.NewTimerTask()
-
-	lock   sync.RWMutex
-	SvName string
-
-	ChanQueue *queue.Queue
-
+	GVA_Timer       timer.Timer = timer.NewTimerTask()
+	lock            sync.RWMutex
+	SvName          string
+	ChanQueue       *queue.Queue
 	QueueDataKeyMap *queue.QueueDataKeyMap
 
 	//RatGRPCCli *grpcclient.GRPCClient

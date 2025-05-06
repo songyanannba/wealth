@@ -34,7 +34,8 @@ func CloseServer() {
 	core.CloseDB()
 	//grpcclient.Close()   // 确保在程序结束时关闭连接
 
-	websocket.NastManager.Close()
+	//nats
+	//websocket.NastManager.Close()
 	global.GVA_LOG.Infof("服务结束 CloseServer")
 }
 

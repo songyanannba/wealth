@@ -71,7 +71,8 @@ func StartWebSocket() {
 	go clientManager.start()
 	//go TavernRoomManager.Start() //房间服务
 
-	go NastManager.memeBattleServiceSubConsumer()
+	//关闭nats
+	//go NastManager.memeBattleServiceSubConsumer()
 
 	global.GVA_LOG.Infof("WebSocket 启动程序成功 %v:%v ", serverIp, serverPort)
 	_ = http.ListenAndServe(":"+webSocketPort, nil)
