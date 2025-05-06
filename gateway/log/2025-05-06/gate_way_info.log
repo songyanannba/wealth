@@ -1,0 +1,16 @@
+[gate_way]2025/05/06 14:04:00.485	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/initialize/redis.go:23	redis connect ping response:	{"pong": "PONG"}
+[gate_way]2025/05/06 14:04:00.521	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/main.go:56	gate_way 服务启动成功...
+[gate_way]2025/05/06 14:04:00.522	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/websocket/init_acc.go:76	WebSocket 启动程序成功 192.168.2.29:8080 
+[gate_way]2025/05/06 14:04:02.521	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/task/server_task.go:28	定时任务，服务注册  192.168.2.29:8080 1746511442
+[gate_way]2025/05/06 14:04:02.534	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/websocket/nats_JetStream.go:90	Processing memeBattleServiceSubConsumer:
+[gate_way]2025/05/06 14:04:03.521	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/task/clean_connection_task.go:37	定时任务，清理超时连接 
+[gate_way]2025/05/06 14:04:03.521	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/websocket/client_manager.go:334	定时清理超时连接 前当前用户数 0 
+[gate_way]2025/05/06 14:04:03.521	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/websocket/client_manager.go:344	定时清理超时连接 后当前用户数 0 
+[gate_way]2025/05/06 14:04:19.542	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/initialize/redis.go:23	redis connect ping response:	{"pong": "PONG"}
+[gate_way]2025/05/06 14:04:19.550	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/main.go:56	gate_way 服务启动成功...
+[gate_way]2025/05/06 14:04:19.550	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/websocket/init_acc.go:76	WebSocket 启动程序成功 192.168.2.29:8080 
+[gate_way]2025/05/06 14:04:21.551	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/task/server_task.go:28	定时任务，服务注册  192.168.2.29:8080 1746511461
+[gate_way]2025/05/06 14:04:21.557	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/websocket/nats_JetStream.go:90	Processing memeBattleServiceSubConsumer:
+[gate_way]2025/05/06 14:04:22.550	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/task/clean_connection_task.go:37	定时任务，清理超时连接 
+[gate_way]2025/05/06 14:04:22.551	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/websocket/client_manager.go:334	定时清理超时连接 前当前用户数 0 
+[gate_way]2025/05/06 14:04:22.551	[34minfo[0m	/Users/syn/goProjects/self_project/gateway/servers/websocket/client_manager.go:344	定时清理超时连接 后当前用户数 0 

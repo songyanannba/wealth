@@ -1,0 +1,166 @@
+app:
+  logFile: log/gin.log
+  httpPort: 80
+  webSocketPort: 8080
+  rpcPort: 8101
+  slotRpcUrl: 127.0.0.1:8101
+  httpUrl: 127.0.0.1:80
+  webSocketUrl: 127.0.0.1:8080
+  natsUrl: nats://127.0.0.1:4222
+  svName : gateway_wealth
+  environment : dev
+jwt:
+  signing-key: xxxx
+  expires-time: 7d
+  buffer-time: 1d
+  issuer: qmPlus
+
+db-list:
+  - disable: false
+    type: ""
+    alias-name: ""
+    path: ""
+    port: ""
+    config: ""
+    #config: "charset=utf8mb4&parseTime=True&loc=Asia%2FShanghai"
+    db-name: ""
+    username: ""
+    password: ""
+    prefix: ""
+    singular: false
+    engine: ""
+    max-idle-conns: 10
+    max-open-conns: 100
+    log-mode: warn
+    log-zap: false
+mysql:
+  #  path: 47.97.182.65
+  #  port: "3307"
+  #  config: charset=utf8mb4&parseTime=True&loc=Asia%2FShanghai
+  #  db-name: "nb_users"
+  #  username: "root"
+  #  password: "mysql_hiEnCx"
+  path: 127.0.0.1
+  port: "3306"
+  config: charset=utf8mb4&parseTime=True&loc=UTC
+  db-name: "wealths"
+  username: root
+  #  password:
+  password: "003416nba"
+  prefix: ""
+  singular: false
+  engine: ""
+  max-idle-conns: 10
+  max-open-conns: 100
+  log-mode: info
+  log-zap: false
+mysqlMemeBattle:
+  path: 47.97.182.65
+  port: "3307"
+  config: charset=utf8mb4&parseTime=True&loc=Asia%2FShanghai
+  db-name: "meme_battle"
+  username: "root"
+  password: "mysql_hiEnCx"
+  prefix: ""
+  singular: false
+  engine: ""
+  max-idle-conns: 6
+  max-open-conns: 60
+  log-mode: info
+  log-zap: false
+redis:
+  #  卓硕游戏开发环境
+  addr: 47.97.182.65:6379
+  password: "songyanan@123"
+  DB: 0
+  poolSize: 30
+  minIdleConns: 30
+#  db: 0
+#  addr: 127.0.0.1:6379 #自己
+#  password: ""
+cluster:
+  gate-port: 34567
+  #etcd-endpoints: 192.168.6.20:2379
+  etcd-endpoints: 127.0.0.1:2379
+  etcd-prefix: ""
+  etcd-user: "root"
+  etcd-pass: "123456"
+  #nats-endpoints: 192.168.6.20:4222
+  nats-endpoints: 127.0.0.1:4222
+  nats-user: "root"
+  nats-pass: "123456"
+system:
+  env: public
+  addr: 8888
+  db-type: mysql
+  oss-type: local
+  use-multipoint: false
+  use-redis: true
+  api-log: false
+  iplimit-count: 15000
+  iplimit-time: 3600
+  router-prefix: ""
+  listen-ip: "0.0.0.0"
+  connect-ip: "0.0.0.0"
+  api-addr: "9888"
+  master-addr: "34567"
+  game-addr: "34580"
+  bind-addr: "34570"
+  gate-addr: "34590"
+  backend-addr: "34500"
+  migrate: true
+  connect-cluster: false
+  api-domain: ""
+  game-domain: "xxx"
+  storage-domain: ""
+  ws-path: ""
+  test-api-url: ""
+  clusters:
+    - name: "server"
+      ip: "0.0.0.0"
+      ws-scheme: "ws"
+cors:
+  mode: strict-whitelist
+  whitelist:
+    - allow-origin: example1.com
+      allow-methods: POST, GET
+      allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+      expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers,
+        Content-Type
+      allow-credentials: true
+    - allow-origin: example2.com
+      allow-methods: GET, POST
+      allow-headers: content-type
+      expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers,
+        Content-Type
+      allow-credentials: true
+timer:
+  start: true
+  spec: '@daily'
+  with_seconds: false
+  detail:
+#    - tableName: sys_operation_records
+#      compareField: created_at
+#      interval: 720h
+#    - tableName: jwt_blacklists
+#      compareField: created_at
+#      interval: 168h
+zap:
+  level: debug
+  prefix: ''
+  format: console
+  director: log
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  max-age: 30
+  show-line: true
+  log-in-console: true
+keys:
+  ip-api-key: ""
+
+
+
+
+
+
+

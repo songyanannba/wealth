@@ -1,0 +1,99 @@
+jwt:
+  signing-key: xxxx
+  expires-time: 7d
+  buffer-time: 1d
+  issuer: qmPlus
+mysql:
+  #  path:
+  #  port: "3306"
+  #  config: charset=utf8mb4&parseTime=True&loc=UTC
+  #  db-name: slot
+  #  username: root
+  #  password: "123456"
+
+  path: 127.0.0.1
+  port: "3306"
+  config: charset=utf8mb4&parseTime=True&loc=UTC
+  db-name: slot
+  username: root
+  password: ""
+  #:"003416nba"
+
+  #  path:
+  #  port: "3306"
+  #  config: charset=utf8mb4&parseTime=True&loc=UTC
+  #  db-name: slot
+  #  username: root
+  #  password:
+
+  prefix: ""
+  singular: false
+  engine: ""
+  max-idle-conns: 10
+  max-open-conns: 100
+  log-mode: info
+  log-zap: false
+redis:
+  db: 0
+  addr: 123.60.111.163:7000 #自己
+  password: ""
+  #  db: 0
+  #  addr: 192.168.6.20:6379
+  #  password: ""
+#  db: 0
+#  addr: 16.163.254.25:6379
+#  password: "F3n5lxlQXucekRO9I4flEKJg8S2M36fDq"
+
+cluster:
+  gate-port: 34567
+  #etcd-endpoints: 192.168.6.20:2379
+  etcd-endpoints: 127.0.0.1:2379
+  etcd-prefix: ""
+  etcd-user: "root"
+  etcd-pass: "123456"
+  #nats-endpoints: 192.168.6.20:4222
+  nats-endpoints: 127.0.0.1:4222
+  nats-user: "root"
+  nats-pass: "123456"
+system:
+  env: public
+  addr: 8888
+  db-type: mysql
+  oss-type: local
+  use-multipoint: false
+  use-redis: true
+  api-log: false
+  iplimit-count: 15000
+  iplimit-time: 3600
+  router-prefix: ""
+  listen-ip: "0.0.0.0"
+  connect-ip: "0.0.0.0"
+  api-addr: "9888"
+  master-addr: "34567"
+  game-addr: "34580"
+  bind-addr: "34570"
+  gate-addr: "34590"
+  backend-addr: "34500"
+  migrate: true
+  connect-cluster: false
+  api-domain: ""
+  game-domain: "xxx"
+  storage-domain: ""
+  ws-path: ""
+  test-api-url: ""
+  clusters:
+    - name: "server"
+      ip: "0.0.0.0"
+      ws-scheme: "ws"
+zap:
+  level: debug
+  prefix: ''
+  format: console
+  director: log
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  max-age: 30
+  show-line: true
+  log-in-console: true
+keys:
+  ip-api-key: ""

@@ -1,0 +1,4441 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/JoinGameSelectCamp": {
+            "post": {
+                "description": "选择阵营-新进入用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "魔塔"
+                ],
+                "summary": "选择阵营-新进入用户",
+                "parameters": [
+                    {
+                        "description": "选择阵营-新进入用户",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MTJoinGameSelectCampReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "选择阵营-新进入用户",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MTJoinGameSelectCampResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/betList": {
+            "post": {
+                "description": "魔塔手动押注列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "魔塔"
+                ],
+                "summary": "魔塔手动押注列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户姓名",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "魔塔手动押注列表",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MtBetReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "魔塔手动押注列表",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MtBetListResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/betOnAutoNum": {
+            "post": {
+                "description": "自动用户:充值",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "魔塔"
+                ],
+                "summary": "自动用户:充值",
+                "parameters": [
+                    {
+                        "description": "自动用户:充值",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MTBetOnAutoNumReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "自动用户:充值",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MTBetOnAutoNumResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/betOnNum": {
+            "post": {
+                "description": "手动押注：充值",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "魔塔"
+                ],
+                "summary": "手动押注：充值",
+                "parameters": [
+                    {
+                        "description": "手动押注：充值",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MTBetOnNumReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "手动押注：充值",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MTBetOnNumResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/characterList": {
+            "post": {
+                "description": "骗子酒馆-人物列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-人物列表",
+                "parameters": [
+                    {
+                        "description": "人物列表",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CharacterListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.CharacterListResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/chooseCharacter": {
+            "post": {
+                "description": "骗子酒馆-选择人物形象",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-选择人物形象",
+                "parameters": [
+                    {
+                        "description": "选择人物形象",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ChooseCharacterReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.ChooseCharacterResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/createRoom": {
+            "post": {
+                "description": "骗子酒馆-创建房间",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-创建房间",
+                "parameters": [
+                    {
+                        "description": "匹配房间",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateRoomReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.CreateRoomResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/daySignIn": {
+            "post": {
+                "description": "钓鱼-每日签到",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "钓鱼"
+                ],
+                "summary": "钓鱼-每日签到",
+                "parameters": [
+                    {
+                        "description": "每日签到",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DaySignInReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.DaySignResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/downOreOrder": {
+            "post": {
+                "description": "下架",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "下架",
+                "parameters": [
+                    {
+                        "description": "卖矿石",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DownOreOrderReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.DownOreOrderResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/exchangeCoin": {
+            "post": {
+                "description": "官方兑换 （先请求频次）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "官方兑换",
+                "parameters": [
+                    {
+                        "description": "卖矿石",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ExchangeCoinReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.ExchangeCoinResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/exchangeCoinDetail": {
+            "post": {
+                "description": "官方兑换金矿页面",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "官方兑换金矿页面",
+                "parameters": [
+                    {
+                        "description": "卖矿石",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ExchangeCoinDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.ExchangeCoinDetailResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/fishAdopt": {
+            "post": {
+                "description": "钓鱼-宝箱详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "钓鱼"
+                ],
+                "summary": "钓鱼-宝箱详情",
+                "parameters": [
+                    {
+                        "description": "领取宝箱",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.FishAdoptReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.FishAdoptAck"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/fishHandbookList": {
+            "post": {
+                "description": "钓鱼-鱼类图鉴列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "钓鱼"
+                ],
+                "summary": "钓鱼-鱼类图鉴列表",
+                "parameters": [
+                    {
+                        "description": "鱼类图鉴列表",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.FishHandbookListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.FishHandbookAck"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/frequencyVerify": {
+            "post": {
+                "description": "邀请-频次验证",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "邀请-频次验证",
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/gameOver": {
+            "post": {
+                "description": "骗子酒馆-游戏结束结算",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-游戏结束结算",
+                "parameters": [
+                    {
+                        "description": "游戏结束结算",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.GameOverReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.GameOverResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/getCoinBalance": {
+            "post": {
+                "description": "骗子酒馆-获取币余额",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-获取币余额",
+                "parameters": [
+                    {
+                        "description": "获取币余额",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.GetCoinBalanceReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.GetCoinBalanceResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/getFishConfig": {
+            "post": {
+                "description": "钓鱼-获取鱼配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "钓鱼"
+                ],
+                "summary": "钓鱼-获取鱼配置",
+                "parameters": [
+                    {
+                        "description": "获取鱼配置",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.GetFishConfReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.FishConfigResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/getFishRodConfig": {
+            "post": {
+                "description": "钓鱼-获取鱼竿和耐久值",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "钓鱼"
+                ],
+                "summary": "钓鱼-获取鱼竿和耐久值",
+                "parameters": [
+                    {
+                        "description": "获取鱼竿和耐久值",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.GetFishRodConfReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.FishConfigRodResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/getRatByBuy": {
+            "post": {
+                "description": "购买矿工",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "挖矿:购买矿工",
+                "parameters": [
+                    {
+                        "description": "购买矿工",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RatBuyReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回矿工列表",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.RatBuyResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/getSwingRodReq": {
+            "post": {
+                "description": "钓鱼-挥杆",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "钓鱼"
+                ],
+                "summary": "钓鱼-挥杆",
+                "parameters": [
+                    {
+                        "description": "挥杆",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SwingRodReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SwingRodAck"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/getSwingRodRes": {
+            "post": {
+                "description": "钓鱼-挥杆结果",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "钓鱼"
+                ],
+                "summary": "钓鱼-挥杆结果",
+                "parameters": [
+                    {
+                        "description": "挥杆结果",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SwingRodResReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SwingRodResAck"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/getUserState": {
+            "post": {
+                "description": "骗子酒馆-获取用户当前游戏状态",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-获取用户当前游戏状态",
+                "parameters": [
+                    {
+                        "description": "选择人物形象",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserStateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UserStateResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/inviteBoxInfo": {
+            "post": {
+                "description": "邀请-框信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "邀请-框信息",
+                "parameters": [
+                    {
+                        "description": "卖矿石",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.InviteBoxInfoReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.InviteBoxInfoResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/inviteGainRat": {
+            "post": {
+                "description": "邀请-领取矿工",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "邀请-领取矿工",
+                "parameters": [
+                    {
+                        "description": "卖矿石",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.InviteGainRatReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.InviteGainRatResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/inviteInputCode": {
+            "post": {
+                "description": "邀请-输入邀请码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "邀请-输入邀请码",
+                "parameters": [
+                    {
+                        "description": "卖矿石",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.InviteInputCodeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.InviteInputCodeResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/inviteUserList": {
+            "post": {
+                "description": "邀请-用户列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "邀请-用户列表",
+                "parameters": [
+                    {
+                        "description": "邀请用户列表",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.InviteUserListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.InviteUserListResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/isAutoUser": {
+            "post": {
+                "description": "是否成为自动用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "魔塔"
+                ],
+                "summary": "是否成为自动用户",
+                "parameters": [
+                    {
+                        "description": "是否成为自动用户",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MTIsAutoReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "是否成为自动用户",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MTIsAutoResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/isDoubt": {
+            "post": {
+                "description": "骗子酒馆-下家是否质疑",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-下家是否质疑",
+                "parameters": [
+                    {
+                        "description": "下家是否质疑",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.IsDoubtReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.IsDoubtResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/joinRoom": {
+            "post": {
+                "description": "骗子酒馆-加入房间",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-加入房间",
+                "parameters": [
+                    {
+                        "description": "加入房间",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.JoinRoomReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.JoinRoomResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/kickRoom": {
+            "post": {
+                "description": "骗子酒馆-离开房间",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-离开房间",
+                "parameters": [
+                    {
+                        "description": "房主踢人",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.KickRoomReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.KickRoomResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/leaveRoom": {
+            "post": {
+                "description": "骗子酒馆-离开房间",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-离开房间",
+                "parameters": [
+                    {
+                        "description": "离开房间",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LeaveRoomReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.LeaveRoomResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/loadCompleted": {
+            "post": {
+                "description": "骗子酒馆-加载完成",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-加载完成",
+                "parameters": [
+                    {
+                        "description": "请求骗子牌",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoadCompletedReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.LoadCompletedResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "登入",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "登陆：（挖矿/）"
+                ],
+                "summary": "登陆",
+                "parameters": [
+                    {
+                        "description": "登陆结构",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Login"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回获取用户矿工列表",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.LogResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/mtCurrStatus": {
+            "post": {
+                "description": "魔塔当前状态",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "魔塔"
+                ],
+                "summary": "魔塔当前状态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户姓名",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "魔塔当前状态",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MTStatusReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "魔塔当前状态",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MTStatusResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/oneTouchBetNum": {
+            "post": {
+                "description": "一键召唤充值",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "魔塔"
+                ],
+                "summary": "一键召唤充值",
+                "parameters": [
+                    {
+                        "description": "一键召唤充值",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MTOneTouchAddBetNumReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "一键召唤充值",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MTOneTouchAddBetNumResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/operateCards": {
+            "post": {
+                "description": "骗子酒馆-出牌",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-出牌",
+                "parameters": [
+                    {
+                        "description": "出牌",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OperateCardReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.OperateCardResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/oreIntroduce": {
+            "post": {
+                "description": "金矿玩法介绍",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "金矿玩法介绍",
+                "parameters": [
+                    {
+                        "description": "金矿玩法介绍",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OreIntroduceReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.OreIntroduceResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/quickMatchRoom": {
+            "post": {
+                "description": "骗子酒馆-匹配房间",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-匹配房间",
+                "parameters": [
+                    {
+                        "description": "匹配房间",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MatchRoomReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MatchRoomAck"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/reJoinRoom": {
+            "post": {
+                "description": "骗子酒馆-重新加入房间",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-重新加入房间",
+                "parameters": [
+                    {
+                        "description": "重新加入房间",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.JoinRoomReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.JoinRoomResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/ready": {
+            "post": {
+                "description": "骗子酒馆-就绪",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-就绪",
+                "parameters": [
+                    {
+                        "description": "加入房间",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReadyReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.ReadyResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/remakeAge": {
+            "post": {
+                "description": "恢复年轻",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "恢复年轻",
+                "parameters": [
+                    {
+                        "description": "恢复年轻",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RemakeAgeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.RemakeAgeResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/roomAlive": {
+            "post": {
+                "description": "骗子酒馆-房间心跳",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-房间心跳",
+                "parameters": [
+                    {
+                        "description": "房间心跳",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RoomAliveReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.RoomAliveResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/roomList": {
+            "post": {
+                "description": "骗子酒馆-房间列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-房间列表",
+                "parameters": [
+                    {
+                        "description": "房间列表",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RoomListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.RoomListResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/searchOreOrder": {
+            "post": {
+                "description": "搜索矿石买卖盘",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "搜索矿石买卖盘",
+                "parameters": [
+                    {
+                        "description": "卖矿石",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SearchOreOrderReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SearchOreOrderResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/startPlay": {
+            "post": {
+                "description": "骗子酒馆-房主开始对局游戏",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "骗子酒馆"
+                ],
+                "summary": "骗子酒馆-房主开始对局游戏",
+                "parameters": [
+                    {
+                        "description": "房主开始对局游戏",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StartPlayReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.StartPlayResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/swingRodConfirmAndAddBag": {
+            "post": {
+                "description": "钓鱼-确认并放入背包",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "钓鱼"
+                ],
+                "summary": "钓鱼-确认并放入背包",
+                "parameters": [
+                    {
+                        "description": "确认并放入背包",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SwingRodConfirmReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SwingRodConfirmAck"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/updateRatState": {
+            "post": {
+                "description": "更新矿工的状态",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "更新矿工的状态",
+                "parameters": [
+                    {
+                        "description": "更新矿工的状态",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateRatStateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UpdateRatStateResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/upgradeUserOreRoom": {
+            "post": {
+                "description": "更新矿洞",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "更新矿洞",
+                "parameters": [
+                    {
+                        "description": "卖矿石",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpgradeUserOreRoomReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UpgradeUserOreRoomResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/userGetOreBySellPoint": {
+            "post": {
+                "description": "购买矿石的接口（转增） （先请求频次）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "购买矿石的接口（转增）",
+                "parameters": [
+                    {
+                        "description": "卖矿石",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserGetOreBySellPointReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UserGetOreBySellPointResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/userOrderList": {
+            "post": {
+                "description": "用户自己的买卖矿石记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "用户自己的买卖矿石记录",
+                "parameters": [
+                    {
+                        "description": "购买矿工",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserOrderListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回矿工列表",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UserOrderListResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/userPeriodLayerList": {
+            "post": {
+                "description": "用户（维度）每期每层历史",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "魔塔"
+                ],
+                "summary": "用户（维度）每期每层历史",
+                "parameters": [
+                    {
+                        "description": "用户（维度）每期每层历史",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MtUserPeriodLayerListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "用户（维度）每期每层历史",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MtUserPeriodLayerListResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/userRatList": {
+            "post": {
+                "description": "获取用户矿工列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "获取用户矿工列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户姓名",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "获取用户矿工列表",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserRatListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回获取用户矿工列表",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UserRatListResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/userRevenueRank": {
+            "post": {
+                "description": "用户每期的收益排行",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "魔塔"
+                ],
+                "summary": "用户每期的收益排行",
+                "parameters": [
+                    {
+                        "description": "用户每期的收益排行",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserPeriodRevenueRankReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "用户每期的收益排行",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UserPeriodRevenueRankResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/userSellOre": {
+            "post": {
+                "description": "卖矿石/上架 （先请求频次）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "挖矿"
+                ],
+                "summary": "卖矿石/上架",
+                "parameters": [
+                    {
+                        "description": "卖矿石",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserSellOreReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "1": {
+                        "description": "返回",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UserSellOreResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "错误提示",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "common.JSONResult": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.BetList": {
+            "type": "object",
+            "properties": {
+                "bet": {
+                    "description": "押注",
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Card": {
+            "type": "object",
+            "properties": {
+                "card_id": {
+                    "type": "integer"
+                },
+                "card_type": {
+                    "description": "0 水果纸牌 1 骰子",
+                    "type": "integer"
+                },
+                "express": {
+                    "description": "如 水果纸牌 0:苹果 1:香蕉 / 普通纸牌 1:J 2:Q 3:K",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "名字",
+                    "type": "string"
+                },
+                "point": {
+                    "description": "点数",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.CharacterList": {
+            "type": "object",
+            "properties": {
+                "character_Id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.CharacterListReq": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CharacterListResp": {
+            "type": "object",
+            "properties": {
+                "character_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CharacterList"
+                    }
+                }
+            }
+        },
+        "models.ChooseCharacterReq": {
+            "type": "object",
+            "properties": {
+                "character_Id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ChooseCharacterResp": {
+            "type": "object",
+            "properties": {
+                "character_Id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                },
+                "character_name": {
+                    "description": "角色名字",
+                    "type": "string"
+                }
+            }
+        },
+        "models.CoinList": {
+            "type": "object",
+            "properties": {
+                "c_type": {
+                    "description": "币种类型 1:国王积分 10:L币",
+                    "type": "integer"
+                },
+                "price_num": {
+                    "description": "余额",
+                    "type": "number"
+                }
+            }
+        },
+        "models.CreateRoomReq": {
+            "type": "object",
+            "properties": {
+                "room_level": {
+                    "description": "房间 等级 0 初级 1 中级 2 高级",
+                    "type": "integer"
+                },
+                "room_type": {
+                    "description": "房间 类型 0 水果 1 纸牌 2 骰子",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "user_num_limit": {
+                    "description": "用户人数限制 2人场 3 人场 4人场",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.CreateRoomResp": {
+            "type": "object"
+        },
+        "models.DateList": {
+            "type": "object",
+            "properties": {
+                "f_level": {
+                    "description": "鱼等级 1:A, 2:B 以此类推",
+                    "type": "string"
+                },
+                "fish_level": {
+                    "description": "鱼等级 int",
+                    "type": "integer"
+                },
+                "fish_rod_typ": {
+                    "description": "0 免费鱼竿 1 非免费",
+                    "type": "integer"
+                },
+                "num": {
+                    "type": "integer"
+                },
+                "obj_id": {
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "1:鱼类 背包定义的类型",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.DaySignInReq": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DaySignResp": {
+            "type": "object",
+            "properties": {
+                "state": {
+                    "description": "0:签到成功; 1:签到失败 2 已经签到",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.DownOreOrderReq": {
+            "type": "object",
+            "properties": {
+                "order_no": {
+                    "description": "订单编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.DownOreOrderResp": {
+            "type": "object",
+            "properties": {
+                "order_no": {
+                    "description": "订单编号",
+                    "type": "string"
+                },
+                "state": {
+                    "description": "0:上架 1:下架 3:撤销 4:已经出售（完成）   / -1 代表买的下单 可忽略",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ExchangeCoinDetailReq": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.ExchangeCoinDetailResp": {
+            "type": "object",
+            "properties": {
+                "destroy_ore": {
+                    "description": "已经销毁的金矿数",
+                    "type": "number"
+                },
+                "have_ore": {
+                    "description": "还拥有的金矿数",
+                    "type": "number"
+                },
+                "king_coin": {
+                    "description": "国王积分数",
+                    "type": "number"
+                },
+                "ore_coin": {
+                    "description": "金矿数",
+                    "type": "number"
+                }
+            }
+        },
+        "models.ExchangeCoinReq": {
+            "type": "object",
+            "properties": {
+                "ore_coin": {
+                    "description": "金矿数",
+                    "type": "number"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.ExchangeCoinResp": {
+            "type": "object",
+            "properties": {
+                "destroy_ore": {
+                    "description": "已经销毁的金矿数",
+                    "type": "number"
+                },
+                "have_ore": {
+                    "description": "还拥有的金矿数",
+                    "type": "number"
+                }
+            }
+        },
+        "models.FishAdoptAck": {
+            "type": "object"
+        },
+        "models.FishAdoptReq": {
+            "type": "object",
+            "properties": {
+                "fish_level": {
+                    "description": "鱼等级 int",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.FishConfigList": {
+            "type": "object",
+            "properties": {
+                "desc": {
+                    "type": "string"
+                },
+                "f_level": {
+                    "description": "鱼等级 1:A, 2:B 以此类推",
+                    "type": "string"
+                },
+                "f_type": {
+                    "description": "0:免费 1：不免费",
+                    "type": "integer"
+                },
+                "fish_id": {
+                    "type": "integer"
+                },
+                "fish_name": {
+                    "type": "string"
+                },
+                "is_first": {
+                    "description": "ture 是首次 false 不是首次",
+                    "type": "boolean"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.FishConfigResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FishConfigList"
+                    }
+                }
+            }
+        },
+        "models.FishConfigRodResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FishRodConfigList"
+                    }
+                }
+            }
+        },
+        "models.FishHandbookAck": {
+            "type": "object",
+            "properties": {
+                "fish_handbook_list": {
+                    "description": "非免费鱼类",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DateList"
+                    }
+                },
+                "have_adopt_num": {
+                    "description": "已经拥有的鱼",
+                    "type": "integer"
+                },
+                "is_can_adopt": {
+                    "description": "是否能被收集",
+                    "type": "boolean"
+                },
+                "need_adopt_num": {
+                    "description": "需要多少鱼 能开宝箱",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.FishHandbookListReq": {
+            "type": "object",
+            "properties": {
+                "fish_level": {
+                    "description": "鱼等级 int 0:获取全部的鱼 1:a类鱼 2:b类鱼 3:c类鱼 4:d类鱼",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.FishRodConfigList": {
+            "type": "object",
+            "properties": {
+                "fish_rod_id": {
+                    "description": "鱼竿ID",
+                    "type": "integer"
+                },
+                "num": {
+                    "description": "耐久值",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.GameOverReq": {
+            "type": "object",
+            "properties": {
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.GameOverResp": {
+            "type": "object",
+            "properties": {
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "room_user_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TavernRoomUser"
+                    }
+                }
+            }
+        },
+        "models.GetCoinBalanceReq": {
+            "type": "object"
+        },
+        "models.GetCoinBalanceResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CoinList"
+                    }
+                }
+            }
+        },
+        "models.GetFishConfReq": {
+            "type": "object"
+        },
+        "models.GetFishRodConfReq": {
+            "type": "object"
+        },
+        "models.HandarmState": {
+            "type": "object",
+            "properties": {
+                "all_bullet": {
+                    "description": "全部子弹数量",
+                    "type": "integer"
+                },
+                "shoot_num": {
+                    "description": "射击次数",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.InviteBoxInfoReq": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.InviteBoxInfoResp": {
+            "type": "object",
+            "properties": {
+                "invite_code": {
+                    "description": "邀请码",
+                    "type": "string"
+                },
+                "is_gain_rat": {
+                    "description": "是否有可以领取的矿工",
+                    "type": "integer"
+                },
+                "lack_invited_num": {
+                    "description": "还缺少多少邀请人",
+                    "type": "integer"
+                },
+                "received_num": {
+                    "description": "被邀请的人数",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.InviteGainRatReq": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.InviteGainRatResp": {
+            "type": "object"
+        },
+        "models.InviteInputCodeReq": {
+            "type": "object",
+            "properties": {
+                "invite_code": {
+                    "description": "邀请码",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InviteInputCodeResp": {
+            "type": "object"
+        },
+        "models.InviteUserList": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "rat_state": {
+                    "description": "1：已经被领取过矿工的邀请人  2：未被领取矿工的邀请人 未买过矿工 3；未被领取矿工的邀请人 已经买过矿工",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "description": "被邀请人用户Id",
+                    "type": "string"
+                }
+            }
+        },
+        "models.InviteUserListReq": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.InviteUserListResp": {
+            "type": "object",
+            "properties": {
+                "invite_user_list": {
+                    "description": "邀请用户列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InviteUserList"
+                    }
+                },
+                "is_have_next_page": {
+                    "description": "0 没有下一页 ； 1 有下一页",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "models.IsDoubtReq": {
+            "type": "object",
+            "properties": {
+                "is_doubt": {
+                    "description": "0:质疑 1:不质疑",
+                    "type": "integer"
+                },
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.IsDoubtResp": {
+            "type": "object"
+        },
+        "models.JoinRoomReq": {
+            "type": "object",
+            "properties": {
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.JoinRoomResp": {
+            "type": "object"
+        },
+        "models.KickRoomReq": {
+            "type": "object",
+            "properties": {
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.KickRoomResp": {
+            "type": "object"
+        },
+        "models.LayerMeta": {
+            "type": "object",
+            "properties": {
+                "auto_soldiers_dp": {
+                    "description": "自动士兵",
+                    "type": "number"
+                },
+                "boss_dp": {
+                    "description": "boss血量",
+                    "type": "number"
+                },
+                "no_auto_soldiers_dp": {
+                    "description": "手动士兵",
+                    "type": "number"
+                },
+                "state": {
+                    "description": "状态:0=准备 1=攻击 2=结算",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.LeaveRoomReq": {
+            "type": "object",
+            "properties": {
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.LeaveRoomResp": {
+            "type": "object"
+        },
+        "models.LoadCompletedReq": {
+            "type": "object",
+            "properties": {
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.LoadCompletedResp": {
+            "type": "object"
+        },
+        "models.LogResp": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "description": "用户token",
+                    "type": "string"
+                }
+            }
+        },
+        "models.Login": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "description": "0:挖矿未传 1:未定义 2:钓鱼 3:酒馆故事 4:magic_tower",
+                    "type": "integer"
+                },
+                "nickname": {
+                    "description": "新版本 不需要传",
+                    "type": "string"
+                },
+                "service_token": {
+                    "description": "验证用户是否登录",
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "新版本 不需要传",
+                    "type": "string"
+                }
+            }
+        },
+        "models.MTBetOnAutoNumReq": {
+            "type": "object",
+            "properties": {
+                "bet": {
+                    "type": "number"
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MTBetOnAutoNumResp": {
+            "type": "object"
+        },
+        "models.MTBetOnNumReq": {
+            "type": "object",
+            "properties": {
+                "bet": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MTBetOnNumResp": {
+            "type": "object"
+        },
+        "models.MTIsAutoReq": {
+            "type": "object",
+            "properties": {
+                "is_auto": {
+                    "description": "0:取消 1:成为自动玩家",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MTIsAutoResp": {
+            "type": "object"
+        },
+        "models.MTJoinGameSelectCampReq": {
+            "type": "object",
+            "properties": {
+                "camp": {
+                    "description": "1=魔王军 2=圣盟军",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MTJoinGameSelectCampResp": {
+            "type": "object"
+        },
+        "models.MTOneTouchAddBetNumReq": {
+            "type": "object",
+            "properties": {
+                "bet": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MTOneTouchAddBetNumResp": {
+            "type": "object"
+        },
+        "models.MTStatusReq": {
+            "type": "object"
+        },
+        "models.MTStatusResp": {
+            "type": "object",
+            "properties": {
+                "layer": {
+                    "description": "第几层",
+                    "type": "integer"
+                },
+                "layer_meta": {
+                    "description": "层信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.LayerMeta"
+                        }
+                    ]
+                },
+                "period_id": {
+                    "description": "第几期",
+                    "type": "integer"
+                },
+                "player_meta": {
+                    "description": "玩家信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.PlayerMeta"
+                        }
+                    ]
+                },
+                "start_time": {
+                    "description": "开始时间",
+                    "type": "string"
+                },
+                "state": {
+                    "description": "状态:0=未开放 1=开放中 3=已关闭",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MatchRoomAck": {
+            "type": "object"
+        },
+        "models.MatchRoomReq": {
+            "type": "object",
+            "properties": {
+                "room_level": {
+                    "description": "房间 等级 0 初级 1 中级 2 高级",
+                    "type": "integer"
+                },
+                "room_type": {
+                    "description": "UserID       string `json:\"user_id\"`\nNickname     string `json:\"nickname\"`\nToken        string `json:\"token\"`",
+                    "type": "integer"
+                },
+                "user_num_limit": {
+                    "description": "用户人数限制 2人场 3 人场 4人场",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MtBetListResp": {
+            "type": "object",
+            "properties": {
+                "bet_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.BetList"
+                    }
+                }
+            }
+        },
+        "models.MtBetReq": {
+            "type": "object"
+        },
+        "models.MtUserPeriodLayerList": {
+            "type": "object",
+            "properties": {
+                "award_num": {
+                    "description": "奖励数量",
+                    "type": "integer"
+                },
+                "layer": {
+                    "description": "第几层",
+                    "type": "integer"
+                },
+                "period_id": {
+                    "description": "第几期",
+                    "type": "integer"
+                },
+                "reduce_num": {
+                    "description": "消耗数量",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MtUserPeriodLayerListReq": {
+            "type": "object",
+            "properties": {
+                "period_id": {
+                    "description": "第几期",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MtUserPeriodLayerListResp": {
+            "type": "object",
+            "properties": {
+                "user_period_layer_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MtUserPeriodLayerList"
+                    }
+                }
+            }
+        },
+        "models.OperateCardReq": {
+            "type": "object",
+            "properties": {
+                "card_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Card"
+                    }
+                },
+                "looking": {
+                    "description": "看牌传",
+                    "type": "boolean"
+                },
+                "ope_type": {
+                    "description": "0:看牌 1:出牌 2:摇头",
+                    "type": "integer"
+                },
+                "pitch": {
+                    "type": "number"
+                },
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "yaw": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.OperateCardResp": {
+            "type": "object",
+            "properties": {
+                "card_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Card"
+                    }
+                }
+            }
+        },
+        "models.OrderList": {
+            "type": "object",
+            "properties": {
+                "Num": {
+                    "description": "矿石个数",
+                    "type": "number"
+                },
+                "king_price": {
+                    "description": "积分积分总价",
+                    "type": "number"
+                },
+                "nickname": {
+                    "description": "用户昵称",
+                    "type": "string"
+                },
+                "order_id": {
+                    "description": "订单ID",
+                    "type": "integer"
+                },
+                "order_no": {
+                    "description": "订单编号",
+                    "type": "string",
+                    "example": "xx"
+                },
+                "order_time": {
+                    "description": "订单时间",
+                    "type": "string"
+                },
+                "single_price": {
+                    "description": "要兑换几国王积分单价",
+                    "type": "number"
+                },
+                "state": {
+                    "description": "0:上架 1:下架 3:撤销 4:已经出售（完成）   / -1 代表买的下单 可忽略",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.OreIntroduceReq": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.OreIntroduceResp": {
+            "type": "object",
+            "properties": {
+                "day_ore_num": {
+                    "description": "今日矿石数量",
+                    "type": "number"
+                },
+                "my_ore_num": {
+                    "description": "我的矿石数量",
+                    "type": "number"
+                },
+                "room_level": {
+                    "description": "房间等级",
+                    "type": "integer"
+                },
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "rule_desc": {
+                    "description": "规则描述",
+                    "type": "string"
+                },
+                "up_room_ore_num": {
+                    "description": "升级矿洞需要的矿石",
+                    "type": "number"
+                },
+                "world_surplus_ore_num": {
+                    "description": "世界剩余矿石数量",
+                    "type": "number"
+                }
+            }
+        },
+        "models.PlayerMeta": {
+            "type": "object",
+            "properties": {
+                "camp": {
+                    "description": "阵营 1=魔王军 2=圣盟军",
+                    "type": "integer"
+                },
+                "is_bet_auto": {
+                    "description": "是否是自动玩家",
+                    "type": "boolean"
+                },
+                "period_id": {
+                    "description": "第几期",
+                    "type": "integer"
+                },
+                "residue_coin_num": {
+                    "description": "剩余积分（小兵）",
+                    "type": "number"
+                },
+                "stage": {
+                    "description": "阵营 0:默认阶段 1:狂暴阶段",
+                    "type": "integer"
+                },
+                "userId": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.RatBuy": {
+            "type": "object",
+            "properties": {
+                "user_rat_id": {
+                    "description": "用户矿工ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.RatBuyReq": {
+            "type": "object",
+            "properties": {
+                "num": {
+                    "description": "需要的数量 默认1",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.RatBuyResp": {
+            "type": "object",
+            "properties": {
+                "user_rat_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RatBuy"
+                    }
+                }
+            }
+        },
+        "models.RatList": {
+            "type": "object",
+            "properties": {
+                "all_ore_num": {
+                    "description": "矿工总挖矿数",
+                    "type": "number"
+                },
+                "ore_num": {
+                    "description": "矿工今日挖矿数",
+                    "type": "number"
+                },
+                "rat_age": {
+                    "description": "年龄",
+                    "type": "integer"
+                },
+                "rat_name": {
+                    "description": "名字",
+                    "type": "string"
+                },
+                "rat_state": {
+                    "description": "用户矿工状态:0休息中/1工作中",
+                    "type": "integer",
+                    "example": 1
+                },
+                "speed": {
+                    "description": "速率",
+                    "type": "number"
+                },
+                "user_rat_id": {
+                    "description": "用户矿工ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ReadyReq": {
+            "type": "object",
+            "properties": {
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ReadyResp": {
+            "type": "object"
+        },
+        "models.RemakeAgeReq": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                },
+                "user_rat_id": {
+                    "description": "用户矿工ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.RemakeAgeResp": {
+            "type": "object"
+        },
+        "models.RoomAliveReq": {
+            "type": "object",
+            "properties": {
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RoomAliveResp": {
+            "type": "object"
+        },
+        "models.RoomItem": {
+            "type": "object",
+            "properties": {
+                "curr_fraud_card": {
+                    "description": "当前轮 骗子牌",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.Card"
+                        }
+                    ]
+                },
+                "room_Id": {
+                    "description": "房间编号",
+                    "type": "integer"
+                },
+                "room_level": {
+                    "description": "房间 等级 0:初级 1:中级 2:高级 10全部",
+                    "type": "integer"
+                },
+                "room_name": {
+                    "description": "房间 名字",
+                    "type": "string"
+                },
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "room_type": {
+                    "description": "房间 类型 1 纸牌 2 骰子",
+                    "type": "integer"
+                },
+                "room_user_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TavernRoomUser"
+                    }
+                },
+                "status": {
+                    "description": "房间状态:1=开放中,2=已满员,3=进行中,4=已解散 5=已结束",
+                    "type": "integer"
+                },
+                "turn": {
+                    "description": "在第几轮",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "user_num_limit": {
+                    "description": "用户人数限制 2人场 3 人场 4人场",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.RoomListReq": {
+            "type": "object",
+            "properties": {
+                "room_id": {
+                    "description": "房间ID",
+                    "type": "integer"
+                },
+                "room_level": {
+                    "description": "房间 等级 0:初级 1:中级 2:高级 10全部",
+                    "type": "integer"
+                },
+                "room_type": {
+                    "description": "房间类型 1:纸牌 2 骰子",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RoomListResp": {
+            "type": "object",
+            "properties": {
+                "is_have_next_page": {
+                    "description": "0 没有下一页 ； 1 有下一页",
+                    "type": "integer",
+                    "example": 1
+                },
+                "room_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RoomItem"
+                    }
+                }
+            }
+        },
+        "models.SearchOreOrderReq": {
+            "type": "object",
+            "properties": {
+                "object_id": {
+                    "description": "用户ID/订单号 string",
+                    "type": "string"
+                }
+            }
+        },
+        "models.SearchOreOrderResp": {
+            "type": "object",
+            "properties": {
+                "search_ore_order": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OrderList"
+                    }
+                }
+            }
+        },
+        "models.StartPlayReq": {
+            "type": "object",
+            "properties": {
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.StartPlayResp": {
+            "type": "object"
+        },
+        "models.SwingRodAck": {
+            "type": "object",
+            "properties": {
+                "swing_rod_no": {
+                    "description": "挥杆唯一标识",
+                    "type": "string"
+                }
+            }
+        },
+        "models.SwingRodConfirmAck": {
+            "type": "object",
+            "properties": {
+                "swing_rod_no": {
+                    "description": "挥杆唯一标识",
+                    "type": "string"
+                }
+            }
+        },
+        "models.SwingRodConfirmReq": {
+            "type": "object",
+            "properties": {
+                "swing_rod_no": {
+                    "description": "挥杆唯一标识",
+                    "type": "string"
+                }
+            }
+        },
+        "models.SwingRodReq": {
+            "type": "object",
+            "properties": {
+                "fish_rod_id": {
+                    "description": "鱼竿ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.SwingRodResAck": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FishConfigList"
+                    }
+                },
+                "swing_rod_no": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SwingRodResReq": {
+            "type": "object",
+            "properties": {
+                "swing_rod_no": {
+                    "description": "挥杆唯一标识",
+                    "type": "string"
+                }
+            }
+        },
+        "models.TavernRoomUser": {
+            "type": "object",
+            "properties": {
+                "bet": {
+                    "description": "押注",
+                    "type": "number"
+                },
+                "character_Id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                },
+                "handarm_state": {
+                    "description": "骗子酒馆 用户的子弹",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.HandarmState"
+                        }
+                    ]
+                },
+                "is_killed": {
+                    "description": "1 被杀",
+                    "type": "integer"
+                },
+                "is_leave": {
+                    "description": "1 离开 （见好就收）",
+                    "type": "integer"
+                },
+                "is_my_turn": {
+                    "description": "是否轮到自己出牌或者质疑",
+                    "type": "boolean"
+                },
+                "is_owner": {
+                    "description": "是否房主",
+                    "type": "boolean"
+                },
+                "is_ready": {
+                    "description": "是否就绪 0 没有就绪 1就绪",
+                    "type": "integer"
+                },
+                "is_robot": {
+                    "description": "是否机器人 0:真实用户 1:机器人",
+                    "type": "integer"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "priority_act": {
+                    "description": "优先出牌",
+                    "type": "boolean"
+                },
+                "seat": {
+                    "description": "位子、顺序 从0开始",
+                    "type": "integer"
+                },
+                "turn": {
+                    "description": "在第几轮",
+                    "type": "integer"
+                },
+                "user_cards": {
+                    "description": "用户自己的牌",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.UserCartState"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "user_limit_num": {
+                    "description": "房间人数限制",
+                    "type": "integer"
+                },
+                "win_price": {
+                    "description": "最终赢钱",
+                    "type": "number"
+                }
+            }
+        },
+        "models.UpdateRatStateReq": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                },
+                "user_rat_id": {
+                    "description": "用户矿工ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.UpdateRatStateResp": {
+            "type": "object"
+        },
+        "models.UpgradeUserOreRoomReq": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpgradeUserOreRoomResp": {
+            "type": "object",
+            "properties": {
+                "old_room_level": {
+                    "description": "旧等级",
+                    "type": "integer"
+                },
+                "room_level": {
+                    "description": "新等级",
+                    "type": "integer"
+                },
+                "room_no": {
+                    "description": "房间编号",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserBalanceReq": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserBalanceResp": {
+            "type": "object",
+            "properties": {
+                "score": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.UserCartState": {
+            "type": "object",
+            "properties": {
+                "card_list": {
+                    "description": "手里的牌",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Card"
+                    }
+                },
+                "card_num": {
+                    "description": "还有几张牌",
+                    "type": "integer"
+                },
+                "doubt_card_list": {
+                    "description": "被质疑的牌",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Card"
+                    }
+                },
+                "out_card_num": {
+                    "description": "出牌数量",
+                    "type": "integer"
+                },
+                "prev_user": {
+                    "description": "前一个用户的用户ID；只有轮到当前用户（is_my_turn = ture），这个字段才赋值，如果没有轮到当前用户，这个没有值；另外不需要返回下一个用户，通过接收广播进行判断",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.UserGetOreBySellPointReq": {
+            "type": "object",
+            "properties": {
+                "order_no": {
+                    "description": "订单编号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserGetOreBySellPointResp": {
+            "type": "object"
+        },
+        "models.UserOrderListReq": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "description": "订单ID",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "0:卖 ；1:买 ；2:只返回上架的订单",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserOrderListResp": {
+            "type": "object",
+            "properties": {
+                "Order_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OrderList"
+                    }
+                },
+                "is_have_next_page": {
+                    "description": "0 没有下一页 ； 1 有下一页",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "models.UserPeriodRevenueRank": {
+            "type": "object",
+            "properties": {
+                "nickname": {
+                    "type": "string"
+                },
+                "rank": {
+                    "description": "最后一个是用户 可以参考这个 看用户是否上榜",
+                    "type": "integer"
+                },
+                "revenue_num": {
+                    "description": "收益",
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserPeriodRevenueRankReq": {
+            "type": "object",
+            "properties": {
+                "period_id": {
+                    "description": "第几期",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.UserPeriodRevenueRankResp": {
+            "type": "object",
+            "properties": {
+                "user_period_revenue_ranks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UserPeriodRevenueRank"
+                    }
+                }
+            }
+        },
+        "models.UserRatListReq": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserRatListResp": {
+            "type": "object",
+            "properties": {
+                "buy_rat_coin_num": {
+                    "description": "招募一个矿工需要金币数",
+                    "type": "integer"
+                },
+                "remake_speed_coin_num": {
+                    "description": "重制速度需要的国王积分",
+                    "type": "integer"
+                },
+                "user_rat_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RatList"
+                    }
+                }
+            }
+        },
+        "models.UserSellOreReq": {
+            "type": "object",
+            "properties": {
+                "num": {
+                    "description": "个数",
+                    "type": "number"
+                },
+                "single_price": {
+                    "description": "单价",
+                    "type": "number"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserSellOreResp": {
+            "type": "object"
+        },
+        "models.UserStateReq": {
+            "type": "object"
+        },
+        "models.UserStateResp": {
+            "type": "object",
+            "properties": {
+                "character_Id": {
+                    "description": "UserDetail UserState `json:\"user_detail,omitempty\"` //用户自身",
+                    "type": "integer"
+                },
+                "room_detail": {
+                    "description": "用户所在房间",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.RoomItem"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
