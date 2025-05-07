@@ -9,13 +9,9 @@ import (
 )
 
 func ProtoTestController(client *Client, msgId int32, message []byte) (respMsgId int32, code uint32, data []byte) {
-
 	reqData := &pbs.Test1Req{}
-
 	err := proto.Unmarshal(message, reqData)
-
 	fmt.Println(reqData, err)
-
 	ack := &pbs.Test1Ack{
 		UserId: "999",
 	}
@@ -23,7 +19,6 @@ func ProtoTestController(client *Client, msgId int32, message []byte) (respMsgId
 	ackMarshal, _ := proto.Marshal(ack)
 
 	//uID, _ := strconv.Atoi(client.UserID)
-	//
 	//netMessageResp := &pbs.NetMessage{
 	//	AckHead: &pbs.AckHead{
 	//		Uid:     int32(uID),
@@ -34,9 +29,8 @@ func ProtoTestController(client *Client, msgId int32, message []byte) (respMsgId
 	//	MsgId:      msgId + 1,
 	//	Content:   ackMarshal,
 	//}
-	//
-	//ackMarshal, _ := proto.Marshal(ack)
 
+	//ackMarshal, _ := proto.Marshal(ack)
 	return msgId + 1, common.OK, ackMarshal
 }
 

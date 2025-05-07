@@ -46,7 +46,7 @@ type Client struct {
 }
 
 // NewClient 初始化
-func NewClient(addr string, socket *websocket.Conn, firstTime uint64, protocType int) (client *Client) {
+func NewClient(addr, gwToken string, socket *websocket.Conn, firstTime uint64, protocType int) (client *Client) {
 	client = &Client{
 		Addr:          addr,
 		Socket:        socket,
@@ -54,6 +54,7 @@ func NewClient(addr string, socket *websocket.Conn, firstTime uint64, protocType
 		FirstTime:     firstTime,
 		HeartbeatTime: firstTime,
 		ProtocType:    protocType,
+		Token:         gwToken,
 	}
 	return
 }

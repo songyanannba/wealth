@@ -56,6 +56,7 @@ func (g *MebGRPCClient) CallMebMethod(req *pbs.NetMessage) (*pbs.NetMessage, err
 	// 创建上下文并设置超时
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+
 	entranceFunc, err := g.MTServiceClient.ComEntranceFunc(ctx, req)
 	global.GVA_LOG.Infof("CallMethod entranceFunc:%v, err%v", entranceFunc, err)
 	return entranceFunc, err
