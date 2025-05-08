@@ -60,21 +60,21 @@ message netMessage {
 
 //==== 旧版
 // ComReq 和。 ComResp 可作为内部rpc协议
-message ComReq {
-  int32 s_id = 1; //服务ID
-  ProtocNum protoc_num = 2; //定义的协议号码
-  bytes data = 3; //请求数据
-}
+//message ComReq {
+//  int32 s_id = 1; //服务ID
+//  ProtocNum protoc_num = 2; //定义的协议号码
+//  bytes data = 3; //请求数据
+//}
+//
+//message ComResp {
+//  string msg =  1; //返回提示
+//  int32  code = 2; //返回的code
+//  bytes  data = 3; //返回的数据
+//  ProtocNum protoc_num = 4; //定义的协议号码
+//}
 
-message ComResp {
-  string msg =  1; //返回提示
-  int32  code = 2; //返回的code
-  bytes  data = 3; //返回的数据
-  ProtocNum protoc_num = 4; //定义的协议号码
-}
 
-
-//test
+//test 测试
 
 message test1Req {
   string  user_id = 1; //用户Id

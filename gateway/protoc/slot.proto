@@ -8,9 +8,9 @@ enum slot {
 
 
   //心跳
-  HeartReq =398;
-  HeartAck =399;
-  Heart =400;
+//  HeartReq =398;
+//  HeartAck =399;
+//  Heart =400;
 
 }
 
