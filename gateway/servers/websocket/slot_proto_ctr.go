@@ -89,9 +89,10 @@ func Login(client *Client, msgId int32, message []byte) (respMsgId int32, code u
 
 	global.GVA_LOG.Infof("LoginController 用户登录成功 login:%v", *login)
 	loginAck := pbs.LoginAck{
-		UserName: "",
-		City:     "",
+		UserName: userInfo.UserName,
+		City:     userInfo.City,
 		Amount:   0,
+		UserId:   userUuId,
 	}
 	ackMarshal, _ := proto.Marshal(&loginAck)
 	global.GVA_LOG.Infof("LoginController 用户登录成功, %v ,%v", client.Addr, string(ackMarshal))

@@ -1,12 +1,12 @@
 app:
   logFile: log/gin.log
   httpPort: 8000
-  webSocketPort: 8080
+  webSocketPort: 8081
   rpcPort: 8101
   #mebRpcUrl: 127.0.0.1:8101
   slotRpcUrl: 127.0.0.1:8101
   httpUrl: 127.0.0.1:8000
-  webSocketUrl: 127.0.0.1:8080
+  webSocketUrl: 127.0.0.1:8081
   natsUrl: nats://127.0.0.1:4222
   svName : gateway_wealth
   environment : dev

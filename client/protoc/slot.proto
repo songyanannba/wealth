@@ -1,0 +1,23 @@
+syntax = "proto3";
+package meme_battle;
+option go_package = "/pbs";
+import "com.proto";
+
+enum slot {
+  s0 =0;
+
+
+  //心跳
+  HeartReq =398;
+  HeartAck =399;
+  Heart =400;
+
+}
+
+service slotService {
+//  rpc mtTest(mTStatusReq) returns (common.netMessage);
+  //rpc comEntranceFunc(common.netMessage) returns (common.netMessage);
+}
+
+
+

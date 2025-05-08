@@ -4,7 +4,6 @@ import (
 	"gateway/core"
 	"gateway/global"
 	"gateway/routers"
-	"gateway/servers/grpcclient"
 	"gateway/servers/task"
 	"gateway/servers/websocket"
 	"github.com/gin-gonic/gin"
@@ -17,11 +16,11 @@ func InitServer() {
 	core.BaseInit()
 
 	//nats消息中间件
-	websocket.NastManager.Start()
+	//websocket.NastManager.Start()
 
 	// 初始化 gRPC 客户端
-	oreRpcUrl := global.GVA_VP.GetString("app.slotRpcUrl")
-	grpcclient.InitMebClient(oreRpcUrl)
+	//oreRpcUrl := global.GVA_VP.GetString("app.slotRpcUrl")
+	//grpcclient.InitMebClient(oreRpcUrl)
 
 	// 定时任务
 	task.Init()

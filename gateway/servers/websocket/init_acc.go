@@ -2,6 +2,7 @@
 package websocket
 
 import (
+	"fmt"
 	"gateway/global"
 	"gateway/helper"
 	"gateway/models"
@@ -80,6 +81,9 @@ func StartWebSocket() {
 
 func wsPage(w http.ResponseWriter, req *http.Request) {
 
+	gwToken1 := req.Header.Get("gw_token")
+	fmt.Println(gwToken1)
+
 	// 升级协议
 	conn, err := (&websocket.Upgrader{CheckOrigin: func(r *http.Request) bool {
 		global.GVA_LOG.Infof("升级协议 ua:%v referer:%v", r.Header["User-Agent"], r.Header["Referer"])
@@ -91,6 +95,7 @@ func wsPage(w http.ResponseWriter, req *http.Request) {
 		//		return false
 		//	}
 		//}
+
 		return true
 	}}).Upgrade(w, req, nil)
 	if err != nil {

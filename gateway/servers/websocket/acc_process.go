@@ -141,6 +141,9 @@ func ProcessDataNew(client *Client, message []byte) {
 			global.GVA_LOG.Infof("ProcessDataNew 请求 proto协议接口 msgId:%v:%v", netMessage.MsgId, client.Addr)
 			// 采用 map 注册的方式
 			if value, ok := getHandlersProto(netMessage.MsgId); ok {
+				//if netMessage.MsgId == int32(pbs.ProtocNum_LoginReq) {
+				//	client.Token = netMessage.ReqHead.Token
+				//}
 				ackMsgId, ackCode, contentByte := value(client, netMessage.MsgId, netMessage.Content)
 				ackMsg := common.GetErrorMessage(ackCode, "")
 				//client.SendMsg(headByte)
