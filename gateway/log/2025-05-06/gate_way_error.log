@@ -1,0 +1,1 @@
+[gate_way]2025/05/06 16:44:48.989	[31merror[0m	/Users/syn/goProjects/self_project/wealth/gateway/models/table/b_user.go:82	insert sql CreateBUser error: %s	{"error": "Error 1054 (42S22): Unknown column 'createtime' in 'field list'"}

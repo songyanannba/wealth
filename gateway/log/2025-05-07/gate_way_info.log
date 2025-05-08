@@ -1,0 +1,3 @@
+[gate_way]2025/05/07 16:56:47.352	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/gateway/initialize/redis.go:23	redis connect ping response:	{"pong": "PONG"}
+[gate_way]2025/05/07 16:56:47.386	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/gateway/main.go:57	gate_way 服务启动成功...
+[gate_way]2025/05/07 16:56:47.387	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/gateway/servers/websocket/init_acc.go:77	WebSocket 启动程序成功 192.168.2.29:8080 
