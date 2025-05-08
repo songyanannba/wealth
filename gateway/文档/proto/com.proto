@@ -100,8 +100,8 @@ message login {
 message loginAck {
     string  user_name = 1;
     string  city = 2;
-    float amount = 3;
-    string userId = 4;
+    float   amount = 3;
+    string  user_id = 4;
 }
 
 //心跳
