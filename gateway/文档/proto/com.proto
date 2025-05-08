@@ -1,0 +1,114 @@
+syntax = "proto3";
+package common;
+option go_package = "/pbs";
+
+//通用code
+enum Code {
+  Unknown = 0;               //未知
+  WebOK                       = 1 ;   // Success
+  OK                          = 200;  // Success
+}
+
+
+enum ErrCode {
+  ErrCode0 = 0;
+  NotLogin = 1000; //未登录
+  TokenExpiration = 1001; //token 过期
+  ServerError = 1004; // 系统错误
+  NotRegister= 1031; //未注册 和http请求保持一致
+
+}
+
+
+//协议号码
+enum ProtocNum {
+  RPN =0;
+
+  LoginReq =10000;
+  LoginAck =10001;
+  HeartReq =10002;
+  HeartAck =10003;
+
+}
+
+
+//==== 新版公共协议
+// 公共请求头
+message req_head {
+  int32  uid = 1; //唯一码
+  string token = 2; //token信息，登录时可留空
+  string platform = 3; //平台名称
+}
+
+// 公共响应头
+message ack_head {
+  int32 uid = 1; // 用户id
+  Code  code = 2; // 状态码 只有1为成功 其他均视为失败
+  string message = 3; // 消息
+}
+
+
+//通用协议交换方式
+message netMessage {
+  req_head req_head = 1; // 返回统一协议
+  ack_head ack_head = 2; // 返回统一协议
+  //
+  string Service_id = 3; //服务号
+  int32  msg_id = 4; //协议号
+  bytes  content = 5; //协议内容
+}
+
+//==== 旧版
+// ComReq 和。 ComResp 可作为内部rpc协议
+//message ComReq {
+//  int32 s_id = 1; //服务ID
+//  ProtocNum protoc_num = 2; //定义的协议号码
+//  bytes data = 3; //请求数据
+//}
+//
+//message ComResp {
+//  string msg =  1; //返回提示
+//  int32  code = 2; //返回的code
+//  bytes  data = 3; //返回的数据
+//  ProtocNum protoc_num = 4; //定义的协议号码
+//}
+
+
+//test 测试
+
+message test1Req {
+  string  user_id = 1; //用户Id
+}
+
+message test1Ack {
+  string  user_id = 1; //用户Id
+}
+
+message test2Req {
+  string  user_id = 1; //用户Id
+}
+
+message test2Ack {
+  string  user_id = 1; //用户Id
+}
+
+//登录
+message login {
+   int32 app_id = 1 ; //平台（先默认填1）
+}
+
+message loginAck {
+    string  user_name = 1;
+    string  city = 2;
+    float amount = 3;
+    string userId = 4;
+}
+
+//心跳
+message heartBeat {
+
+}
+
+message heartBeatAck {
+
+}

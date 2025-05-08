@@ -37,7 +37,7 @@ var WsClientService = wsClientService{
 
 func (ws *wsClientService) Start() {
 
-	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDY3NzM3NTcsInN1YiI6IiIsInVzZXJfaWQiOiJiMTNmZjk5Yy0zNzVmLTQwMDAtOTE5ZC1hYWZlYWMxM2U3MjgifQ.nJllxr8u90jXcYfVppRkCxqybjQxpZ_9XGFoS8sr9Og"
+	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDY3NzgxNDcsInN1YiI6IiIsInVzZXJfaWQiOiIyZDdjZDFkZC0wOGIzLTQ4OWQtOGVmYS00ODVlNmZiMTc3MTIifQ.6AwCyrvPc-hGu_lwkzIAlwOIEom0A4EdxEdjZGWqyt8"
 
 	header := http.Header{}
 	header.Add("userId", "syn")
@@ -170,16 +170,14 @@ func (ws *wsClientService) Test123() {
 	//	Type:      1,
 	//}
 
-	req1 := &pbs.Test1Req{
-		UserId: "1",
+	req1 := &pbs.Login{
+		AppId: 1,
 	}
-
 	req1M, _ := proto.Marshal(req1)
-
 	reqq := &pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
 			Uid:      0,
-			Token:    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDY3NzM3NTcsInN1YiI6IiIsInVzZXJfaWQiOiJiMTNmZjk5Yy0zNzVmLTQwMDAtOTE5ZC1hYWZlYWMxM2U3MjgifQ.nJllxr8u90jXcYfVppRkCxqybjQxpZ_9XGFoS8sr9Og",
+			Token:    "",
 			Platform: "",
 		},
 		AckHead: &pbs.AckHead{

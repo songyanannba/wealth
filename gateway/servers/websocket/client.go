@@ -80,7 +80,7 @@ func (c *Client) read() {
 	for {
 		_, message, err := c.Socket.ReadMessage()
 		if err != nil {
-			global.GVA_LOG.Error("读取客户端数据 错误", zap.Any("c.Addr ", err), zap.Any("message", string(message)))
+			global.GVA_LOG.Error("read 读取客户端数据 错误", zap.Any("c.Addr ", err), zap.Any("message", string(message)))
 			return
 		}
 
