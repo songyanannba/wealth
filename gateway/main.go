@@ -6,6 +6,7 @@ import (
 	"gateway/routers"
 	"gateway/servers/task"
 	"gateway/servers/websocket"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -44,6 +45,9 @@ func main() {
 
 	//gin服务
 	router := gin.Default()
+
+	// Gin 框架示例（其他框架逻辑类似）
+	router.Use(cors.Default())
 
 	// 初始化路由
 	routers.Init(router)
