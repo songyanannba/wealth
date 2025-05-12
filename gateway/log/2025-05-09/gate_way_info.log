@@ -1,0 +1,4 @@
+[gate_way]2025/05/09 11:04:00.939	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/gateway/initialize/redis.go:23	redis connect ping response:	{"pong": "PONG"}
+[gate_way]2025/05/09 11:04:00.941	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/gateway/main.go:64	gate_way 服务启动成功...
+[gate_way]2025/05/09 11:04:00.942	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/gateway/servers/websocket/init_acc.go:78	WebSocket 启动程序成功 192.168.2.29:8081 
+[gate_way]2025/05/09 11:04:02.941	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/gateway/servers/task/server_task.go:28	定时任务，服务注册  192.168.2.29:8081 1746759842

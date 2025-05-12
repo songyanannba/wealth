@@ -1,0 +1,374 @@
+syntax = "proto3";
+package meme_battle;
+option go_package = "/pbs";
+import "com.proto";
+
+
+enum meb {
+  mt0 =0;
+
+  mtHeartReq =398;
+  mtHeartAck =399;
+  mtHeart =400;
+
+  //创建房间
+  createRoom =1001;
+  createRoomAck =1002;
+
+  //加入房间
+  joinRoom =1003;
+  joinRoomAck =1004;
+
+  //离开房间
+  leaveRoom  =1005;
+  leaveRoomAck  =1006;
+
+  //获取用户状态
+  userState  =1007;
+  userStateAck  =1008;
+
+  //加入房间
+  reJoinRoom =1009;
+  reJoinRoomAck =1010;
+
+  //房间心跳
+  roomAlive =1011;
+  roomAliveAck =1012;
+
+  //踢人
+  kickRoom =1013;
+  kickRoomAck =1014;
+
+  //邀请好友
+  inviteFriend =1015;
+  inviteFriendAck =1016;
+
+  //开始
+  startPlay =1017;
+  startPlayAck =1018;
+
+  //加载完成
+  loadCompleted =1019;
+  loadCompletedAck =1020;
+
+  //问题广播
+  issueMsg =1021;
+
+  //发牌
+  dealCardsMsg =1022;
+
+  //操作牌
+  operateCards = 1023;
+
+  //看牌广播
+  LookCards = 1024;
+
+  //表情
+  opeEmoji = 1025;
+
+  //出牌
+  outCards = 1026;
+
+  //重置牌（重随）
+  reMakeCards = 1027;
+
+  //进入点赞
+  entryLikePage = 1028;
+
+  //点赞
+  likeCards = 1029;
+
+  //本局结束 计算本局最终结果
+  calculateRank = 1030;
+
+  //游戏结束
+  memeBattleOver = 1031;
+
+  //匹配
+  memeMatchRoom = 1032;
+
+  //取消匹配 mebCancel
+  cancelMatchRoom = 1033;
+
+  //匹配成功 并开始
+  matchStart = 1034;
+
+  //就绪
+  readyMsg = 1035;
+
+  //图鉴列表
+  handbookList = 1036;
+  handbookListResp = 1043;
+
+  //拆包
+  unpackCard = 1037;
+  unpackCardResp = 1045;
+
+  //版本列表
+  cardVersionList = 1038;
+  cardVersionListResp = 1044;
+
+  //好友列表
+  friendUserList = 1039;
+  friendUserListResp = 1040;
+
+  //申请好友列表
+  auditUserList = 1041;
+  auditUserListResp = 1042;
+
+  //添加朋友
+  addFriend = 1046;
+  addFriendResp = 1047;
+
+  //审核朋友
+  authFriend = 1048;
+  authFriendResp = 1049;
+
+  //删除朋友
+  delFriend = 1050;
+  delFriendResp = 1051;
+
+  //用户资料
+  userDetail = 1052;
+  userDetailResp = 1053;
+
+  //就绪
+  cancelReady = 1054;
+  cancelReadyMsg = 1055;
+
+  coinExperience = 1056;
+  coinExperienceResp = 1057;
+
+}
+
+
+service memeBattleService {
+//  rpc mtTest(mTStatusReq) returns (common.netMessage);
+  rpc comEntranceFunc(common.netMessage) returns (common.netMessage);
+}
+
+//创建房间
+message createRoomReq {
+  string  user_id = 1;  //
+  int32   room_type = 2; // 1:好友约战
+  int32   user_num_limit = 3; //用户人数限制 2人场 3 人场 4人场
+  int32   room_turn_num = 4; //房间 回合数 3/5/7
+}
+
+//加入房间
+message joinRoomReq {
+  string   user_id = 1;  //
+  string   room_no = 2; // 1:房间编号
+}
+
+//重新加入房间
+message reJoinRoomReq {
+  string   user_id = 1;  //
+  string   room_no = 2; // 1:房间编号
+}
+
+message roomAliveReq {
+  string  user_id = 1;  //
+  string  room_no = 2; // 1:房间编号
+}
+
+message kickRoomReq {
+  string  user_id = 1;  //被踢之人的用户ID
+  string  room_no = 2; // 1:房间编号
+  string  owner_id = 3; // 1:房主ID
+}
+
+message inviteFriendReq {
+  string  invite_user_id = 1;  //被邀请之人的用户ID
+  string  room_no = 2; // 1:房间编号
+  string  owner_id = 3; // 1:房主ID
+}
+
+
+//离开房间
+message leaveRoomReq {
+  string  user_id = 1;  //
+  string   room_no = 2; // 1:房间编号
+}
+
+message userStateReq {
+  string  user_id = 1;
+  string  room_no = 2; // 1:房间编号
+}
+
+message startPlayReq {
+  string  user_id = 1;
+  string  room_no = 2; // 1:房间编号
+}
+
+message loadCompletedReq {
+  string  user_id = 1;
+  string  room_no = 2; // 1:房间编号
+}
+
+message OperateCardReq {
+  string  user_id = 1;
+  string  room_no = 2; // 房间编号
+  int32   ope_type = 3; // //0:看牌 1:出牌 2:表情 3:重随
+  string  emoji_id = 4; // emoji_id 表情ID
+  float   pitch  = 5;
+  float   yaw  = 6;
+  bool    looking  = 7; //看牌传
+  repeated Card Card = 8; //牌ID
+}
+
+message Card {
+  int32 CardId   = 1;
+}
+
+message LikeCardReq {
+  string  user_id = 1;
+  string  room_no = 2; // 房间编号
+  string  like_user_id = 3; //被点赞的用户ID
+  repeated Card Card = 4; //牌ID
+}
+
+message MatchRoomReq {
+  string  room_no = 1; // 房间编号
+  string  user_id = 2;
+}
+
+message ReadyReq {
+  string  user_id = 1;
+  string  room_no = 2; // 1:房间编号
+}
+
+message CancelReadyReq {
+  string  user_id = 1;
+  string  room_no = 2; // 1:房间编号
+}
+
+message HandbookListReq {
+  string  user_id = 1;
+  int32   last_id = 2;
+  int32   level = 3;
+}
+
+message HandbookListAck {
+  bool  is_have_next_page = 1;
+  int32  all_cart_count = 2;
+  repeated  HandListCard hand_list_card = 3;
+}
+
+
+message HandListCard {
+  int32  card_id = 1;
+  string name = 2;
+  string suffix = 3;
+  bool   is_own = 4;
+  int32  level = 5;
+}
+
+message UnpackCardReq {
+  string  user_id = 1;
+  int32   version = 2;
+  int32   num = 3;
+}
+
+message UnpackCardAck {
+  repeated  HandListCardArr list_card = 1;
+}
+
+message HandListCardArr {
+  repeated  HandListCard cards = 1;
+}
+
+message CardVersionListReq {
+  string  user_id = 1;
+}
+
+message CardVersionListAck {
+  repeated  CardVersionList card_version_list = 1;
+}
+
+message CardVersionList {
+  int32  version = 1;
+}
+
+message FriendListReq {
+  string  user_id = 1;
+  int32   last_id = 2;
+}
+
+
+
+message FriendListAck {
+  bool  is_have_next_page = 1;
+  repeated  UserFriend user_friend = 2;
+}
+
+message UserFriend {
+  string   friend_user_id = 1;
+  string   nickname = 2;
+  int32   friend_id = 3;
+}
+
+message AuditUserListReq {
+  string  user_id = 1;
+  int32   last_id = 2;
+}
+
+message AuditUserAck {
+  bool  is_have_next_page = 1;
+  repeated  AuditUser audit_user = 2;
+}
+
+
+message AuditUser {
+  string  application_user = 1;
+  string  nickname = 2;
+  int32  audit_id = 3;
+}
+
+message AddFriendReq {
+  string  audit_user = 1;
+  string  application_user = 2;
+}
+
+message AddFriendAck {
+
+}
+message AuthFriendAck {
+
+}
+
+message AuthFriendReq {
+  string  user_id = 1;
+  int32   audit_id = 2;
+}
+
+
+message DelFriendAck {
+
+}
+
+message DelFriendReq {
+  string  user_id = 1;
+  int32   friend_id = 2;
+}
+
+message userDetailReq {
+  string  user_id = 1;
+}
+
+
+message userDetailAck {
+  string  user_id = 1;
+  string  nickname = 2;
+}
+
+
+message coinExperienceReq {
+  string  user_id = 1;
+}
+
+
+message coinExperienceAck {
+  float  coin_num = 1;
+  float  experience = 2;
+}

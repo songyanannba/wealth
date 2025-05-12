@@ -1,0 +1,172 @@
+syntax = "proto3";
+package common;
+option go_package = "/pbs";
+
+//通用code
+enum Code {
+  Unknown = 0;               //未知
+  WebOK                       = 1 ;   // Success
+  OK                          = 200;  // Success
+//  TokenInvalid = 401; //token失效
+//  ParameterError = 402; //参数错误
+//  Exists = 403; //已存在
+//  NotExists = 404; //不存在
+//  SystemError = 405; //系统错误
+//  DbError = 406; //数据库错误
+//  StatusError = 407; //状态错误
+//  AmountInsufficientError = 408; //余额不足
+
+  NotLoggedIn                 = 1000 ;// 未登录
+  ParameterIllegal            = 1001 ;// 参数不合法
+  UnauthorizedUserID          = 1002 ;// 非法的用户 ID
+  Unauthorized                = 1003 ;// 未授权
+  ServerError                 = 1004 ;// 系统错误
+  NotData                     = 1005 ;// 没有数据
+  ModelAddError               = 1006 ;// 添加错误
+  ModelDeleteError            = 1007 ;// 删除错误
+  ModelStoreError             = 1008 ;// 存储错误
+  OperationFailure            = 1009 ;// 操作失败
+  RoutingNotExist             = 1010 ;// 路由不存在
+  RepetitiveOperation         = 1011 ;// 重复操作
+  SysBusy                     = 1012 ;// 系统繁忙 稍后在试
+  Maintenance                 = 1013 ;// 维护阶段 稍后再来
+  UserScoreNotEnough          = 1014 ;// 用户积分不够
+  SelectRoomProhibit          = 1015 ;// 房间被占用
+  BetLow                      = 1017 ;// 押注不正确
+  NoReSelectRoom              = 1018 ;// 已经选择过房间
+  ReLogin                     = 1020 ;
+  LoginFirstProtectionDesc    = 1021 ;//首刀保护的档位 不让重复进入文案
+  TokenExpiration             = 1022 ;
+  ServerRedisError            = 1023 ;
+  GetScoreErr                 = 1024 ;
+  DuplicateRequests           = 1025 ;
+  GetRoomConfigErr            = 1026 ;
+  GetCurrTurnErr              = 1027 ;
+  GetTurnDetail               = 1028 ;
+  ProhibitSelectRoom          = 1029 ;// 系统强制匹配时间
+  EnterGameIng                = 1030 ;//
+  NotScoreConsume             = 1031 ;//
+  RepetitionConfirm           = 1032 ;
+  DBErr                       = 1033 ;// 没有数据
+  NoTFishRod                  = 1034 ;//
+  LCoin                       = 1035 ;// 里昂尼斯币不足
+  SCoin                       = 1036 ;// 国王积分不足
+  CoinTypeNotMatchFishRodType = 1037 ;// 币类型和鱼竿类型不匹配
+  NotSupportCoin              = 1038 ;// 不支持的币种
+  ParameterNot                = 1039 ;// 参数有误
+  FishRodNumNotEnough         = 1040 ;// 耐久度不够,请购买
+  RepetitionFunc              = 1041 ;// 重复操作
+  SignInEd                    = 1042 ;//
+  GetDBDataErr                = 1043 ;// 获取数据库数据有误
+  FishSellTypeErr             = 1044 ;// 此类型鱼,不能出售
+  UserKnapsackDataEmpty       = 1045 ;// 背包数据不足
+  UserKnapsackCapacityLimit   = 1046 ;// 容量限制达到最大限制
+  UserKnapsackStackUp         = 1047 ;// 背包叠放达到最大限制
+  RpcCallRespErr              = 1048 ;// 用rpc调用远程服务器错误
+  RpcCallRespDataErr          = 1049 ;// 用rpc调用远程服务器返回数据有误
+  InvitesNumEnough            = 1050 ;// 邀请的用户数不够3人
+  DbAddUserRatErr             = 1051 ;// 添加矿工失败
+  RoomLevelNotEnough          = 1052 ;// 矿洞等级不够 请升级矿洞
+  ProtocNumberError           = 1053 ;// 协议号错误
+  DataCompileError            = 1054 ;// 数据编译错误
+  GetDataFromDbErr            = 1055 ;// 获取DB数据错误
+  AddDataFromDbErr            = 1056 ;// 添加数据错误
+  RegisterTimeErr             = 1057 ;// 挖矿游戏上线之前已经注册
+  KingCoinNotEnough           = 1058 ;// 没有足够金矿石
+  UnauthorizedUserToken       = 1059 ; // 非法的用户token
+  HaveBeInviteUser            = 1060 ;// 已经填写过邀请码
+  InviteUserUnreal            = 1061 ; // 邀请用户不存在
+  NotAuthentication           = 1062 ; // 没有实名认证
+  SellOreNumNot0              = 1063;
+  PrevLoginTimeTimeErr        = 1064; //回归时间不在1个月内
+  NotInviteYourself           = 1065;
+  ExchangeOreCoinErr          = 1066; // 请输入正确的金矿数量
+  BuyRatNumErr                = 1067; // 请输入正确的矿工数量
+  BuyRatTimeLimit             = 1083; //  敬请期待 购买矿工的限制
+  InviteGainRatLimit          = 1084; //  新用户需要购买一次矿工才能邀请成功
+  CoinExchangeLimit           = 1087;
+  CoinExchangePerKing         = 1088; //  每天积分达到限制
+  CoinExchangePerOre          = 1089; //  每天矿石达到限制
+  CoinBuySellLimit            = 1091 ;// 当天买卖总量限制
+  CoinBuySellPerKing          = 1092 ;//  每天买卖积分达到限制
+  CoinBuySellPerOre           = 1093 ;//  每天买卖矿石达到限制
+  NOtOrder                    = 1095 ;//  订单不存在
+  NOtOrderDone                = 1096 ;//  订单交易完成
+  OreOrderStateDown           = 1097 ;//  上下架间隔一天,明天再来
+  ServerTaskIng               = 1099 ;//  后台有任务在执行中 加入mysql执行队列，脚本执行
+  CrazyLimitAutoBet           = 1111 ;//boss狂暴阶段 不让自动下注
+  NotCrazyStageBet            = 1112 ;//非狂暴阶段,不能一键召唤
+  GameNotStart                = 1113 ;//游戏没开始
+  HaveCallSoldiers            = 1114 ;//您已经召唤小兵,不能重复召唤
+  AlreadySetIsAuto            = 1115 ;//当前期 当前层 已经设置过是否自动
+  NotAutoUser                 = 1116 ;//不是自动用户
+  NotContinue5                = 1138 ;//不是自动用户
+}
+
+
+//协议号码
+enum ProtocNum {
+  RPN =0;
+
+}
+
+
+//==== 新版公共协议
+// 公共请求头
+message req_head {
+  int32  uid = 1; //唯一码
+  string token = 2; //token信息，登录时可留空
+  string platform = 3; //平台名称
+}
+
+// 公共响应头
+message ack_head {
+  int32 uid = 1; // 用户id
+  Code  code = 2; // 状态码 只有1为成功 其他均视为失败
+  string message = 3; // 消息
+}
+
+
+//通用协议交换方式
+message netMessage {
+  req_head req_head = 1; // 返回统一协议
+  ack_head ack_head = 2; // 返回统一协议
+  //
+  string Service_id = 3; //服务号
+  int32  msg_id = 4; //协议号
+  bytes  content = 5; //协议内容
+}
+
+//==== 旧版
+// ComReq 和。 ComResp 可作为内部rpc协议
+message ComReq {
+  int32 s_id = 1; //服务ID
+  ProtocNum protoc_num = 2; //定义的协议号码
+  bytes data = 3; //请求数据
+}
+
+message ComResp {
+  string msg =  1; //返回提示
+  int32  code = 2; //返回的code
+  bytes  data = 3; //返回的数据
+  ProtocNum protoc_num = 4; //定义的协议号码
+}
+
+
+//test
+
+message test1Req {
+  string  user_id = 1; //用户Id
+}
+
+message test1Ack {
+  string  user_id = 1; //用户Id
+}
+
+message test2Req {
+  string  user_id = 1; //用户Id
+}
+
+message test2Ack {
+  string  user_id = 1; //用户Id
+}

@@ -1,0 +1,17 @@
+[slot_server]2025/05/12 16:15:04.768	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/lib/initialize/redis.go:23	redis connect ping response:	{"pong": "PONG"}
+[slot_server]2025/05/12 16:15:04.798	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/servers/websocket/nats_manager.go:137	Start StartConsumer
+[slot_server]2025/05/12 16:15:04.799	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/main.go:64	meme_battle 服务启动成功...
+[slot_server]2025/05/12 16:15:06.554	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/main.go:77	Shutting down server...
+[slot_server]2025/05/12 16:15:06.554	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/lib/core/service.go:44	GVA_MEME_DB 关闭数据库连接
+[slot_server]2025/05/12 16:16:19.884	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/lib/initialize/redis.go:23	redis connect ping response:	{"pong": "PONG"}
+[slot_server]2025/05/12 16:16:19.890	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/servers/websocket/nats_manager.go:137	Start StartConsumer
+[slot_server]2025/05/12 16:16:48.164	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/lib/initialize/redis.go:23	redis connect ping response:	{"pong": "PONG"}
+[slot_server]2025/05/12 16:16:48.171	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/servers/websocket/nats_manager.go:137	Start StartConsumer
+[slot_server]2025/05/12 16:17:20.386	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/lib/initialize/redis.go:23	redis connect ping response:	{"pong": "PONG"}
+[slot_server]2025/05/12 16:17:41.115	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/servers/websocket/nats_manager.go:137	Start StartConsumer
+[slot_server]2025/05/12 16:19:17.492	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/lib/initialize/redis.go:23	redis connect ping response:	{"pong": "PONG"}
+[slot_server]2025/05/12 16:19:17.497	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/servers/websocket/nats_manager.go:137	Start StartConsumer
+[slot_server]2025/05/12 16:23:55.232	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/lib/initialize/redis.go:23	redis connect ping response:	{"pong": "PONG"}
+[slot_server]2025/05/12 16:23:55.238	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/servers/websocket/nats_manager.go:137	Start StartConsumer
+[slot_server]2025/05/12 16:23:55.239	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/main.go:64	meme_battle 服务启动成功...
+[slot_server]2025/05/12 16:24:13.099	[34minfo[0m	/Users/syn/goProjects/self_project/wealth/slot_server/main.go:77	Shutting down server...
