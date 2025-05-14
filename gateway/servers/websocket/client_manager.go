@@ -211,12 +211,12 @@ func (manager *ClientManager) EventRegister(client *Client) {
 	} else {
 		fConnSucc := pbs.NetMessage{
 			ReqHead: &pbs.ReqHead{
-				Uid:      0,
+				Uid:      "",
 				Token:    "",
 				Platform: "",
 			},
 			AckHead: &pbs.AckHead{
-				Uid:     0,
+				Uid:     "",
 				Code:    0,
 				Message: "",
 			},

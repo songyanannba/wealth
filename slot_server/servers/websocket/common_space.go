@@ -9,10 +9,47 @@ import (
 	"slot_server/lib/models"
 	"slot_server/lib/models/table"
 	"slot_server/protoc/pbs"
-	"strconv"
 	"sync"
 	"time"
 )
+
+type PeriodSpace struct {
+
+	//key是用户ID 用户信息 {用户押注/获取房间的时候添加 }
+	UserInfos map[string]*models.UserInfo
+
+	//接收消息处理
+	ReceiveMsg chan []byte
+
+	//广播类型的消息 消息中需要有房间号
+	Broadcast chan []byte
+
+	//关闭房间的chan
+	Close chan bool
+
+	//上次操作房间的时间 ｜ 存活时间
+	CurrentOpTime int64
+
+	//是否开始游戏
+	IsStartGame bool
+
+	//房间游戏是否结束 结束需要回收资源
+	IsStopGame bool
+	//房间结束的时间戳
+
+	StopGameTime int64
+
+	//每小局详情
+	TurnMateInfo TurnMateInfo
+	Sync         *sync.Mutex
+	UserSync     *sync.RWMutex
+
+	//是否匹配成功后，被清理的房间
+	IsMatchClear bool
+
+	//是否正在发牌
+	IdDealCarding bool
+}
 
 type ComRoomSpace struct {
 	//是否被保护
@@ -510,12 +547,12 @@ func (rs *ComRoomSpace) NatsSendAllUserMsg(msg *pbs.NetMessage) {
 		if len(userInfo.UserID) == 0 || userInfo.UserProperty.IsLeave == 1 || userInfo.UserProperty.IsRobot == 1 {
 			continue
 		}
-		userIDInt, err := strconv.Atoi(userInfo.UserID)
-		if err != nil {
-			global.GVA_LOG.Error("NatsSendAllUserMsg err", zap.Any("err", err))
-			continue
-		}
-		msg.AckHead.Uid = int32(userIDInt)
+		//userIDInt, err := strconv.Atoi(userInfo.UserID)
+		//if err != nil {
+		//	global.GVA_LOG.Error("NatsSendAllUserMsg err", zap.Any("err", err))
+		//	continue
+		//}
+		msg.AckHead.Uid = userInfo.UserID
 		netMessageRespMarshal, _ := proto.Marshal(msg)
 		global.GVA_LOG.Infof("NatsSendAllUserMsg UserID:{%v} 给客户端发消息:{%v}", userInfo.UserID, msg)
 		NastManager.Producer(netMessageRespMarshal)
@@ -530,12 +567,12 @@ func (rs *ComRoomSpace) NatsSendAimUserMsg(msg *pbs.NetMessage, userId string) {
 		if len(userInfo.UserID) == 0 || userInfo.UserProperty.IsLeave == 1 || userInfo.UserProperty.IsRobot == 1 {
 			return
 		}
-		userIDInt, err := strconv.Atoi(userInfo.UserID)
-		if err != nil {
-			global.GVA_LOG.Error("NatsSendAimUserMsg err", zap.Any("err", err))
-			return
-		}
-		msg.AckHead.Uid = int32(userIDInt)
+		//userIDInt, err := strconv.Atoi(userInfo.UserID)
+		//if err != nil {
+		//	global.GVA_LOG.Error("NatsSendAimUserMsg err", zap.Any("err", err))
+		//	return
+		//}
+		msg.AckHead.Uid = userId
 		netMessageRespMarshal, _ := proto.Marshal(msg)
 		global.GVA_LOG.Infof("NatsSendAimUserMsg UserID:{%v} 给客户端发消息:{%v}", userInfo.UserID, msg)
 		NastManager.Producer(netMessageRespMarshal)
@@ -553,13 +590,13 @@ func (rs *ComRoomSpace) MatsSendExcludeUserMsg(msg *pbs.NetMessage, userId strin
 		if len(userInfo.UserID) == 0 || userInfo.UserProperty.IsLeave == 1 {
 			continue
 		}
-		userIDInt, err := strconv.Atoi(userInfo.UserID)
-		if err != nil {
-			global.GVA_LOG.Error("MatsSendExcludeUserMsg err", zap.Any("err", err))
-			continue
-		}
+		//userIDInt, err := strconv.Atoi(userInfo.UserID)
+		//if err != nil {
+		//	global.GVA_LOG.Error("MatsSendExcludeUserMsg err", zap.Any("err", err))
+		//	continue
+		//}
 
-		msg.AckHead.Uid = int32(userIDInt)
+		msg.AckHead.Uid = userInfo.UserID
 		netMessageRespMarshal, _ := proto.Marshal(msg)
 		global.GVA_LOG.Infof("MatsSendExcludeUserMsg UserID:{%v} 给客户端发消息:{%v}", userInfo.UserID, msg)
 		NastManager.Producer(netMessageRespMarshal)
@@ -576,12 +613,12 @@ func (rs *ComRoomSpace) SendExcludeUserMsg(msg *pbs.NetMessage, userId string) {
 		if len(userInfo.UserID) == 0 || userInfo.UserProperty.IsLeave == 1 || userInfo.UserProperty.IsRobot == 1 {
 			continue
 		}
-		userIDInt, err := strconv.Atoi(userInfo.UserID)
-		if err != nil {
-			global.GVA_LOG.Error("NatsSendAllUserMsg err", zap.Any("err", err))
-			continue
-		}
-		msg.AckHead.Uid = int32(userIDInt)
+		//userIDInt, err := strconv.Atoi(userInfo.UserID)
+		//if err != nil {
+		//	global.GVA_LOG.Error("NatsSendAllUserMsg err", zap.Any("err", err))
+		//	continue
+		//}
+		msg.AckHead.Uid = userInfo.UserID
 		netMessageRespMarshal, _ := proto.Marshal(msg)
 		global.GVA_LOG.Infof("NatsSendAllUserMsg UserID:{%v} 给客户端发消息:{%v}", userInfo.UserID, msg)
 		NastManager.Producer(netMessageRespMarshal)
@@ -907,7 +944,7 @@ func (rs *ComRoomSpace) GetLikeCountdownTime() int64 {
 }
 
 func (rs *ComRoomSpace) SetGameStartTime(gameStartTime int64) {
-	rs.TurnMateInfo.GameStartTime = gameStartTime + 5
+	rs.TurnMateInfo.GameStartTime = gameStartTime
 }
 
 func (rs *ComRoomSpace) GetGameStartTime() int64 {

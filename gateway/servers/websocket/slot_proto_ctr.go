@@ -62,12 +62,15 @@ func Login(client *Client, msgId int32, message []byte) (respMsgId int32, code u
 
 	userInfo, err := table.GetBUserByUUid(userUuId)
 	if err != nil {
+		global.GVA_LOG.Error("Login ", zap.Any("err", err))
 		return int32(pbs.ProtocNum_LoginAck), uint32(pbs.ErrCode_ServerError), []byte{}
 	}
 	if userInfo.ID <= 0 {
+		global.GVA_LOG.Infof("Login userInfo.ID <= 0")
 		return int32(pbs.ProtocNum_LoginAck), uint32(pbs.ErrCode_NotRegister), []byte{}
 	}
-	client.Login(uint32(reqData.AppId), userInfo.Uuid, currentTime, userInfo.UserName, client.Token)
+
+	client.Login(10, userInfo.Uuid, currentTime, userInfo.UserName, client.Token)
 
 	global.GVA_LOG.Infof("用户登录成功 client:%v", *client)
 	// 存储数据

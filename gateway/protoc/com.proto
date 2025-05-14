@@ -16,6 +16,7 @@ enum ErrCode {
   TokenExpiration = 1001; //token 过期
   ServerError = 1004; // 系统错误
   NotRegister= 1031; //未注册 和http请求保持一致
+  NotRoom = 1032;   //没有房间
 
 }
 
@@ -29,20 +30,24 @@ enum ProtocNum {
   HeartReq =10002;
   HeartAck =10003;
 
+  //获取动物派对的信息
+  CurrAPInfoReq =10004;
+  CurrAPInfoAck =10005;
+
 }
 
 
 //==== 新版公共协议
 // 公共请求头
 message req_head {
-  int32  uid = 1; //唯一码
-  string token = 2; //token信息，登录时可留空
-  string platform = 3; //平台名称
+  string  uid = 1; //唯一码
+  string  token = 2; //token信息，登录时可留空
+  string  platform = 3; //平台名称
 }
 
 // 公共响应头
 message ack_head {
-  int32 uid = 1; // 用户id
+  string uid = 1; // 用户id
   Code  code = 2; // 状态码 只有1为成功 其他均视为失败
   string message = 3; // 消息
 }

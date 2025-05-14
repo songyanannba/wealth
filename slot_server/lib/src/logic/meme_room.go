@@ -11,8 +11,8 @@ import (
 	"slot_server/lib/src/dao"
 )
 
-func SaveRoom(userID string, roomType, userNumLimit, roomLevel, roomTurnNum int, bet float64) (*table.MemeRoom, error) {
-	room := &table.MemeRoom{}
+func SaveRoom(userID string, roomType, userNumLimit, roomLevel, roomTurnNum int, bet float64) (*table.AnimalPartyRoom, error) {
+	room := &table.AnimalPartyRoom{}
 
 	userInfo, err := table.GetGameUserByUid(userID)
 	if err != nil {
@@ -23,7 +23,7 @@ func SaveRoom(userID string, roomType, userNumLimit, roomLevel, roomTurnNum int,
 	//创建
 	rNo := uuid.New().String()
 	rName := userInfo.Nickname + "'s" + " lobby"
-	room = table.NewMemeRoom(userID, userID, rNo, rName, "", table.TavernRoomOpen, int8(roomType), int8(roomLevel), table.RoomClassInvite, roomTurnNum, userNumLimit)
+	room = table.NewAnimalPartyRoom(userID, userID, rNo, rName, "", "1", table.TavernRoomOpen, int8(roomType), int8(roomLevel), table.RoomClassInvite, roomTurnNum, userNumLimit)
 	err = table.CreateMemeRoom(room)
 	if err != nil {
 		global.GVA_LOG.Error("SaveRoom CreateMemeRoom", zap.Error(err))
@@ -40,7 +40,7 @@ func SaveRoom(userID string, roomType, userNumLimit, roomLevel, roomTurnNum int,
 
 	//用户维度状态 ｜ 创建房间
 	tavernUserRoomData := table.NewUserRoom(tavernRoomUsers.UserId, tavernRoomUsers.RoomNo, tavernRoomUsers.Nickname, tavernRoomUsers.IsLeave, tavernRoomUsers.IsKilled,
-		tavernRoomUsers.IsOwner, tavernRoomUsers.Turn, tavernRoomUsers.Seat, tavernRoomUsers.IsRobot, tavernRoomUsers.IsReady)
+		tavernRoomUsers.IsOwner, tavernRoomUsers.Turn, 1, tavernRoomUsers.IsRobot, tavernRoomUsers.IsReady)
 	err = dao.CreateOrUpdateUsersRoom(tavernUserRoomData)
 	if err != nil {
 		global.GVA_LOG.Error("SaveRoom", zap.Any("CreateOrUpdateUsersRoom", err))

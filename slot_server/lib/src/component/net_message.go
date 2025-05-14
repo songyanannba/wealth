@@ -6,7 +6,7 @@ func NewNetMessage(msgId int32) *pbs.NetMessage {
 	return &pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{},
 		AckHead: &pbs.AckHead{
-			Uid:     0,
+			Uid:     "",
 			Code:    pbs.Code_OK,
 			Message: "",
 		},

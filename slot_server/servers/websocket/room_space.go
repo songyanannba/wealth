@@ -26,7 +26,7 @@ type GameStateFunc func(trs *RoomSpace)
 
 type RoomSpace struct {
 	//房间信息
-	RoomInfo *table.MemeRoom
+	RoomInfo *table.AnimalPartyRoom
 
 	//房间配置
 	MemeRoomConfig *table.MemeRoomConfig
@@ -68,7 +68,7 @@ type RoomSpace struct {
 
 func GetRoomSpace() *RoomSpace {
 	trSpace := &RoomSpace{
-		RoomInfo:              &table.MemeRoom{},
+		RoomInfo:              &table.AnimalPartyRoom{},
 		MemeRoomConfig:        &table.MemeRoomConfig{},
 		RoomBaseCard:          make([]*table.MbCardConfig, 0),
 		RoomVersionCard:       make(map[int][]*table.MbCardConfig),
@@ -136,9 +136,9 @@ func (trs *RoomSpace) Start() {
 			close(trs.ComRoomSpace.ReceiveMsg)
 
 			//清理房间管理器的房间
-			_, ok := MemeRoomManager.Rooms[trs.RoomInfo.RoomNo]
+			_, ok := SlotRoomManager.Rooms[trs.RoomInfo.RoomNo]
 			if ok {
-				MemeRoomManager.DelRoom(trs.RoomInfo.RoomNo)
+				SlotRoomManager.DelRoom(trs.RoomInfo.RoomNo)
 			}
 			return
 		case <-GameTurnStateTimer.C:
@@ -401,7 +401,7 @@ func (trs *RoomSpace) AnalyzeFinalIncome() {
 	nNo := uuid.New().String()
 	trs.IntoNextRoom(nNo)
 
-	netMessageResp := helper.NewNetMessage(0, 0, int32(pbs.Meb_memeBattleOver), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_memeBattleOver), config.SlotServer)
 	//发送广播
 	msgData := models.GameOverMsg{
 		ProtoNum:  strconv.Itoa(int(pbs.Meb_memeBattleOver)),
@@ -429,7 +429,7 @@ func (trs *RoomSpace) AnalyzeFinalIncome() {
 }
 
 func (trs *RoomSpace) IntoNextRoom(roomNo string) {
-	roomInfo := table.NewMemeRoom(trs.RoomInfo.UserId, "", roomNo, trs.RoomInfo.Name, "继续游戏房间",
+	roomInfo := table.NewAnimalPartyRoom(trs.RoomInfo.UserId, "", roomNo, trs.RoomInfo.Name, "继续游戏房间", "",
 		table.TavernRoomOpen, trs.RoomInfo.RoomType, trs.RoomInfo.RoomLevel, table.RoomClassMatch, trs.RoomInfo.RoomTurnNum, trs.RoomInfo.UserNumLimit)
 	roomInfo.IsGoOn = 1
 	err := table.CreateMemeRoom(roomInfo)
@@ -447,7 +447,7 @@ func (trs *RoomSpace) IntoNextRoom(roomNo string) {
 	//roomSpaceInfo.MemeRoomConfig = trs.MemeRoomConfig
 
 	//2 添加到全局房间管理器
-	MemeRoomManager.AddRoomSpace(roomInfo.RoomNo, roomSpaceInfo)
+	SlotRoomManager.AddRoomSpace(roomInfo.RoomNo, roomSpaceInfo)
 
 	//每个小房间是一个 协成
 	go roomSpaceInfo.Start()
@@ -509,7 +509,7 @@ func (trs *RoomSpace) ClearRoom() bool {
 	}
 
 	//清理房间管理器的房间
-	_, ok := MemeRoomManager.Rooms[trs.RoomInfo.RoomNo]
+	_, ok := SlotRoomManager.Rooms[trs.RoomInfo.RoomNo]
 	if ok {
 		global.GVA_LOG.Infof("清理房间 ClearRoom DelRoom,currTime:%v RoomNo:%v", currTime, trs.RoomInfo.RoomNo)
 
@@ -526,7 +526,7 @@ func (trs *RoomSpace) ClearRoom() bool {
 			global.GVA_LOG.Error("ClearRoom DelRoomByTime LeaveRoomNotStartGame", zap.Error(err))
 		}
 
-		MemeRoomManager.DelRoom(trs.RoomInfo.RoomNo)
+		SlotRoomManager.DelRoom(trs.RoomInfo.RoomNo)
 	}
 
 	return true
@@ -615,7 +615,7 @@ func (trs *RoomSpace) MatchSuccUserList() ([]models.MemeRoomUser, error) {
 	//	}
 	//	//用户回归匹配池子 todo
 	//	//这里先不做处理
-	//	//MemeRoomManager.MatchIngUser.MatchIng2UsersMap[roomType][roomLevel] = newMatchIng2Users
+	//	//SlotRoomManager.MatchIngUser.MatchIng2UsersMap[roomType][roomLevel] = newMatchIng2Users
 	//	return errors.New("MatchSuccUserList 存在扣减积分失败情况 不能开始游戏")
 	//}
 
@@ -657,8 +657,8 @@ func (trs *RoomSpace) LeaveRoomNotStartGame(userInfo *models.UserInfo) uint32 {
 		}
 
 		responseHeadByte, _ := json.Marshal(msgData)
-		uIdInt, _ := strconv.Atoi(userId)
-		netMessageResp := helper.NewNetMessage(int32(uIdInt), 0, int32(pbs.Meb_leaveRoom), config.NatsMemeBattle)
+		//uIdInt, _ := strconv.Atoi(userId)
+		netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_leaveRoom), config.SlotServer)
 		netMessageResp.Content = responseHeadByte
 
 		global.GVA_LOG.Infof("LeaveRoom 离开房间的广播: %v", string(responseHeadByte))
@@ -708,7 +708,7 @@ func (trs *RoomSpace) OwnerLeaveRoomNotStartGame(userInfo *models.UserInfo) uint
 			return common.ModelAddError
 		}
 
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_leaveRoom), config.NatsMemeBattle)
+		netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_leaveRoom), config.SlotServer)
 		//获取房间人数  发送广播 离开房间
 		msgData := models.LeaveRoomMsg{
 			ProtoNum: strconv.Itoa(int(pbs.Meb_leaveRoom)),
@@ -810,7 +810,7 @@ func (trs *RoomSpace) OwnerLeaveRoomNotStartGame(userInfo *models.UserInfo) uint
 		}
 
 		responseHeadByte, _ := json.Marshal(msgData)
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_leaveRoom), config.NatsMemeBattle)
+		netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_leaveRoom), config.SlotServer)
 		netMessageResp.Content = responseHeadByte
 
 		NatsSendAllUserMsg(trs, netMessageResp)
@@ -909,7 +909,7 @@ func (trs *RoomSpace) ReLoadCompleted(userId string, currIssue *models.Issue) {
 	}
 	//给用户消息
 	responseHeadByte, _ := json.Marshal(msgData)
-	NatsSendAimUserMsg(trs, helper.GetNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_loadCompleted), config.NatsMemeBattle, responseHeadByte), userId)
+	NatsSendAimUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_loadCompleted), config.SlotServer, responseHeadByte), userId)
 }
 
 func (trs *RoomSpace) LoadCompletedFirst(userId string, currIssue *models.Issue) {
@@ -934,7 +934,7 @@ func (trs *RoomSpace) LoadCompletedFirst(userId string, currIssue *models.Issue)
 	//给用户消息
 	global.GVA_LOG.Infof("LoadCompletedFirst 加载广播: %v", msgData)
 	responseHeadByte, _ := json.Marshal(msgData)
-	NatsSendAimUserMsg(trs, helper.GetNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_loadCompleted), config.NatsMemeBattle, responseHeadByte), userId)
+	NatsSendAimUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_loadCompleted), config.SlotServer, responseHeadByte), userId)
 
 	//查找自己的牌并赋值
 	cardConfigByIds := logic.GetUserOwnCards(userId)
@@ -962,7 +962,7 @@ func (trs *RoomSpace) DoLikeCard(userId, likeUserId string, likeCard models.Like
 
 	trs.ComRoomSpace.SetLikeUserInfo(userId, &likeCard)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_likeCards), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_likeCards), config.SlotServer)
 	protoNum := strconv.Itoa(int(pbs.Meb_likeCards))
 	msgData := models.LikeCardsMsg{
 		ProtoNum:   protoNum,
@@ -1061,7 +1061,7 @@ func (trs *RoomSpace) OutCart(reqCards, cards []*models.Card, userId string) ([]
 	}
 
 	protoNum := strconv.Itoa(int(pbs.Meb_outCards))
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_outCards), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_outCards), config.SlotServer)
 	//非出牌用户得到的消息
 	msgData := models.OperateCardsMsg{
 		ProtoNum:   protoNum,
@@ -1078,7 +1078,7 @@ func (trs *RoomSpace) OutCart(reqCards, cards []*models.Card, userId string) ([]
 
 	//===
 
-	netMessageResp1 := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_outCards), config.NatsMemeBattle)
+	netMessageResp1 := helper.NewNetMessage("", "", int32(pbs.Meb_outCards), config.SlotServer)
 	//出牌用户得到的消息
 	aimMsgData := models.OperateCardsMsg{
 		ProtoNum:   protoNum,
@@ -1118,7 +1118,7 @@ func (trs *RoomSpace) CloseRoom(roomNo string, typ int) {
 	}
 	global.GVA_LOG.Infof("质疑后 游戏结束, closeInfo:%v userInfo:%v", closeInfo)
 	closeInfoMs, _ := json.Marshal(closeInfo)
-	MemeRoomManager.CommonRoomManager.CloseRoom <- closeInfoMs
+	SlotRoomManager.CommonRoomManager.CloseRoom <- closeInfoMs
 }
 
 // IsAllCompleted 是否都确认了

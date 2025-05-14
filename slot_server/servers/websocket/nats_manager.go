@@ -35,9 +35,9 @@ func (n *natsManager) consumer() {
 	time.Sleep(2 * time.Second)
 	js := n.NatsMebJs
 
-	cons, err := js.CreateConsumer(context.Background(), config.MemeBattle, jetstream.ConsumerConfig{
-		Durable:       "MemeBattleTopic_Consumer",
-		FilterSubject: config.MemeBattleTopic,
+	cons, err := js.CreateConsumer(context.Background(), config.AnimalParty, jetstream.ConsumerConfig{
+		Durable:       "AnimalPartyTopic_Consumer",
+		FilterSubject: config.AnimalPartyTopic,
 		AckPolicy:     jetstream.AckExplicitPolicy,
 		MaxDeliver:    3,
 		AckWait:       30 * time.Second,
@@ -91,7 +91,7 @@ func (n *natsManager) consumer() {
 }
 
 func (n *natsManager) Producer(msgData []byte) {
-	_, err := n.NatsMebJs.Publish(context.Background(), config.MemeBattleTopicResp, msgData)
+	_, err := n.NatsMebJs.Publish(context.Background(), config.AnimalPartyTopicResp, msgData)
 	if err != nil {
 		global.GVA_LOG.Infof("Failed to send response: %v", err)
 	}
@@ -99,8 +99,8 @@ func (n *natsManager) Producer(msgData []byte) {
 
 func memeBattleEnsureStream(js jetstream.JetStream) error {
 	_, err := js.CreateStream(context.Background(), jetstream.StreamConfig{
-		Name:      config.MemeBattle,
-		Subjects:  []string{config.MemeBattleTopic, config.MemeBattleTopicResp},
+		Name:      config.AnimalParty,
+		Subjects:  []string{config.AnimalPartyTopic, config.AnimalPartyTopicResp},
 		Retention: jetstream.WorkQueuePolicy,
 		Storage:   jetstream.FileStorage, // 存储类型（文件存储）
 		MaxAge:    2 * time.Hour,         // 消息保留时间

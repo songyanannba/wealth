@@ -79,7 +79,7 @@ const (
 	RoomTypeMatch   = 2 //匹配模式
 )
 
-type MemeRoom struct {
+type AnimalPartyRoom struct {
 	GVA_MODEL
 	UserId       string     `json:"user_id" form:"user_id" gorm:"column:user_id;comment:用户id;"`
 	Owner        string     `json:"owner" form:"owner" gorm:"column:owner;comment:房主;"`
@@ -87,23 +87,25 @@ type MemeRoom struct {
 	Name         string     `json:"name" form:"name" gorm:"column:name;comment:名称;"`
 	Desc         string     `json:"desc" form:"desc" gorm:"column:desc;comment:描述;"`
 	IsOpen       int8       `json:"is_open" form:"is_open" gorm:"column:is_open;default:0;comment:房间状态:1=开放中,2=已满员,3=已解散,4=进行中,5=已结束,6=异常房间 8=清理匹配成功用户之前的房间;"`
-	RoomType     int8       `json:"room_type" form:"room_type" gorm:"column:room_type;default:0;comment:1:好友约战 2:匹配模式;"`
+	RoomType     int8       `json:"room_type" form:"room_type" gorm:"column:room_type;default:0;comment:房间类型 1=动物派对（全局）;"`
 	RoomLevel    int8       `json:"room_level" form:"room_level" gorm:"column:room_level;default:0;comment:房间等级 0 初级 1 中级 2 高级;"`
 	RoomClass    int8       `json:"room_class" form:"room_class" gorm:"column:room_class;default:0;comment:0: 1:继续游戏;"`
 	UserNumLimit int        `json:"user_num_limit" form:"user_num_limit" gorm:"column:user_num_limit;default:0;comment:用户人数限制 2人场 3 人场 4人场;"`
 	RoomTurnNum  int        `json:"room_turn_num" form:"room_turn_num" gorm:"column:room_turn_num;default:0;comment:房间回合数 3/5/7，默认5"`
 	IsGoOn       int        `json:"is_go_on" form:"is_go_on" gorm:"column:is_go_on;default:0;comment:0 默认；1= 继续游戏的房间;"`
+	CityId       int        `json:"city_id" form:"city_id" gorm:"column:city_id;default:0;comment:0 默认;"`
 	Date         string     `json:"date" form:"date" gorm:"column:date;comment:年月日;"`
+	Period       string     `json:"period" form:"period" gorm:"column:period;default:0;comment:当前第几期"`
 	DateTime     *time.Time `json:"date_time" form:"date_time" gorm:"column:date_time;comment:时间;"`
 }
 
 // TableName 用户房间
-func (o *MemeRoom) TableName() string {
-	return "meme_room"
+func (o *AnimalPartyRoom) TableName() string {
+	return "animal_party_room"
 }
 
-func NewMemeRoom(userID, owner, roomNo, name, desc string, isOpen, roomType, roomLevel, roomClass int8, turnNum, userNumLimit int) *MemeRoom {
-	return &MemeRoom{
+func NewAnimalPartyRoom(userID, owner, roomNo, name, desc, period string, isOpen, roomType, roomLevel, roomClass int8, turnNum, userNumLimit int) *AnimalPartyRoom {
+	return &AnimalPartyRoom{
 		UserId:       userID,
 		Owner:        owner,
 		RoomNo:       roomNo,
@@ -120,8 +122,8 @@ func NewMemeRoom(userID, owner, roomNo, name, desc string, isOpen, roomType, roo
 	}
 }
 
-func CreateMemeRoom(record *MemeRoom) error {
-	err := global.GVA_SLOT_SERVER_DB.Model(MemeRoom{}).
+func CreateMemeRoom(record *AnimalPartyRoom) error {
+	err := global.GVA_SLOT_SERVER_DB.Model(AnimalPartyRoom{}).
 		Create(&record).
 		Error
 	if err != nil {
@@ -134,9 +136,9 @@ func CreateMemeRoom(record *MemeRoom) error {
 // DelMemeRoom 删除房间
 func DelMemeRoom(roomNo string) error {
 	err := global.GVA_SLOT_SERVER_DB.
-		Model(MemeRoom{}).
+		Model(AnimalPartyRoom{}).
 		Where("room_no = ?", roomNo).
-		Delete(MemeRoom{}).
+		Delete(AnimalPartyRoom{}).
 		Error
 	if err != nil {
 		global.GVA_LOG.Error("sql DelMemeRoom error: %s", zap.Error(err))
@@ -145,8 +147,8 @@ func DelMemeRoom(roomNo string) error {
 	return nil
 }
 
-func SaveMemeRoom(record *MemeRoom) error {
-	err := global.GVA_SLOT_SERVER_DB.Model(MemeRoom{}).
+func SaveMemeRoom(record *AnimalPartyRoom) error {
+	err := global.GVA_SLOT_SERVER_DB.Model(AnimalPartyRoom{}).
 		Where("id = ?", record.ID).
 		Save(&record).
 		Error
@@ -157,9 +159,9 @@ func SaveMemeRoom(record *MemeRoom) error {
 	return nil
 }
 
-func GetMemeRoomById(id int) (record *MemeRoom, err error) {
+func GetMemeRoomById(id int) (record *AnimalPartyRoom, err error) {
 	err = global.GVA_SLOT_SERVER_DB.
-		Model(MemeRoom{}).
+		Model(AnimalPartyRoom{}).
 		Where("id = ?", id).
 		First(&record).
 		Error
@@ -170,9 +172,23 @@ func GetMemeRoomById(id int) (record *MemeRoom, err error) {
 	return record, nil
 }
 
-func MemeRoomByRoomNo(roomNo string) (record *MemeRoom, err error) {
+func GetMemeRoomByIdDesc() (record *AnimalPartyRoom, err error) {
 	err = global.GVA_SLOT_SERVER_DB.
-		Model(MemeRoom{}).
+		Model(AnimalPartyRoom{}).
+		Order("id desc").
+		First(&record).
+		Limit(1).
+		Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		global.GVA_LOG.Error(err.Error())
+		return
+	}
+	return record, nil
+}
+
+func SlotRoomByRoomNo(roomNo string) (record *AnimalPartyRoom, err error) {
+	err = global.GVA_SLOT_SERVER_DB.
+		Model(AnimalPartyRoom{}).
 		Where("room_no = ?", roomNo).
 		First(&record).
 		Error
@@ -183,23 +199,10 @@ func MemeRoomByRoomNo(roomNo string) (record *MemeRoom, err error) {
 	return record, nil
 }
 
-func GetFillMemeRoomByRoomNo(roomNo string) (record *MemeRoom, err error) {
-	err = global.GVA_SLOT_SERVER_DB.
-		Model(MemeRoom{}).
-		Where("room_no = ? and is_open = 1", roomNo).
-		First(&record).
-		Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		global.GVA_LOG.Error(err.Error())
-		return record, err
-	}
-	return record, nil
-}
-
 // GetMemeRoomByUid 返回用户没有结束的房间
-func GetMemeRoomByUid(userID string) (record *MemeRoom, err error) {
+func GetMemeRoomByUid(userID string) (record *AnimalPartyRoom, err error) {
 	err = global.GVA_SLOT_SERVER_DB.
-		Model(MemeRoom{}).
+		Model(AnimalPartyRoom{}).
 		Where("user_id = ? and is_open in ? ", userID, []int{RoomStatusOpen, RoomStatusFill, RoomStatusIng}).
 		Order("id desc").
 		First(&record).
@@ -211,9 +214,9 @@ func GetMemeRoomByUid(userID string) (record *MemeRoom, err error) {
 	return record, nil
 }
 
-func GetMemeRoomByOwner(userID string) (record *MemeRoom, err error) {
+func GetMemeRoomByOwner(userID string) (record *AnimalPartyRoom, err error) {
 	err = global.GVA_SLOT_SERVER_DB.
-		Model(MemeRoom{}).
+		Model(AnimalPartyRoom{}).
 		Where("owner = ? and is_open in ? ", userID, []int{RoomStatusOpen, RoomStatusFill, RoomStatusIng}).
 		Order("id desc").
 		First(&record).
@@ -225,8 +228,8 @@ func GetMemeRoomByOwner(userID string) (record *MemeRoom, err error) {
 	return record, nil
 }
 
-func GetMemeRoomPage(roomId int, roomLevel RoomLevel) (val []*MemeRoom, err error) {
-	db := global.GVA_SLOT_SERVER_DB.Model(MemeRoom{})
+func GetMemeRoomPage(roomId int, roomLevel RoomLevel) (val []*AnimalPartyRoom, err error) {
+	db := global.GVA_SLOT_SERVER_DB.Model(AnimalPartyRoom{})
 	if roomId == 0 {
 		if roomLevel == RoomLevelPri || roomLevel == RoomLevelMid || roomLevel == RoomLevelExp {
 			db.Where("room_level = ? ", roomLevel).Where("is_open = ?", RoomStatusOpen).Where("room_class = ?", 1).Where("is_go_on = ?", 0)
@@ -252,7 +255,7 @@ func GetMemeRoomPage(roomId int, roomLevel RoomLevel) (val []*MemeRoom, err erro
 
 func MemeRoomPageIsNext(roomId int) (count int64, err error) {
 	db := global.GVA_SLOT_SERVER_DB.
-		Model(MemeRoom{})
+		Model(AnimalPartyRoom{})
 
 	if roomId != 0 {
 		db.Where(" id > ?", roomId)
@@ -267,9 +270,9 @@ func MemeRoomPageIsNext(roomId int) (count int64, err error) {
 	return count, nil
 }
 
-func NewestMemeRoomByUid(userId string) (record *MemeRoom, err error) {
+func NewestMemeRoomByUid(userId string) (record *AnimalPartyRoom, err error) {
 	err = global.GVA_SLOT_SERVER_DB.
-		Model(MemeRoom{}).
+		Model(AnimalPartyRoom{}).
 		Where("user_id = ?", userId).
 		Order("id desc").
 		First(&record).
@@ -281,9 +284,9 @@ func NewestMemeRoomByUid(userId string) (record *MemeRoom, err error) {
 	return record, nil
 }
 
-func NewestMemeRoomByRoomNo(roomNo string) (record *MemeRoom, err error) {
+func NewestMemeRoomByRoomNo(roomNo string) (record *AnimalPartyRoom, err error) {
 	err = global.GVA_SLOT_SERVER_DB.
-		Model(MemeRoom{}).
+		Model(AnimalPartyRoom{}).
 		Where("room_no = ?", roomNo).
 		First(&record).
 		Error
@@ -294,9 +297,9 @@ func NewestMemeRoomByRoomNo(roomNo string) (record *MemeRoom, err error) {
 	return record, nil
 }
 
-func NewestNormalMemeRoomByRoomNo(roomNo string) (record *MemeRoom, err error) {
+func NewestNormalMemeRoomByRoomNo(roomNo string) (record *AnimalPartyRoom, err error) {
 	err = global.GVA_SLOT_SERVER_DB.
-		Model(MemeRoom{}).
+		Model(AnimalPartyRoom{}).
 		Where("room_no = ? and is_open in ?", roomNo, []int{RoomStatusOpen, RoomStatusFill, RoomStatusIng}).
 		First(&record).
 		Error

@@ -3,12 +3,13 @@ package meme_battle;
 option go_package = "/pbs";
 import "com.proto";
 
-
 enum meb {
   mt0 =0;
 
+  //心跳
   mtHeartReq =398;
   mtHeartAck =399;
+
   mtHeart =400;
 
   //创建房间
@@ -43,7 +44,7 @@ enum meb {
   inviteFriend =1015;
   inviteFriendAck =1016;
 
-  //开始
+  //开始游戏
   startPlay =1017;
   startPlayAck =1018;
 
@@ -61,7 +62,7 @@ enum meb {
   operateCards = 1023;
 
   //看牌广播
-  LookCards = 1024;
+  lookCards = 1024;
 
   //表情
   opeEmoji = 1025;
@@ -72,7 +73,7 @@ enum meb {
   //重置牌（重随）
   reMakeCards = 1027;
 
-  //进入点赞
+  //进入点赞页面
   entryLikePage = 1028;
 
   //点赞
@@ -120,6 +121,7 @@ enum meb {
   addFriend = 1046;
   addFriendResp = 1047;
 
+
   //审核朋友
   authFriend = 1048;
   authFriendResp = 1049;
@@ -141,7 +143,6 @@ enum meb {
 
 }
 
-
 service memeBattleService {
 //  rpc mtTest(mTStatusReq) returns (common.netMessage);
   rpc comEntranceFunc(common.netMessage) returns (common.netMessage);
@@ -161,10 +162,17 @@ message joinRoomReq {
   string   room_no = 2; // 1:房间编号
 }
 
+
 //重新加入房间
 message reJoinRoomReq {
   string   user_id = 1;  //
   string   room_no = 2; // 1:房间编号
+}
+
+//离开房间
+message leaveRoomReq {
+  string  user_id = 1;  //
+  string  room_no = 2; // 1:房间编号
 }
 
 message roomAliveReq {
@@ -178,22 +186,15 @@ message kickRoomReq {
   string  owner_id = 3; // 1:房主ID
 }
 
+message userStateReq {
+  string  user_id = 1;
+  string  room_no = 2; // 1:房间编号
+}
+
 message inviteFriendReq {
   string  invite_user_id = 1;  //被邀请之人的用户ID
   string  room_no = 2; // 1:房间编号
   string  owner_id = 3; // 1:房主ID
-}
-
-
-//离开房间
-message leaveRoomReq {
-  string  user_id = 1;  //
-  string   room_no = 2; // 1:房间编号
-}
-
-message userStateReq {
-  string  user_id = 1;
-  string  room_no = 2; // 1:房间编号
 }
 
 message startPlayReq {
@@ -211,9 +212,9 @@ message OperateCardReq {
   string  room_no = 2; // 房间编号
   int32   ope_type = 3; // //0:看牌 1:出牌 2:表情 3:重随
   string  emoji_id = 4; // emoji_id 表情ID
-  float   pitch  = 5;
-  float   yaw  = 6;
-  bool    looking  = 7; //看牌传
+  float   pitch = 5;
+  float   yaw = 6;
+  bool    looking = 7; //看牌传
   repeated Card Card = 8; //牌ID
 }
 
@@ -232,6 +233,7 @@ message MatchRoomReq {
   string  room_no = 1; // 房间编号
   string  user_id = 2;
 }
+
 
 message ReadyReq {
   string  user_id = 1;
@@ -255,7 +257,6 @@ message HandbookListAck {
   repeated  HandListCard hand_list_card = 3;
 }
 
-
 message HandListCard {
   int32  card_id = 1;
   string name = 2;
@@ -269,6 +270,7 @@ message UnpackCardReq {
   int32   version = 2;
   int32   num = 3;
 }
+
 
 message UnpackCardAck {
   repeated  HandListCardArr list_card = 1;
@@ -295,23 +297,38 @@ message FriendListReq {
   int32   last_id = 2;
 }
 
-
-
 message FriendListAck {
   bool  is_have_next_page = 1;
   repeated  UserFriend user_friend = 2;
 }
 
+
+
+message AddFriendReq {
+  string  audit_user = 1;
+  string  application_user = 2;
+}
+
+message AddFriendAck {
+
+}
+
 message UserFriend {
-  string   friend_user_id = 1;
-  string   nickname = 2;
+  string  friend_user_id = 1;
+  string  nickname = 2;
   int32   friend_id = 3;
 }
+
 
 message AuditUserListReq {
   string  user_id = 1;
   int32   last_id = 2;
 }
+
+message Example {
+  optional bool is_active = 1;
+}
+
 
 message AuditUserAck {
   bool  is_have_next_page = 1;
@@ -322,19 +339,7 @@ message AuditUserAck {
 message AuditUser {
   string  application_user = 1;
   string  nickname = 2;
-  int32  audit_id = 3;
-}
-
-message AddFriendReq {
-  string  audit_user = 1;
-  string  application_user = 2;
-}
-
-message AddFriendAck {
-
-}
-message AuthFriendAck {
-
+  int32   audit_id = 3;
 }
 
 message AuthFriendReq {
@@ -343,7 +348,7 @@ message AuthFriendReq {
 }
 
 
-message DelFriendAck {
+message AuthFriendAck {
 
 }
 
@@ -352,11 +357,18 @@ message DelFriendReq {
   int32   friend_id = 2;
 }
 
+
+message DelFriendAck {
+
+}
+
+
 message userDetailReq {
   string  user_id = 1;
 }
 
 
+//用户资料
 message userDetailAck {
   string  user_id = 1;
   string  nickname = 2;
@@ -372,3 +384,4 @@ message coinExperienceAck {
   float  coin_num = 1;
   float  experience = 2;
 }
+

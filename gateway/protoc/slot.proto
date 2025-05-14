@@ -12,6 +12,7 @@ enum slot {
 //  HeartAck =399;
 //  Heart =400;
 
+
 }
 
 service slotService {
@@ -21,3 +22,26 @@ service slotService {
 
 
 
+
+message currAPInfoReq {
+}
+
+
+message currAPInfoAck {
+   string  room_no  = 1; //房间编号
+   string  curr_period  = 2; //当前期
+   int64   game_start_time = 3; //游戏的开始时间戳
+   int32   game_turn_state = 4; //游戏的状态 ； 1=可以押注 ；2=计算阶段不可以押注
+  repeated aPRoomInfos  aP_room_infos = 5; //
+ }
+
+message aPRoomInfos {
+  string user_id = 1;
+  int32 bet_zone_id = 2; //押注ID 押的那个
+  float bet = 3; //押注多少
+}
+
+//消息中间件使用
+message natsCurrAPInfo {
+  string  user_id = 1;
+}

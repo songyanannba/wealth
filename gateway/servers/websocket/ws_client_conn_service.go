@@ -30,12 +30,12 @@ func (ws *wsClientService) Send(msgType int32, userId, serviceId string, message
 
 	netMessage := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      1,
+			Uid:      "1",
 			Token:    "xxx",
 			Platform: "a",
 		},
 		AckHead: &pbs.AckHead{
-			Uid:     1,
+			Uid:     "1",
 			Code:    0,
 			Message: "",
 		},
@@ -173,12 +173,12 @@ func (ws *wsClientService) Test123() {
 
 	netMessage := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      1,
+			Uid:      "1",
 			Token:    "xxx",
 			Platform: "a",
 		},
 		AckHead: &pbs.AckHead{
-			Uid:     1,
+			Uid:     "1",
 			Code:    0,
 			Message: "",
 		},

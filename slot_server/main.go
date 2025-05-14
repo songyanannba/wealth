@@ -27,7 +27,7 @@ func InitServer() {
 	websocket.NastManager.Start()
 
 	//路由初始化
-	router.NatsRouterInit()
+	router.NatsSlotInit()
 
 	// 定时任务
 	task.Init()
@@ -44,7 +44,7 @@ func main() {
 	InitServer()
 	defer CloseServer()
 
-	go websocket.MemeRoomManager.Start() //房间服务
+	go websocket.SlotRoomManager.Start() //房间服务
 
 	grpcServer := grpc.NewServer()
 	pbs.RegisterMemeBattleServiceServer(grpcServer, &grpcserver.MemeBattleService{})

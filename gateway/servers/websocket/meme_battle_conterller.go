@@ -13,7 +13,6 @@ import (
 	"gateway/utils/cache"
 	"github.com/golang/protobuf/proto"
 	"go.uber.org/zap"
-	"strconv"
 	"time"
 )
 
@@ -32,7 +31,7 @@ func MtHeartReq(client *Client, cmd string, message []byte) (code uint32, msg st
 		return
 	}
 
-	uid, err := strconv.Atoi(userID)
+	//uid, err := strconv.Atoi(userID)
 	if err != nil {
 		code = common.TokenExpiration
 		global.GVA_LOG.Error("处理数据 cmd ", zap.Any("err", err))
@@ -41,16 +40,16 @@ func MtHeartReq(client *Client, cmd string, message []byte) (code uint32, msg st
 
 	msgReq := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      int32(uid),
+			Uid:      userID,
 			Token:    "",
 			Platform: "",
 		},
 		AckHead: &pbs.AckHead{
-			Uid:     int32(uid),
+			Uid:     userID,
 			Code:    0,
 			Message: "",
 		},
-		ServiceId: config.NatsMemeBattle,
+		ServiceId: config.NatsSlotServer,
 		//MsgId:     int32(pbs.Mmb_mtHeartReq),
 		Content: message,
 	}
@@ -61,7 +60,7 @@ func MtHeartReq(client *Client, cmd string, message []byte) (code uint32, msg st
 	return code, "", nil
 }
 
-func MemeEntry(message []byte, uid, msgId int32) (code uint32, msg string, data interface{}) {
+func MemeEntry(message []byte, uid string, msgId int32) (code uint32, msg string, data interface{}) {
 	code = common.OK
 
 	msgReq := pbs.NetMessage{
@@ -75,7 +74,7 @@ func MemeEntry(message []byte, uid, msgId int32) (code uint32, msg string, data 
 			Code:    0,
 			Message: "",
 		},
-		ServiceId: config.NatsMemeBattle,
+		ServiceId: config.NatsSlotServer,
 		MsgId:     msgId,
 		Content:   message,
 	}
@@ -102,14 +101,14 @@ func MemeBattleEntry(client *Client, seq string, message []byte) (code uint32, m
 		return
 	}
 
-	uid, err := strconv.Atoi(userID)
+	//uid, err := strconv.Atoi(userID)
 	//cmdToInt, err := strconv.Atoi(cmd)
 	if err != nil {
 		code = common.TokenExpiration
 		global.GVA_LOG.Error("处理数据 cmd ", zap.Any("err", err))
 		return
 	}
-	MemeEntry(message, int32(uid), int32(pbs.Meb_mtHeartReq))
+	MemeEntry(message, userID, int32(pbs.Meb_mtHeartReq))
 	return
 }
 
@@ -176,13 +175,13 @@ func QuickMatchRoom(client *Client, seq string, message []byte) (code uint32, ms
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.MatchRoomReq{
 		RoomNo: request.RoomNo,
 		UserId: userID,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_memeMatchRoom))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_memeMatchRoom))
 
 	return code, "", resp
 }
@@ -249,13 +248,12 @@ func MebCancelMatchRoom(client *Client, seq string, message []byte) (code uint32
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.MatchRoomReq{
 		RoomNo: request.RoomNo,
 		UserId: userID,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_cancelMatchRoom))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_cancelMatchRoom))
 
 	return code, "", resp
 }
@@ -295,13 +293,12 @@ func GetUserState(client *Client, seq string, message []byte) (code uint32, msg 
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.UserStateReq{
 		UserId: userID,
 		RoomNo: "",
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_userState))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_userState))
 
 	return code, "", resp
 }
@@ -387,7 +384,7 @@ func MebCreateRoom(client *Client, seq string, message []byte) (code uint32, msg
 		return
 	}
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.CreateRoomReq{
 		UserId:       userID,
 		RoomType:     int32(request.RoomType),
@@ -395,7 +392,7 @@ func MebCreateRoom(client *Client, seq string, message []byte) (code uint32, msg
 		RoomTurnNum:  int32(request.RoomTurnNum),
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_createRoom))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_createRoom))
 
 	global.GVA_LOG.Infof("MebCreateRoom %v", userID)
 	return code, "", nil
@@ -471,13 +468,13 @@ func MebJoinRoom(client *Client, seq string, message []byte) (code uint32, msg s
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.JoinRoomReq{
 		UserId: userID,
 		RoomNo: request.RoomNo,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_joinRoom))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_joinRoom))
 
 	return code, "", resp
 }
@@ -551,13 +548,13 @@ func MebReJoinRoom(client *Client, seq string, message []byte) (code uint32, msg
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.JoinRoomReq{
 		UserId: userID,
 		RoomNo: request.RoomNo,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_reJoinRoom))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_reJoinRoom))
 
 	return code, "", resp
 }
@@ -599,13 +596,13 @@ func MebReady(client *Client, seq string, message []byte) (code uint32, msg stri
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.ReadyReq{
 		UserId: userID,
 		RoomNo: request.RoomNo,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_readyMsg))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_readyMsg))
 
 	return code, "", resp
 }
@@ -638,13 +635,13 @@ func MebCancelReady(client *Client, seq string, message []byte) (code uint32, ms
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.CancelReadyReq{
 		UserId: userID,
 		RoomNo: request.RoomNo,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_cancelReady))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_cancelReady))
 
 	return code, "", resp
 }
@@ -694,13 +691,13 @@ func MebLeaveRoom(client *Client, seq string, message []byte) (code uint32, msg 
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.LeaveRoomReq{
 		UserId: userID,
 		RoomNo: request.RoomNo,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_leaveRoom))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_leaveRoom))
 
 	return code, "", resp
 }
@@ -784,14 +781,14 @@ func MebKickRoom(client *Client, seq string, message []byte) (code uint32, msg s
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.KickRoomReq{
 		UserId:  request.UserID,
 		RoomNo:  request.RoomNo,
 		OwnerId: userID,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_kickRoom))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_kickRoom))
 
 	return code, "", resp
 }
@@ -877,14 +874,14 @@ func MebInviteFriend(client *Client, seq string, message []byte) (code uint32, m
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.InviteFriendReq{
 		InviteUserId: request.UserID,
 		RoomNo:       request.RoomNo,
 		OwnerId:      userID,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_inviteFriend))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_inviteFriend))
 
 	return code, "", resp
 }
@@ -933,13 +930,13 @@ func MebRoomAlive(client *Client, seq string, message []byte) (code uint32, msg 
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.RoomAliveReq{
 		UserId: userID,
 		RoomNo: request.RoomNo,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_roomAlive))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_roomAlive))
 
 	return code, "", resp
 }
@@ -981,13 +978,13 @@ func MebStartPlay(client *Client, seq string, message []byte) (code uint32, msg 
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.StartPlayReq{
 		UserId: userID,
 		RoomNo: request.RoomNo,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_startPlay))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_startPlay))
 
 	return code, "", resp
 }
@@ -1028,13 +1025,13 @@ func MebLoadCompleted(client *Client, seq string, message []byte) (code uint32, 
 	}
 	defer global.QueueDataKeyMap.Del(cacheKey)
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.LoadCompletedReq{
 		UserId: userID,
 		RoomNo: request.RoomNo,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_loadCompleted))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_loadCompleted))
 
 	return code, "", resp
 }
@@ -1110,7 +1107,7 @@ func MebOperateCard(client *Client, seq string, message []byte) (code uint32, ms
 		}
 	}
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.OperateCardReq{
 		UserId:  userID,
 		RoomNo:  request.RoomNo,
@@ -1122,7 +1119,7 @@ func MebOperateCard(client *Client, seq string, message []byte) (code uint32, ms
 		Card:    pbCard,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_operateCards))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_operateCards))
 
 	return code, "", resp
 }
@@ -1191,7 +1188,7 @@ func MebCardLike(client *Client, seq string, message []byte) (code uint32, msg s
 		pbCard = append(pbCard, &card)
 	}
 
-	uid, _ := strconv.Atoi(userID)
+	//uid, _ := strconv.Atoi(userID)
 	reqProto := &pbs.LikeCardReq{
 		LikeUserId: request.LikeUserID,
 		UserId:     userID,
@@ -1199,7 +1196,7 @@ func MebCardLike(client *Client, seq string, message []byte) (code uint32, msg s
 		Card:       pbCard,
 	}
 	protoReq, _ := proto.Marshal(reqProto)
-	MemeEntry(protoReq, int32(uid), int32(pbs.Meb_likeCards))
+	MemeEntry(protoReq, userID, int32(pbs.Meb_likeCards))
 	return code, "", resp
 }
 
@@ -1267,7 +1264,7 @@ func MebHandbookList(client *Client, seq string, message []byte) (code uint32, m
 	// 调用 gRPC 方法
 	msgReq := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},
@@ -1375,7 +1372,7 @@ func MebUnpackCard(client *Client, seq string, message []byte) (code uint32, msg
 	// 调用 gRPC 方法
 	msgReq := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},
@@ -1439,7 +1436,7 @@ func MebCardVersionList(client *Client, seq string, message []byte) (code uint32
 	// 调用 gRPC 方法
 	msgReq := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},
@@ -1507,7 +1504,7 @@ func MebAuditUserList(client *Client, seq string, message []byte) (code uint32, 
 	// 调用 gRPC 方法
 	msgReq := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},
@@ -1575,7 +1572,7 @@ func MebFriendList(client *Client, seq string, message []byte) (code uint32, msg
 	// 调用 gRPC 方法
 	msgReq := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},
@@ -1667,7 +1664,7 @@ func MebAddFriend(client *Client, seq string, message []byte) (code uint32, msg 
 	// 调用 gRPC 方法
 	msgReq := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},
@@ -1759,7 +1756,7 @@ func MebDelFriend(client *Client, seq string, message []byte) (code uint32, msg 
 	// 调用 gRPC 方法
 	msgReq := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},
@@ -1850,7 +1847,7 @@ func MebAuthFriend(client *Client, seq string, message []byte) (code uint32, msg
 	// 调用 gRPC 方法
 	msgReq := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},
@@ -1939,7 +1936,7 @@ func MebUserDetail(client *Client, seq string, message []byte) (code uint32, msg
 	// 调用 gRPC 方法
 	msgReq := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},
@@ -2029,7 +2026,7 @@ func MebGetCoinExperience(client *Client, seq string, message []byte) (code uint
 	// 调用 gRPC 方法
 	msgReq := pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},

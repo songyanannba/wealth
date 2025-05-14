@@ -305,7 +305,7 @@ func (trMgr *roomManager) MatchGroupStart(matchUserArr []*MatchGroupRoomInfo) {
 		//给用户创建房间 并发送游戏开始的广播
 		rNo := uuid.New().String()
 		rName := userInfoArr[0].Nickname + "'s" + " lobby"
-		memeRoom := table.NewMemeRoom(userInfoArr[0].UserID, userInfoArr[0].UserID, rNo, rName, "匹配房间", table.TavernRoomOpen, table.RoomTypeMatch, 0, 0, turnNum, matchUserLimit)
+		memeRoom := table.NewAnimalPartyRoom(userInfoArr[0].UserID, userInfoArr[0].UserID, rNo, rName, "匹配房间", "", table.TavernRoomOpen, table.RoomTypeMatch, 0, 0, turnNum, matchUserLimit)
 		err := table.CreateMemeRoom(memeRoom)
 		if err != nil {
 			global.GVA_LOG.Error("MatchGroupStart:{%v},roomInfo:%v", zap.Error(err), zap.Any("tavernRoom", memeRoom.RoomNo))
@@ -337,12 +337,12 @@ func (trMgr *roomManager) MatchGroupStart(matchUserArr []*MatchGroupRoomInfo) {
 		roomSpaceInfo.ComRoomSpace.ChangeGameState(EnGameStartIng)
 
 		//添加到全局房间管理器
-		MemeRoomManager.AddRoomSpace(memeRoom.RoomNo, roomSpaceInfo)
+		SlotRoomManager.AddRoomSpace(memeRoom.RoomNo, roomSpaceInfo)
 
 		//每个小房间是一个chan
 		go roomSpaceInfo.Start()
 
-		netMessageResp := helper.NewNetMessage(0, 0, int32(pbs.Meb_matchStart), config.NatsMemeBattle)
+		netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_matchStart), config.SlotServer)
 		//发送广播通知
 		msgData := models.MatchSuccResp{
 			ProtoNum:  strconv.Itoa(int(pbs.Meb_matchStart)), //快速匹配成功协议 游戏开始
@@ -378,7 +378,7 @@ func (trMgr *roomManager) MatchGroupStart(matchUserArr []*MatchGroupRoomInfo) {
 
 		for _, delRoomNo := range delRoomNos {
 			//删除房间用户
-			beforeRoomSpaceInfo, err := MemeRoomManager.GetRoomSpace(delRoomNo)
+			beforeRoomSpaceInfo, err := SlotRoomManager.GetRoomSpace(delRoomNo)
 			if err != nil {
 				global.GVA_LOG.Error("MatchGroupStart 删除用户匹配前所在的房间 ", zap.Error(err))
 				continue

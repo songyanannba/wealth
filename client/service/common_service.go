@@ -22,6 +22,7 @@ func (cs *commonService) First() {
 func (cs *commonService) Start() {
 	Test1()
 	LoginAck()
+	CurrAPInfoAck()
 }
 
 func (cs *commonService) RegisterHandlers(typeInt int32, f func(msg *pbs.NetMessage)) {

@@ -34,14 +34,15 @@ import (
 const NotBeOwner = 0
 const BeOwner = 1
 
-type RoomUsers struct {
+type AnimalPartyRoomUsers struct {
 	GVA_MODEL
 	UserId   string     `json:"user_id" form:"user_id" gorm:"column:user_id;comment:用户id;"`
 	RoomNo   string     `json:"room_no" form:"room_no" gorm:"column:room_no;comment:房间号;"`
 	Nickname string     `json:"nickname" form:"nickname" gorm:"column:nickname;comment:昵称;"`
 	IsRobot  int8       `json:"is_robot" form:"is_robot" gorm:"column:is_robot;default:0;comment:是否机器人:0=否,1=是;"`
 	IsReady  int8       `json:"is_ready" form:"is_ready" gorm:"column:is_ready;default:0;comment:是否就绪 0:未就绪 1:就绪;"`
-	Seat     int        `json:"seat" form:"seat" gorm:"column:seat;default:0;comment:座位次序"`
+	Period   string     `json:"period" form:"period" gorm:"column:period;default:0;comment:第几期"`
+	Seat     int        `json:"seat" form:"seat" gorm:"column:seat;default:0;comment:房间座位"`
 	Date     string     `json:"date" form:"date" gorm:"column:date;comment:年月日;"`
 	DateTime *time.Time `json:"date_time" form:"date_time" gorm:"column:date_time;comment:时间;"`
 	Turn     int        `json:"turn" form:"turn" gorm:"column:turn;default:0;comment:第几轮"`
@@ -53,12 +54,12 @@ type RoomUsers struct {
 }
 
 // TableName 游戏玩家表
-func (o *RoomUsers) TableName() string {
-	return "room_users"
+func (o *AnimalPartyRoomUsers) TableName() string {
+	return "animal_party_room_users"
 }
 
-func NewRoomUsers(userId, roomNo, nickname string, seat, turn, isOwner int, bet float64, isReady int8) *RoomUsers {
-	return &RoomUsers{
+func NewRoomUsers(userId, roomNo, nickname string, seat, turn, isOwner int, bet float64, isReady int8) *AnimalPartyRoomUsers {
+	return &AnimalPartyRoomUsers{
 		UserId:   userId,
 		RoomNo:   roomNo,
 		Nickname: nickname,
@@ -76,9 +77,9 @@ func NewRoomUsers(userId, roomNo, nickname string, seat, turn, isOwner int, bet 
 	}
 }
 
-func NewestRoomUsersByUid(userId string) (record *RoomUsers, err error) {
+func NewestRoomUsersByUid(userId string) (record *AnimalPartyRoomUsers, err error) {
 	err = global.GVA_SLOT_SERVER_DB.
-		Model(RoomUsers{}).
+		Model(AnimalPartyRoomUsers{}).
 		Where("user_id = ?", userId).
 		Order("id desc").
 		First(&record).
@@ -90,8 +91,8 @@ func NewestRoomUsersByUid(userId string) (record *RoomUsers, err error) {
 	return record, nil
 }
 
-func CreateRoomUsers(record *RoomUsers) error {
-	err := global.GVA_SLOT_SERVER_DB.Model(RoomUsers{}).
+func CreateRoomUsers(record *AnimalPartyRoomUsers) error {
+	err := global.GVA_SLOT_SERVER_DB.Model(AnimalPartyRoomUsers{}).
 		Create(&record).
 		Error
 	if err != nil {
@@ -101,9 +102,9 @@ func CreateRoomUsers(record *RoomUsers) error {
 	return nil
 }
 
-func GetRoomUsers(roomNo string) (records []*RoomUsers, err error) {
+func GetRoomUsers(roomNo string) (records []*AnimalPartyRoomUsers, err error) {
 	err = global.GVA_SLOT_SERVER_DB.
-		Model(RoomUsers{}).
+		Model(AnimalPartyRoomUsers{}).
 		Where("room_no = ? and is_leave = ?", roomNo, 0).
 		Find(&records).
 		Error
@@ -114,8 +115,8 @@ func GetRoomUsers(roomNo string) (records []*RoomUsers, err error) {
 	return records, nil
 }
 
-func RoomUsersByRoomNoAndUid(roomNo, uid string) (record *RoomUsers, err error) {
-	err = global.GVA_SLOT_SERVER_DB.Model(RoomUsers{}).
+func RoomUsersByRoomNoAndUid(roomNo, uid string) (record *AnimalPartyRoomUsers, err error) {
+	err = global.GVA_SLOT_SERVER_DB.Model(AnimalPartyRoomUsers{}).
 		Where("room_no = ? and user_id = ? ", roomNo, uid).
 		First(&record).
 		Error
@@ -129,9 +130,9 @@ func RoomUsersByRoomNoAndUid(roomNo, uid string) (record *RoomUsers, err error) 
 func DelRoomUsers(roomNo, userId string) error {
 	global.GVA_LOG.Infof("DelRoomUsers %v %v", roomNo, userId)
 	err := global.GVA_SLOT_SERVER_DB.
-		Model(RoomUsers{}).
+		Model(AnimalPartyRoomUsers{}).
 		Where("room_no = ? and user_id = ? ", roomNo, userId).
-		Delete(RoomUsers{}).
+		Delete(AnimalPartyRoomUsers{}).
 		Error
 	if err != nil {
 		global.GVA_LOG.Error("sql DelRoomUsers error: %s", zap.Error(err))
@@ -142,9 +143,9 @@ func DelRoomUsers(roomNo, userId string) error {
 
 func DelRoomUsersByRoomNo(roomNo string) error {
 	err := global.GVA_SLOT_SERVER_DB.
-		Model(RoomUsers{}).
+		Model(AnimalPartyRoomUsers{}).
 		Where("room_no = ?", roomNo).
-		Delete(RoomUsers{}).
+		Delete(AnimalPartyRoomUsers{}).
 		Error
 	if err != nil {
 		global.GVA_LOG.Error("sql DelRoomUsersByRoomNo error: %s", zap.Error(err))
@@ -155,7 +156,7 @@ func DelRoomUsersByRoomNo(roomNo string) error {
 
 func UpdateRoomUsersReady(uid, roomNo string, values map[string]interface{}) error {
 	err := global.GVA_SLOT_SERVER_DB.
-		Model(RoomUsers{}).
+		Model(AnimalPartyRoomUsers{}).
 		Where("user_id = ? and  room_no = ?", uid, roomNo).
 		Updates(values).
 		Error
@@ -168,7 +169,7 @@ func UpdateRoomUsersReady(uid, roomNo string, values map[string]interface{}) err
 
 func UpdateRoomUsersLeave(uid, roomNo string, values map[string]interface{}) error {
 	err := global.GVA_SLOT_SERVER_DB.
-		Model(RoomUsers{}).
+		Model(AnimalPartyRoomUsers{}).
 		Where("user_id = ? and  room_no = ?", uid, roomNo).
 		Updates(values).
 		Error
@@ -181,7 +182,7 @@ func UpdateRoomUsersLeave(uid, roomNo string, values map[string]interface{}) err
 
 func UpdateRoomUser(uid, roomNo string, values map[string]interface{}) error {
 	err := global.GVA_SLOT_SERVER_DB.
-		Model(RoomUsers{}).
+		Model(AnimalPartyRoomUsers{}).
 		Where("user_id = ? and  room_no = ?", uid, roomNo).
 		Updates(values).
 		Error
@@ -192,9 +193,9 @@ func UpdateRoomUser(uid, roomNo string, values map[string]interface{}) error {
 	return nil
 }
 
-func GetRoomUser(uid, roomNo string) (record *RoomUsers, err error) {
+func GetRoomUser(uid, roomNo string) (record *AnimalPartyRoomUsers, err error) {
 	err = global.GVA_SLOT_SERVER_DB.
-		Model(RoomUsers{}).
+		Model(AnimalPartyRoomUsers{}).
 		Where("user_id = ? and room_no = ?", uid, roomNo).
 		First(&record).
 		Error
@@ -207,7 +208,7 @@ func GetRoomUser(uid, roomNo string) (record *RoomUsers, err error) {
 
 //func UpdateTavernRoomWinPrice(uid, roomNo string, values map[string]interface{}) error {
 //	err := global.GVA_SLOT_SERVER_DB.
-//		Model(RoomUsers{}).
+//		Model(AnimalPartyRoomUsers{}).
 //		Where("user_id = ? and  room_no = ?", uid, roomNo).
 //		Updates(values).
 //		Error

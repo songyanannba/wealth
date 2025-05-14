@@ -7,7 +7,7 @@ import (
 )
 
 // UserIsJoinRoom 用户如果已经加入房间 返回用户所在房间
-func UserIsJoinRoom(userId string) (tavernRoom *table.MemeRoom, err error) {
+func UserIsJoinRoom(userId string) (tavernRoom *table.AnimalPartyRoom, err error) {
 	//查看用户最近一次加入的房间
 	user, err := NewestRoomUser(userId)
 	if err != nil {
@@ -27,7 +27,7 @@ func UserIsJoinRoom(userId string) (tavernRoom *table.MemeRoom, err error) {
 	return room, nil
 }
 
-func NewestTavernRoomByRoomNo(roomNo string) (tavernRoom *table.MemeRoom, err error) {
+func NewestTavernRoomByRoomNo(roomNo string) (tavernRoom *table.AnimalPartyRoom, err error) {
 	record, err := table.NewestNormalMemeRoomByRoomNo(roomNo)
 	if err != nil {
 		global.GVA_LOG.Error("GetTavernRoom", zap.Any("err", err))

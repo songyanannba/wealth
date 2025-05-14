@@ -57,8 +57,8 @@ type Issue struct {
 }
 
 type CreateRoomInterior struct {
-	UserID   string          `json:"user_id"`
-	RoomInfo *table.MemeRoom `json:"room_info"`
+	UserID   string                 `json:"user_id"`
+	RoomInfo *table.AnimalPartyRoom `json:"room_info"`
 }
 
 // 房间列表

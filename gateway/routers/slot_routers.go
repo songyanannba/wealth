@@ -16,4 +16,7 @@ func (rm *slotRouter) SlotRouterInit() {
 	//心跳
 	websocket.RegisterProto(int32(pbs.ProtocNum_HeartReq), websocket.Heartbeat)
 
+	//动物派对全局的房间信息
+	websocket.RegisterProto(int32(pbs.ProtocNum_CurrAPInfoReq), websocket.CurrAPInfo)
+
 }

@@ -63,7 +63,7 @@ func Heart400(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data []
 	ackMsg := common.GetErrorMessage(common.OK, "")
 	netMessageResp := &pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},
@@ -83,7 +83,7 @@ func Heart400(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data []
 	NastManager.Producer(netMessageRespMarshal)
 
 	//查看当前期房间是否创建 如果创建需要添加到 当前房间的容器中
-	uidStr := strconv.Itoa(int(netMessage.ReqHead.Uid))
+	uidStr := netMessage.ReqHead.Uid
 
 	err := meme_serve.MemeRoomManager.AddManager(uidStr, "")
 	if err != nil {
@@ -109,25 +109,25 @@ func MatchRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 		Timestamp: time.Now().Unix(),
 	}
 
-	roomSpace, err := MemeRoomManager.GetRoomSpace(request.RoomNo)
-	if err != nil {
-		code = common.RoomNotExist
-	}
+	//roomSpace, err := SlotRoomManager.GetRoomSpace(request.RoomNo)
+	//if err != nil {
+	//	code = common.RoomNotExist
+	//}
 
-	if roomSpace != nil && roomSpace.RoomInfo.Owner != request.UserId {
-		code = common.NotRoomOwner
-
-		if roomSpace.RoomInfo.RoomType != table.RoomTypeMatch {
-			code = common.NotRoomOwner
-		}
-	}
+	//if roomSpace != nil && roomSpace.RoomInfo.Owner != request.UserId {
+	//	code = common.NotRoomOwner
+	//
+	//	if roomSpace.RoomInfo.RoomType != table.RoomTypeMatch {
+	//		code = common.NotRoomOwner
+	//	}
+	//}
 	if code != common.OK {
 		//返回内容
 		msgDataMarshal, _ := json.Marshal(msgData)
 		netMessageResp.Content = msgDataMarshal
 
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 
 		//返回的code
 		netMessageResp.AckHead.Code = pbs.Code(int32(code))
@@ -139,7 +139,7 @@ func MatchRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 	}
 
 	//匹配开始 把用户放入匹配中的结构中
-	MemeRoomManager.JoinMatchIngRoom(request.RoomNo)
+	SlotRoomManager.JoinMatchIngRoom(request.RoomNo)
 
 	//返回内容
 	msgDataMarshal, _ := json.Marshal(msgData)
@@ -172,7 +172,7 @@ func CancelMatchRoomController(netMessage *pbs.NetMessage) (respMsgId int32, cod
 		netMessageResp.Content = msgDataMarshal
 
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 
 		//返回的code
 		netMessageResp.AckHead.Code = pbs.Code(int32(vfCode))
@@ -184,7 +184,7 @@ func CancelMatchRoomController(netMessage *pbs.NetMessage) (respMsgId int32, cod
 	}
 
 	//匹配开始 把用户放入匹配中的结构中
-	MemeRoomManager.CancelMatchIngUser(request.RoomNo)
+	SlotRoomManager.CancelMatchIngUser(request.RoomNo)
 
 	//返回内容
 	msgDataMarshal, _ := json.Marshal(msgData)
@@ -244,26 +244,6 @@ func CreateRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uin
 	roomSpaceInfo.RoomInfo = roomInfo
 	roomSpaceInfo.ComRoomSpace.AddTurn()
 
-	//roomSpaceInfo.TavernRoomConfig = tavernRoomConfig
-
-	//tavernCards, err := table.GetTavernCards()
-	//if err != nil {
-	//	global.GVA_LOG.Error("CreateRoomController SaveRoom CreateTavernCards", zap.Error(err))
-	//	//return common.NotData
-	//}
-	//roomSpaceInfo.TavernCards = tavernCards
-	//
-	////牌总量 用于发牌
-	//roomSpaceInfo.InitCanSelectCards()
-	//
-
-	//characterId, err := logic.GetTavernUserCharacter(request.LikeUserId)
-	//if err != nil {
-	//	code = common.ServerError
-	//	global.GVA_LOG.Error("CreateRoomController ", zap.Error(err))
-	//	return
-	//}
-
 	//创建房间 并添加用户
 	userInfo := &models.UserInfo{
 		UserID:   request.UserId,
@@ -273,7 +253,7 @@ func CreateRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uin
 			Seat:    1,
 		},
 		UserExt: models.UserExt{
-			RoomNo: roomInfo.RoomNo,
+			//RoomNo: roomInfo.RoomNo,
 		},
 	}
 
@@ -287,38 +267,38 @@ func CreateRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uin
 	roomSpaceInfo.ComRoomSpace.AddUserInfos(request.UserId, userInfo)
 
 	//2 添加到全局房间管理器
-	MemeRoomManager.AddRoomSpace(roomInfo.RoomNo, roomSpaceInfo)
+	//SlotRoomManager.AddRoomSpace(roomInfo.RoomNo, roomSpaceInfo)
+	//
+	//roomUserList, _ := dao.GetRoomUser(roomInfo.RoomNo, roomSpaceInfo.ComRoomSpace.GetTurn())
+	//
+	////发送广播 谁加入房间
+	//msgData := models.CreateRoomMsg{
+	//	ProtoNum:  strconv.Itoa(int(pbs.Meb_createRoom)),
+	//	Timestamp: time.Now().Unix(),
+	//	RoomCom: models.RoomCom{
+	//		UserId:       request.UserId,
+	//		RoomNo:       roomInfo.RoomNo,
+	//		RoomName:     roomInfo.Name,
+	//		Status:       roomInfo.IsOpen,
+	//		UserNumLimit: roomInfo.UserNumLimit,
+	//		RoomType:     int(roomInfo.RoomType),
+	//		RoomLevel:    int(roomInfo.RoomLevel),
+	//	},
+	//	RoomUserList: roomUserList,
+	//}
 
-	roomUserList, _ := dao.GetRoomUser(roomInfo.RoomNo, roomSpaceInfo.ComRoomSpace.GetTurn())
-
-	//发送广播 谁加入房间
-	msgData := models.CreateRoomMsg{
-		ProtoNum:  strconv.Itoa(int(pbs.Meb_createRoom)),
-		Timestamp: time.Now().Unix(),
-		RoomCom: models.RoomCom{
-			UserId:       request.UserId,
-			RoomNo:       roomInfo.RoomNo,
-			RoomName:     roomInfo.Name,
-			Status:       roomInfo.IsOpen,
-			UserNumLimit: roomInfo.UserNumLimit,
-			RoomType:     int(roomInfo.RoomType),
-			RoomLevel:    int(roomInfo.RoomLevel),
-		},
-		RoomUserList: roomUserList,
-	}
-
-	responseHeadByte, _ := json.Marshal(msgData)
+	//responseHeadByte, _ := json.Marshal(msgData)
 
 	//给客户消息
-	global.GVA_LOG.Infof("CreateRoomController 加入房间的广播: %v", string(responseHeadByte))
-
-	//每个小房间是一个 协成
-	go roomSpaceInfo.Start()
-
-	netMessageResp.Content = responseHeadByte
-	netMessageRespMarshal, _ := proto.Marshal(netMessageResp)
-	global.GVA_LOG.Infof("CreateRoomController:%v ", string(netMessageRespMarshal))
-	NastManager.Producer(netMessageRespMarshal)
+	//global.GVA_LOG.Infof("CreateRoomController 加入房间的广播: %v", string(responseHeadByte))
+	//
+	////每个小房间是一个 协成
+	//go roomSpaceInfo.Start()
+	//
+	//netMessageResp.Content = responseHeadByte
+	//netMessageRespMarshal, _ := proto.Marshal(netMessageResp)
+	//global.GVA_LOG.Infof("CreateRoomController:%v ", string(netMessageRespMarshal))
+	//NastManager.Producer(netMessageRespMarshal)
 	return int32(pbs.Meb_createRoom), common.OK, nil
 }
 
@@ -331,7 +311,7 @@ func ReadyRoomRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code 
 	}
 	global.GVA_LOG.Infof("ReadyRoomRoomController %v", request)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.UserId)), 0, int32(pbs.Meb_readyMsg), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_readyMsg), config.SlotServer)
 	msgData := models.ReadyMsg{
 		ProtoNum:  strconv.Itoa(int(pbs.Meb_readyMsg)),
 		Timestamp: time.Now().Unix(),
@@ -344,7 +324,7 @@ func ReadyRoomRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code 
 		netMessageResp.Content = msgDataMarshal
 
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 
 		//返回的code
 		netMessageResp.AckHead.Code = pbs.Code(int32(vfCode))
@@ -362,7 +342,7 @@ func ReadyRoomRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code 
 	}
 	comMsgMarshal, _ := json.Marshal(comMsg)
 
-	err := MemeRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
+	err := SlotRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
 	if err != nil {
 		global.GVA_LOG.Error("MebJoinRoom GetRoomSpace ", zap.Error(err))
 		return
@@ -379,7 +359,7 @@ func CancelReadyRoomRoomController(netMessage *pbs.NetMessage) (respMsgId int32,
 	}
 	global.GVA_LOG.Infof("CancelReadyRoomRoomController %v", request)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.UserId)), 0, int32(pbs.Meb_cancelReadyMsg), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_cancelReadyMsg), config.SlotServer)
 	msgData := models.ReadyMsg{
 		ProtoNum:  strconv.Itoa(int(pbs.Meb_cancelReadyMsg)),
 		Timestamp: time.Now().Unix(),
@@ -392,7 +372,7 @@ func CancelReadyRoomRoomController(netMessage *pbs.NetMessage) (respMsgId int32,
 		netMessageResp.Content = msgDataMarshal
 
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 
 		//返回的code
 		netMessageResp.AckHead.Code = pbs.Code(int32(vfCode))
@@ -410,7 +390,7 @@ func CancelReadyRoomRoomController(netMessage *pbs.NetMessage) (respMsgId int32,
 	}
 	comMsgMarshal, _ := json.Marshal(comMsg)
 
-	err := MemeRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
+	err := SlotRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
 	if err != nil {
 		global.GVA_LOG.Error("MebJoinRoom GetRoomSpace ", zap.Error(err))
 		return
@@ -427,7 +407,7 @@ func JoinRoomRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code u
 	}
 	global.GVA_LOG.Infof("JoinRoomRoomController %v", request)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.UserId)), 0, int32(pbs.Meb_joinRoom), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_joinRoom), config.SlotServer)
 	msgData := models.JoinRoomMsg{
 		ProtoNum:  strconv.Itoa(int(pbs.Meb_joinRoom)),
 		Timestamp: time.Now().Unix(),
@@ -440,7 +420,7 @@ func JoinRoomRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code u
 		netMessageResp.Content = msgDataMarshal
 
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 
 		//返回的code
 		netMessageResp.AckHead.Code = pbs.Code(int32(vfCode))
@@ -458,7 +438,7 @@ func JoinRoomRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code u
 	}
 	comMsgMarshal, _ := json.Marshal(comMsg)
 
-	err := MemeRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
+	err := SlotRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
 	if err != nil {
 		global.GVA_LOG.Error("MebJoinRoom GetRoomSpace ", zap.Error(err))
 		return
@@ -468,7 +448,7 @@ func JoinRoomRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code u
 
 func RoomIsExist(roomNo string) int {
 	code := common.OK
-	_, err := MemeRoomManager.GetRoomSpace(roomNo)
+	_, err := SlotRoomManager.GetRoomSpace(roomNo)
 	if err != nil {
 		code = common.RoomNotExist
 		return code
@@ -495,7 +475,7 @@ func JoinRoomVerifyParas(userID, roomNo string) int {
 	}
 
 	//查看房间是否存在
-	roomRecord, err := table.MemeRoomByRoomNo(roomNo)
+	roomRecord, err := table.SlotRoomByRoomNo(roomNo)
 	if err != nil {
 		code = common.ServerError
 		global.GVA_LOG.Error("MebJoinRoom ", zap.Error(err))
@@ -543,7 +523,7 @@ func ReJoinRoomVerifyParas(userID, roomNo string) int {
 	}
 
 	//查看房间是否存在
-	roomRecord, err := table.MemeRoomByRoomNo(roomNo)
+	roomRecord, err := table.SlotRoomByRoomNo(roomNo)
 	if err != nil {
 		code = common.ServerError
 		global.GVA_LOG.Error("MebJoinRoom ", zap.Error(err))
@@ -574,7 +554,7 @@ func LeaveRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 	global.GVA_LOG.Infof("LeaveRoomController %v", request)
 
 	//查看房间是否存在
-	roomRecord, err := table.MemeRoomByRoomNo(request.RoomNo)
+	roomRecord, err := table.SlotRoomByRoomNo(request.RoomNo)
 	if err != nil {
 		code = common.ServerError
 		global.GVA_LOG.Error("MebLeaveRoom ", zap.Error(err))
@@ -586,12 +566,12 @@ func LeaveRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 		return
 	}
 
-	_, err = MemeRoomManager.GetRoomSpace(roomRecord.RoomNo)
+	_, err = SlotRoomManager.GetRoomSpace(roomRecord.RoomNo)
 	if err != nil {
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.UserId)), 0, int32(pbs.Meb_leaveRoom), config.NatsMemeBattle)
+		netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_leaveRoom), config.SlotServer)
 
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 
 		//返回的code
 		netMessageResp.AckHead.Code = pbs.Code(int32(common.RoomNotExist))
@@ -609,7 +589,7 @@ func LeaveRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 	}
 	comMsgMarshal, _ := json.Marshal(comMsg)
 
-	err = MemeRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
+	err = SlotRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
 	if err != nil {
 		code = common.RoomNotExist
 		global.GVA_LOG.Error("MebLeaveRoom RoomNotExist ", zap.Error(err))
@@ -627,7 +607,7 @@ func UserStateController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 	}
 	global.GVA_LOG.Infof("UserStateController %v", request)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.UserId)), 0, int32(pbs.Meb_userState), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_userState), config.SlotServer)
 	res := &models.UserStateMsg{
 		ProtoNum:   strconv.Itoa(int(pbs.Meb_userState)),
 		Timestamp:  time.Now().Unix(),
@@ -651,13 +631,13 @@ func UserStateController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 	res.IsContinue = isContinue
 
 	//房间是否存活
-	roomSpaceInfo, err := MemeRoomManager.GetRoomSpace(request.RoomNo)
+	roomSpaceInfo, err := SlotRoomManager.GetRoomSpace(request.RoomNo)
 	global.GVA_LOG.Infof("UserStateController roomSpaceInfo %v", &roomSpaceInfo)
 
 	if err != nil {
 		//房间已经被回收 ，房间管理器没有房间
 		//但是数据库 房间状态还是在进行中 需要销毁房间
-		record, err := table.MemeRoomByRoomNo(request.RoomNo)
+		record, err := table.SlotRoomByRoomNo(request.RoomNo)
 		if err != nil {
 			global.GVA_LOG.Error("UserStateController: %v %v", zap.Error(err))
 		}
@@ -675,7 +655,7 @@ func UserStateController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 		userStateRespMarshal, _ := json.Marshal(res)
 		netMessageResp.Content = userStateRespMarshal
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 		global.GVA_LOG.Infof("InviteFriend LikeUserId:{%v} 给客户端发消息:{%v}", request.UserId, res)
 		netMessageRespMarshal, _ := proto.Marshal(netMessageResp)
 		NastManager.Producer(netMessageRespMarshal)
@@ -700,15 +680,15 @@ func UserStateController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 			IsContinue: isContinue,
 			RoomDetail: &models.RoomItem{
 				RoomCom: models.RoomCom{
-					RoomId:       0,
-					Turn:         roomSpaceInfo.ComRoomSpace.GetTurn(),
-					RoomNo:       userStatus.RoomNo,
-					UserId:       userStatus.UserId,
-					RoomName:     roomSpaceInfo.RoomInfo.Name,
-					Status:       roomSpaceInfo.RoomInfo.IsOpen,
-					UserNumLimit: roomSpaceInfo.RoomInfo.UserNumLimit,
-					RoomType:     int(roomSpaceInfo.RoomInfo.RoomType),
-					RoomLevel:    int(roomSpaceInfo.RoomInfo.RoomLevel),
+					RoomId: 0,
+					Turn:   roomSpaceInfo.ComRoomSpace.GetTurn(),
+					RoomNo: userStatus.RoomNo,
+					UserId: userStatus.UserId,
+					//RoomName:     roomSpaceInfo.RoomInfo.Name,
+					//Status:       roomSpaceInfo.RoomInfo.IsOpen,
+					//UserNumLimit: roomSpaceInfo.RoomInfo.UserNumLimit,
+					//RoomType:     int(roomSpaceInfo.RoomInfo.RoomType),
+					//RoomLevel:    int(roomSpaceInfo.RoomInfo.RoomLevel),
 				},
 				RoomUserList: roomUserLists,
 			},
@@ -730,7 +710,7 @@ func ReJoinRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uin
 	}
 	global.GVA_LOG.Infof("ReJoinRoomController %v", request)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.UserId)), 0, int32(pbs.Meb_reJoinRoom), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_reJoinRoom), config.SlotServer)
 	msgData := models.JoinRoomMsg{
 		ProtoNum:  strconv.Itoa(int(pbs.Meb_reJoinRoom)),
 		Timestamp: time.Now().Unix(),
@@ -754,7 +734,7 @@ func ReJoinRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uin
 		netMessageResp.Content = msgDataMarshal
 
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 
 		//返回的code
 		netMessageResp.AckHead.Code = pbs.Code(int32(vfCode))
@@ -770,7 +750,7 @@ func ReJoinRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uin
 	}
 	comMsgMarshal, _ := json.Marshal(comMsg)
 
-	err = MemeRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
+	err = SlotRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
 	if err != nil {
 		global.GVA_LOG.Error("ReJoinRoomController ", zap.Error(err))
 		return
@@ -793,7 +773,7 @@ func KickRoomController(netMessage *pbs.NetMessage) (respMsgId int32, code uint3
 	}
 	comMsgMarshal, _ := json.Marshal(comMsg)
 
-	err := MemeRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
+	err := SlotRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
 	if err != nil {
 		global.GVA_LOG.Error("ReJoinRoomController ", zap.Error(err))
 		return
@@ -815,7 +795,7 @@ func InviteFriendController(netMessage *pbs.NetMessage) (respMsgId int32, code u
 		Data:  netMessage.Content,
 	}
 	comMsgMarshal, _ := json.Marshal(comMsg)
-	err := MemeRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
+	err := SlotRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
 	if err != nil {
 		global.GVA_LOG.Error("InviteFriendInter ", zap.Error(err))
 		return
@@ -832,7 +812,7 @@ func StartPlayController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 	}
 	global.GVA_LOG.Infof("StartPlayController %v", request)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.UserId)), 0, int32(pbs.Meb_startPlay), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_startPlay), config.SlotServer)
 	msgData := models.StartPlayMsg{
 		ProtoNum:  strconv.Itoa(int(pbs.Meb_startPlay)),
 		Timestamp: time.Now().Unix(),
@@ -845,7 +825,7 @@ func StartPlayController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 		netMessageResp.Content = msgDataMarshal
 
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 
 		//返回的code
 		netMessageResp.AckHead.Code = pbs.Code(int32(vfCode))
@@ -862,7 +842,7 @@ func StartPlayController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 		Data:  netMessage.Content,
 	}
 	comMsgMarshal, _ := json.Marshal(comMsg)
-	err := MemeRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
+	err := SlotRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
 	if err != nil {
 		global.GVA_LOG.Error("StartPlayController ", zap.Error(err))
 		return
@@ -879,7 +859,7 @@ func LoadCompletedController(netMessage *pbs.NetMessage) (respMsgId int32, code 
 	}
 	global.GVA_LOG.Infof("LoadCompletedController %v", request)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.UserId)), 0, int32(pbs.Meb_loadCompleted), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_loadCompleted), config.SlotServer)
 	msgData := models.LoadMsg{
 		ProtoNum:  strconv.Itoa(int(pbs.Meb_loadCompleted)),
 		Timestamp: time.Now().Unix(),
@@ -891,7 +871,7 @@ func LoadCompletedController(netMessage *pbs.NetMessage) (respMsgId int32, code 
 		msgDataMarshal, _ := json.Marshal(msgData)
 		netMessageResp.Content = msgDataMarshal
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 		//返回的code
 		netMessageResp.AckHead.Code = pbs.Code(int32(vfCode))
 		global.GVA_LOG.Infof("LoadCompletedController LikeUserId:{%v} 给客户端发消息:{%v}", request.UserId, msgData)
@@ -906,7 +886,7 @@ func LoadCompletedController(netMessage *pbs.NetMessage) (respMsgId int32, code 
 	}
 	comMsgMarshal, _ := json.Marshal(comMsg)
 
-	err := MemeRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
+	err := SlotRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
 	if err != nil {
 		global.GVA_LOG.Error("LoadCompletedController ", zap.Error(err))
 		return
@@ -924,7 +904,7 @@ func LikeCardsController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 	}
 	global.GVA_LOG.Infof("LikeCardsController %v", request)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.UserId)), 0, int32(pbs.Meb_likeCards), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_likeCards), config.SlotServer)
 	msgData := models.OperateCardsMsg{
 		ProtoNum:  strconv.Itoa(int(pbs.Meb_likeCards)),
 		Timestamp: time.Now().Unix(),
@@ -937,7 +917,7 @@ func LikeCardsController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 		netMessageResp.Content = msgDataMarshal
 
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 
 		//返回的code
 		netMessageResp.AckHead.Code = pbs.Code(int32(vfCode))
@@ -955,7 +935,7 @@ func LikeCardsController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 	}
 	comMsgMarshal, _ := json.Marshal(comMsg)
 
-	err := MemeRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
+	err := SlotRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
 	if err != nil {
 		global.GVA_LOG.Error("LoadCompletedController ", zap.Error(err))
 	}
@@ -972,7 +952,7 @@ func OperateCardController(netMessage *pbs.NetMessage) (respMsgId int32, code ui
 	}
 	global.GVA_LOG.Infof("OperateCardController %v", request)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.UserId)), 0, int32(pbs.Meb_operateCards), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_operateCards), config.SlotServer)
 	msgData := models.OperateCardsMsg{
 		ProtoNum:  strconv.Itoa(int(pbs.Meb_operateCards)),
 		Timestamp: time.Now().Unix(),
@@ -985,7 +965,7 @@ func OperateCardController(netMessage *pbs.NetMessage) (respMsgId int32, code ui
 		netMessageResp.Content = msgDataMarshal
 
 		//返回的用户id
-		netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.UserId))
+		netMessageResp.AckHead.Uid = request.UserId
 
 		//返回的code
 		netMessageResp.AckHead.Code = pbs.Code(int32(vfCode))
@@ -1003,7 +983,7 @@ func OperateCardController(netMessage *pbs.NetMessage) (respMsgId int32, code ui
 	}
 	comMsgMarshal, _ := json.Marshal(comMsg)
 
-	err := MemeRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
+	err := SlotRoomManager.SendMsgToRoomSpace(request.RoomNo, comMsgMarshal)
 	if err != nil {
 		global.GVA_LOG.Error("LoadCompletedController ", zap.Error(err))
 	}
@@ -1020,7 +1000,7 @@ func RoomAliveController(netMessage *pbs.NetMessage) (respMsgId int32, code uint
 	}
 	global.GVA_LOG.Infof("RoomAliveController %v", request)
 
-	roomSpaceInfo, err := MemeRoomManager.GetRoomSpace(request.RoomNo)
+	roomSpaceInfo, err := SlotRoomManager.GetRoomSpace(request.RoomNo)
 	if err != nil {
 		global.GVA_LOG.Error("RoomAliveController GetRoomSpace ", zap.Error(err))
 		return

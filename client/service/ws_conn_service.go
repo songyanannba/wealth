@@ -37,7 +37,7 @@ var WsClientService = wsClientService{
 
 func (ws *wsClientService) Start() {
 
-	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDY3NzgxNDcsInN1YiI6IiIsInVzZXJfaWQiOiIyZDdjZDFkZC0wOGIzLTQ4OWQtOGVmYS00ODVlNmZiMTc3MTIifQ.6AwCyrvPc-hGu_lwkzIAlwOIEom0A4EdxEdjZGWqyt8"
+	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDczMDkwMzgsInN1YiI6IiIsInVzZXJfaWQiOiJiMzcwM2M1MS0xMjM4LTRjN2MtYWU3MS05ZDczZmQ0YmYxZjEifQ.GihVT_Kwe_Ge6iu26lRN1J3z-XHMRGeFRO0yUxND4MY"
 
 	header := http.Header{}
 	header.Add("userId", "syn")
@@ -65,7 +65,9 @@ func (ws *wsClientService) Start() {
 	go ws.Write()
 	go ws.Read()
 
-	ws.Test123()
+	//ws.Test123()
+	//time.Sleep(2 * time.Second)
+	ws.TestCurrAPInfo()
 	//ws.TestGame()
 
 	time.Sleep(1000 * time.Second * 10000)
@@ -171,22 +173,50 @@ func (ws *wsClientService) Test123() {
 	//}
 
 	req1 := &pbs.Login{
-		AppId: 1,
+		AppId: 10,
 	}
 	req1M, _ := proto.Marshal(req1)
 	reqq := &pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
-			Uid:      0,
+			Uid:      "",
 			Token:    "",
 			Platform: "",
 		},
 		AckHead: &pbs.AckHead{
-			Uid:     0,
+			Uid:     "",
 			Code:    0,
 			Message: "",
 		},
 		ServiceId: "slot_server",
 		MsgId:     int32(pbs.ProtocNum_LoginReq),
+		Content:   req1M,
+	}
+
+	reqM, _ := proto.Marshal(reqq)
+
+	ws.context <- reqM
+	/*for {
+		time.Sleep(30 * time.Second)
+	}*/
+}
+
+func (ws *wsClientService) TestCurrAPInfo() {
+
+	req1 := &pbs.CurrAPInfoReq{}
+	req1M, _ := proto.Marshal(req1)
+	reqq := &pbs.NetMessage{
+		ReqHead: &pbs.ReqHead{
+			Uid:      "",
+			Token:    "",
+			Platform: "",
+		},
+		AckHead: &pbs.AckHead{
+			Uid:     "",
+			Code:    0,
+			Message: "",
+		},
+		ServiceId: "slot_server",
+		MsgId:     int32(pbs.ProtocNum_CurrAPInfoReq),
 		Content:   req1M,
 	}
 

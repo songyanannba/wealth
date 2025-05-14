@@ -17,7 +17,7 @@ func InitServer() {
 	core.BaseInit()
 
 	//nats消息中间件
-	//websocket.NastManager.Start()
+	websocket.NastManager.Start()
 
 	// 初始化 gRPC 客户端
 	//oreRpcUrl := global.GVA_VP.GetString("app.slotRpcUrl")

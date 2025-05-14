@@ -14,13 +14,13 @@ func InitTavernUsersRoom(userID string) {
 	}
 
 	if tavernUserStatus.ID <= 0 {
-		room := &table.UserRoom{
+		room := &table.AnimalPartyUserRoom{
 			UserId:   userID,
 			IsLeave:  0,
 			IsKilled: 0,
 			IsOwner:  0,
 			Turn:     0,
-			Seat:     0,
+			//Seat:     0,
 			RoomNo:   "",
 			Nickname: "",
 			IsRobot:  0,
@@ -36,7 +36,7 @@ func InitTavernUsersRoom(userID string) {
 }
 
 // CreateOrUpdateUsersRoom 更新用户维度的数据
-func CreateOrUpdateUsersRoom(record *table.UserRoom) error {
+func CreateOrUpdateUsersRoom(record *table.AnimalPartyUserRoom) error {
 	//创建房间的时候 ｜ 快速开始的时候
 	//加入房间的时候调用
 	//离开房间的时候
@@ -47,14 +47,14 @@ func CreateOrUpdateUsersRoom(record *table.UserRoom) error {
 	if tavernUserStatus.ID > 0 {
 		//更
 
-		val := &table.UserRoom{
+		val := &table.AnimalPartyUserRoom{
 			GVA_MODEL: table.GVA_MODEL{
 				ID: tavernUserStatus.ID,
 			},
 			UserId:   record.UserId,
 			RoomNo:   record.RoomNo,
 			Nickname: record.Nickname,
-			Seat:     record.Seat,
+			//Seat:     record.Seat,
 			Turn:     record.Turn,
 			IsLeave:  record.IsLeave,
 			IsKilled: record.IsKilled,

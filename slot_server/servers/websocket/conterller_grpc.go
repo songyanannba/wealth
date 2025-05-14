@@ -26,12 +26,12 @@ func FriendUserList(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMessage, 
 
 	if req.MsgId != int32(pbs.Meb_friendUserList) {
 		global.GVA_LOG.Error("FriendUserList 协议号不正确", zap.Any("FriendUserList", req))
-		comResp.AckHead.Code = pbs.Code_ProtocNumberError
+		//comResp.AckHead.Code = pbs.Code_ProtocNumberError
 		return comResp, nil
 	}
 	err := proto.Unmarshal(req.Content, &request)
 	if err != nil {
-		comResp.AckHead.Code = pbs.Code_DataCompileError
+		//comResp.AckHead.Code = pbs.Code_DataCompileError
 		return comResp, nil
 	}
 	global.GVA_LOG.Infof("获取用户矿工列表 UserRatList：%v", &request)
@@ -70,12 +70,12 @@ func AuditUserList(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMessage, e
 
 	if req.MsgId != int32(pbs.Meb_auditUserList) {
 		global.GVA_LOG.Error("AuditUserList 协议号不正确", zap.Any("AuditUserList", req))
-		comResp.AckHead.Code = pbs.Code_ProtocNumberError
+		//comResp.AckHead.Code = pbs.Code_ProtocNumberError
 		return comResp, nil
 	}
 	err := proto.Unmarshal(req.Content, &request)
 	if err != nil {
-		comResp.AckHead.Code = pbs.Code_DataCompileError
+		//comResp.AckHead.Code = pbs.Code_DataCompileError
 		return comResp, nil
 	}
 	global.GVA_LOG.Infof(" AuditUserList：%v", &request)
@@ -112,12 +112,12 @@ func HandbookListController(ctx context.Context, req *pbs.NetMessage) (*pbs.NetM
 
 	if req.MsgId != int32(pbs.Meb_handbookList) {
 		global.GVA_LOG.Error("HandbookListController 协议号不正确", zap.Any("HandbookListController", req))
-		comResp.AckHead.Code = pbs.Code_ProtocNumberError
+		//comResp.AckHead.Code = pbs.Code_ProtocNumberError
 		return comResp, nil
 	}
 	err := proto.Unmarshal(req.Content, &request)
 	if err != nil {
-		comResp.AckHead.Code = pbs.Code_DataCompileError
+		//comResp.AckHead.Code = pbs.Code_DataCompileError
 		return comResp, nil
 	}
 	global.GVA_LOG.Infof("HandbookListController：%v", &request)
@@ -156,21 +156,21 @@ func CardVersionListController(ctx context.Context, req *pbs.NetMessage) (*pbs.N
 
 	if req.MsgId != int32(pbs.Meb_cardVersionList) {
 		global.GVA_LOG.Error("CardVersionListController 协议号不正确", zap.Any("CardVersionListController", req))
-		comResp.AckHead.Code = pbs.Code_ProtocNumberError
+		//comResp.AckHead.Code = pbs.Code_ProtocNumberError
 		return comResp, nil
 	}
 	err := proto.Unmarshal(req.Content, &request)
 	if err != nil {
-		comResp.AckHead.Code = pbs.Code_DataCompileError
+		//comResp.AckHead.Code = pbs.Code_DataCompileError
 		return comResp, nil
 	}
 	global.GVA_LOG.Infof(" CardVersionListController：%v", &request)
 
-	cardLists := dao.GetCardConfVersion()
-
-	for _, cardList := range cardLists {
-		listData = append(listData, &pbs.CardVersionList{Version: int32(cardList.Version)})
-	}
+	//cardLists := dao.GetCardConfVersion()
+	//
+	//for _, cardList := range cardLists {
+	//	listData = append(listData, &pbs.CardVersionList{Version: int32(cardList.Version)})
+	//}
 
 	ListAck := &pbs.CardVersionListAck{CardVersionList: listData}
 
@@ -191,12 +191,12 @@ func UnpackCardController(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMes
 
 	if req.MsgId != int32(pbs.Meb_unpackCard) {
 		global.GVA_LOG.Error("UnpackCardController 协议号不正确", zap.Any("UnpackCardController", req))
-		comResp.AckHead.Code = pbs.Code_ProtocNumberError
+		//comResp.AckHead.Code = pbs.Code_ProtocNumberError
 		return comResp, nil
 	}
 	err := proto.Unmarshal(req.Content, &request)
 	if err != nil {
-		comResp.AckHead.Code = pbs.Code_DataCompileError
+		//comResp.AckHead.Code = pbs.Code_DataCompileError
 		return comResp, nil
 	}
 	global.GVA_LOG.Infof("UnpackCardController：%v", &request)
@@ -208,7 +208,7 @@ func UnpackCardController(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMes
 		isContinue = true
 	}
 	if isContinue && request.Num == 5 {
-		comResp.AckHead.Code = pbs.Code_NotContinue5
+		//comResp.AckHead.Code = pbs.Code_NotContinue5
 		return comResp, nil
 	}
 
@@ -218,7 +218,7 @@ func UnpackCardController(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMes
 	coinConsumeConfig := dao.GetCoinConsumeConfigByType(int(table.CoinConsumeUnpackCard))
 	if isContinue {
 		if request.Num == config.UnpackCardNum1 && experienceInfo.CoinNum < coinConsumeConfig.CoinNum {
-			comResp.AckHead.Code = pbs.Code_KingCoinNotEnough
+			//comResp.AckHead.Code = pbs.Code_KingCoinNotEnough
 			return comResp, nil
 		}
 	}
@@ -261,12 +261,12 @@ func AddFriendController(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMess
 
 	if req.MsgId != int32(pbs.Meb_addFriend) {
 		global.GVA_LOG.Error("AddFriendController 协议号不正确", zap.Any("AddFriendController", req))
-		comResp.AckHead.Code = pbs.Code_ProtocNumberError
+		//comResp.AckHead.Code = pbs.Code_ProtocNumberError
 		return comResp, nil
 	}
 	err := proto.Unmarshal(req.Content, &request)
 	if err != nil {
-		comResp.AckHead.Code = pbs.Code_DataCompileError
+		//comResp.AckHead.Code = pbs.Code_DataCompileError
 		return comResp, nil
 	}
 	global.GVA_LOG.Infof("AddFriendController：%v", &request)
@@ -296,19 +296,19 @@ func DelFriendController(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMess
 
 	if req.MsgId != int32(pbs.Meb_delFriend) {
 		global.GVA_LOG.Error("DelFriendController 协议号不正确", zap.Any("DelFriendController", req))
-		comResp.AckHead.Code = pbs.Code_ProtocNumberError
+		//comResp.AckHead.Code = pbs.Code_ProtocNumberError
 		return comResp, nil
 	}
 	err := proto.Unmarshal(req.Content, &request)
 	if err != nil {
-		comResp.AckHead.Code = pbs.Code_DataCompileError
+		//comResp.AckHead.Code = pbs.Code_DataCompileError
 		return comResp, nil
 	}
 	global.GVA_LOG.Infof("DelFriendController：%v", &request)
 
 	record, err := table.GetUserFriendById(int(request.FriendId))
 	if err != nil {
-		comResp.AckHead.Code = pbs.Code_DBErr
+		//comResp.AckHead.Code = pbs.Code_DBErr
 		return comResp, nil
 	}
 
@@ -321,7 +321,7 @@ func DelFriendController(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMess
 	err = table.DelUserFriendById(int(request.FriendId))
 	if err != nil {
 		global.GVA_LOG.Error("DelUserFriendById", zap.Any("DelUserFriendById", request.FriendId))
-		comResp.AckHead.Code = pbs.Code_DBErr
+		//comResp.AckHead.Code = pbs.Code_DBErr
 		return comResp, nil
 	}
 
@@ -345,12 +345,12 @@ func AuthFriendController(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMes
 
 	if req.MsgId != int32(pbs.Meb_authFriend) {
 		global.GVA_LOG.Error("AuthFriendController 协议号不正确", zap.Any("AuthFriendController", req))
-		comResp.AckHead.Code = pbs.Code_ProtocNumberError
+		//comResp.AckHead.Code = pbs.Code_ProtocNumberError
 		return comResp, nil
 	}
 	err := proto.Unmarshal(req.Content, &request)
 	if err != nil {
-		comResp.AckHead.Code = pbs.Code_DataCompileError
+		//comResp.AckHead.Code = pbs.Code_DataCompileError
 		return comResp, nil
 	}
 	global.GVA_LOG.Infof("AuthFriendController：%v", &request)
@@ -360,7 +360,7 @@ func AuthFriendController(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMes
 	application, err := table.UserFriendAuditById(int(request.AuditId))
 	if err != nil {
 		global.GVA_LOG.Error("UserFriendAuditByAuditAndApplication:", zap.Error(err))
-		comResp.AckHead.Code = pbs.Code_DBErr
+		//comResp.AckHead.Code = pbs.Code_DBErr
 		return comResp, nil
 	}
 	if application.ID == 0 {
@@ -416,12 +416,12 @@ func UserDetailController(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMes
 
 	if req.MsgId != int32(pbs.Meb_userDetail) {
 		global.GVA_LOG.Error("UserDetailController 协议号不正确", zap.Any("UserDetailController", req))
-		comResp.AckHead.Code = pbs.Code_ProtocNumberError
+		//comResp.AckHead.Code = pbs.Code_ProtocNumberError
 		return comResp, nil
 	}
 	err := proto.Unmarshal(req.Content, &request)
 	if err != nil {
-		comResp.AckHead.Code = pbs.Code_DataCompileError
+		//comResp.AckHead.Code = pbs.Code_DataCompileError
 		return comResp, nil
 	}
 	global.GVA_LOG.Infof("UserDetailController：%v", &request)
@@ -429,7 +429,7 @@ func UserDetailController(ctx context.Context, req *pbs.NetMessage) (*pbs.NetMes
 	userInfo, err := table.GetGameUserByUid(request.UserId)
 	if err != nil {
 		global.GVA_LOG.Error("UserDetailController GetGameUserByUid", zap.Error(err))
-		comResp.AckHead.Code = pbs.Code_DBErr
+		//comResp.AckHead.Code = pbs.Code_DBErr
 		return comResp, nil
 	}
 
@@ -450,12 +450,12 @@ func CoinExperienceController(ctx context.Context, req *pbs.NetMessage) (*pbs.Ne
 
 	if req.MsgId != int32(pbs.Meb_coinExperience) {
 		global.GVA_LOG.Error("CoinExperienceController 协议号不正确", zap.Any("CoinExperienceController", req))
-		comResp.AckHead.Code = pbs.Code_ProtocNumberError
+		//comResp.AckHead.Code = pbs.Code_ProtocNumberError
 		return comResp, nil
 	}
 	err := proto.Unmarshal(req.Content, &request)
 	if err != nil {
-		comResp.AckHead.Code = pbs.Code_DataCompileError
+		//comResp.AckHead.Code = pbs.Code_DataCompileError
 		return comResp, nil
 	}
 	global.GVA_LOG.Infof("CoinExperienceController：%v", &request)

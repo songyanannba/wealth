@@ -69,6 +69,16 @@ func Login(c *gin.Context) {
 	//获取用户名和密码
 	//是否注册过，注册过返回用户信息
 
+	userInfo, err := table.GetBUserByUsername(request.UserName)
+	if err != nil {
+		controllers.Response(c, common.ServerError, "", data)
+		return
+	}
+	if userInfo.ID <= 0 {
+		controllers.Response(c, common.NotRegister, "", data)
+		return
+	}
+
 	password := helper.MD5V([]byte(request.Password))
 	info, err := table.GetBUserByUsernameAndPassword(request.UserName, password)
 	if err != nil {
@@ -76,9 +86,8 @@ func Login(c *gin.Context) {
 		return
 	}
 	//没有注册过返回错误提示 让用户进行注册
-	//未注册
-	if info.ID < 0 {
-		controllers.Response(c, common.NotRegister, "", data)
+	if info.ID <= 0 {
+		controllers.Response(c, common.PasswordErr, "", data)
 		return
 	}
 

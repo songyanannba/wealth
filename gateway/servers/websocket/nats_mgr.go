@@ -54,7 +54,7 @@ func (n *natsManager) Start() {
 	//	log.Fatalf("Failed to initialize JetStream: %v", err)
 	//}
 
-	n.CreatNatsPubMTJs(MemeBattle)
+	n.CreatNatsPubMTJs(AnimalParty)
 
 	//defer connect.Close()
 }
@@ -112,7 +112,7 @@ func (n *natsManager) GetNatsJs(topic string) (jetstream.JetStream, error) {
 func (n *natsManager) SendMemeJs(msg *pbs.NetMessage) {
 	n.Sync.RLock()
 	defer n.Sync.RUnlock()
-	js, ok := n.NatsPubJsMap[MemeBattle]
+	js, ok := n.NatsPubJsMap[AnimalParty]
 	if !ok {
 		global.GVA_LOG.Error("natsManager err : MemeBattle not exist")
 		return

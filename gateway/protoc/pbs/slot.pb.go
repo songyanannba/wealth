@@ -63,12 +63,263 @@ func (Slot) EnumDescriptor() ([]byte, []int) {
 	return file_slot_proto_rawDescGZIP(), []int{0}
 }
 
+type CurrAPInfoReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *CurrAPInfoReq) Reset() {
+	*x = CurrAPInfoReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CurrAPInfoReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CurrAPInfoReq) ProtoMessage() {}
+
+func (x *CurrAPInfoReq) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CurrAPInfoReq.ProtoReflect.Descriptor instead.
+func (*CurrAPInfoReq) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{0}
+}
+
+type CurrAPInfoAck struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	RoomNo        string         `protobuf:"bytes,1,opt,name=room_no,json=roomNo,proto3" json:"room_no,omitempty"`                         //房间编号
+	CurrPeriod    string         `protobuf:"bytes,2,opt,name=curr_period,json=currPeriod,proto3" json:"curr_period,omitempty"`             //当前期
+	GameStartTime int64          `protobuf:"varint,3,opt,name=game_start_time,json=gameStartTime,proto3" json:"game_start_time,omitempty"` //游戏的开始时间戳
+	GameTurnState int32          `protobuf:"varint,4,opt,name=game_turn_state,json=gameTurnState,proto3" json:"game_turn_state,omitempty"` //游戏的状态 ； 1=可以押注 ；2=计算阶段不可以押注
+	APRoomInfos   []*APRoomInfos `protobuf:"bytes,5,rep,name=aP_room_infos,json=aPRoomInfos,proto3" json:"aP_room_infos,omitempty"`        //
+}
+
+func (x *CurrAPInfoAck) Reset() {
+	*x = CurrAPInfoAck{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CurrAPInfoAck) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CurrAPInfoAck) ProtoMessage() {}
+
+func (x *CurrAPInfoAck) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CurrAPInfoAck.ProtoReflect.Descriptor instead.
+func (*CurrAPInfoAck) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *CurrAPInfoAck) GetRoomNo() string {
+	if x != nil {
+		return x.RoomNo
+	}
+	return ""
+}
+
+func (x *CurrAPInfoAck) GetCurrPeriod() string {
+	if x != nil {
+		return x.CurrPeriod
+	}
+	return ""
+}
+
+func (x *CurrAPInfoAck) GetGameStartTime() int64 {
+	if x != nil {
+		return x.GameStartTime
+	}
+	return 0
+}
+
+func (x *CurrAPInfoAck) GetGameTurnState() int32 {
+	if x != nil {
+		return x.GameTurnState
+	}
+	return 0
+}
+
+func (x *CurrAPInfoAck) GetAPRoomInfos() []*APRoomInfos {
+	if x != nil {
+		return x.APRoomInfos
+	}
+	return nil
+}
+
+type APRoomInfos struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId    string  `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	BetZoneId int32   `protobuf:"varint,2,opt,name=bet_zone_id,json=betZoneId,proto3" json:"bet_zone_id,omitempty"` //押注ID 押的那个
+	Bet       float32 `protobuf:"fixed32,3,opt,name=bet,proto3" json:"bet,omitempty"`                               //押注多少
+}
+
+func (x *APRoomInfos) Reset() {
+	*x = APRoomInfos{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *APRoomInfos) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*APRoomInfos) ProtoMessage() {}
+
+func (x *APRoomInfos) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use APRoomInfos.ProtoReflect.Descriptor instead.
+func (*APRoomInfos) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *APRoomInfos) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *APRoomInfos) GetBetZoneId() int32 {
+	if x != nil {
+		return x.BetZoneId
+	}
+	return 0
+}
+
+func (x *APRoomInfos) GetBet() float32 {
+	if x != nil {
+		return x.Bet
+	}
+	return 0
+}
+
+// 消息中间件使用
+type NatsCurrAPInfo struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+}
+
+func (x *NatsCurrAPInfo) Reset() {
+	*x = NatsCurrAPInfo{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NatsCurrAPInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NatsCurrAPInfo) ProtoMessage() {}
+
+func (x *NatsCurrAPInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NatsCurrAPInfo.ProtoReflect.Descriptor instead.
+func (*NatsCurrAPInfo) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *NatsCurrAPInfo) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
 var File_slot_proto protoreflect.FileDescriptor
 
 var file_slot_proto_rawDesc = []byte{
 	0x0a, 0x0a, 0x73, 0x6c, 0x6f, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0b, 0x6d, 0x65,
 	0x6d, 0x65, 0x5f, 0x62, 0x61, 0x74, 0x74, 0x6c, 0x65, 0x1a, 0x09, 0x63, 0x6f, 0x6d, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x2a, 0x0e, 0x0a, 0x04, 0x73, 0x6c, 0x6f, 0x74, 0x12, 0x06, 0x0a, 0x02,
+	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x0f, 0x0a, 0x0d, 0x63, 0x75, 0x72, 0x72, 0x41, 0x50, 0x49, 0x6e,
+	0x66, 0x6f, 0x52, 0x65, 0x71, 0x22, 0xd7, 0x01, 0x0a, 0x0d, 0x63, 0x75, 0x72, 0x72, 0x41, 0x50,
+	0x49, 0x6e, 0x66, 0x6f, 0x41, 0x63, 0x6b, 0x12, 0x17, 0x0a, 0x07, 0x72, 0x6f, 0x6f, 0x6d, 0x5f,
+	0x6e, 0x6f, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x6f, 0x6f, 0x6d, 0x4e, 0x6f,
+	0x12, 0x1f, 0x0a, 0x0b, 0x63, 0x75, 0x72, 0x72, 0x5f, 0x70, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x63, 0x75, 0x72, 0x72, 0x50, 0x65, 0x72, 0x69, 0x6f,
+	0x64, 0x12, 0x26, 0x0a, 0x0f, 0x67, 0x61, 0x6d, 0x65, 0x5f, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f,
+	0x74, 0x69, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0d, 0x67, 0x61, 0x6d, 0x65,
+	0x53, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x26, 0x0a, 0x0f, 0x67, 0x61, 0x6d,
+	0x65, 0x5f, 0x74, 0x75, 0x72, 0x6e, 0x5f, 0x73, 0x74, 0x61, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x05, 0x52, 0x0d, 0x67, 0x61, 0x6d, 0x65, 0x54, 0x75, 0x72, 0x6e, 0x53, 0x74, 0x61, 0x74,
+	0x65, 0x12, 0x3c, 0x0a, 0x0d, 0x61, 0x50, 0x5f, 0x72, 0x6f, 0x6f, 0x6d, 0x5f, 0x69, 0x6e, 0x66,
+	0x6f, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6d, 0x65, 0x6d, 0x65, 0x5f,
+	0x62, 0x61, 0x74, 0x74, 0x6c, 0x65, 0x2e, 0x61, 0x50, 0x52, 0x6f, 0x6f, 0x6d, 0x49, 0x6e, 0x66,
+	0x6f, 0x73, 0x52, 0x0b, 0x61, 0x50, 0x52, 0x6f, 0x6f, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x73, 0x22,
+	0x58, 0x0a, 0x0b, 0x61, 0x50, 0x52, 0x6f, 0x6f, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x73, 0x12, 0x17,
+	0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x1e, 0x0a, 0x0b, 0x62, 0x65, 0x74, 0x5f, 0x7a,
+	0x6f, 0x6e, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x62, 0x65,
+	0x74, 0x5a, 0x6f, 0x6e, 0x65, 0x49, 0x64, 0x12, 0x10, 0x0a, 0x03, 0x62, 0x65, 0x74, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x02, 0x52, 0x03, 0x62, 0x65, 0x74, 0x22, 0x29, 0x0a, 0x0e, 0x6e, 0x61, 0x74,
+	0x73, 0x43, 0x75, 0x72, 0x72, 0x41, 0x50, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x17, 0x0a, 0x07, 0x75,
+	0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73,
+	0x65, 0x72, 0x49, 0x64, 0x2a, 0x0e, 0x0a, 0x04, 0x73, 0x6c, 0x6f, 0x74, 0x12, 0x06, 0x0a, 0x02,
 	0x73, 0x30, 0x10, 0x00, 0x32, 0x0d, 0x0a, 0x0b, 0x73, 0x6c, 0x6f, 0x74, 0x53, 0x65, 0x72, 0x76,
 	0x69, 0x63, 0x65, 0x42, 0x06, 0x5a, 0x04, 0x2f, 0x70, 0x62, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x33,
@@ -87,15 +338,21 @@ func file_slot_proto_rawDescGZIP() []byte {
 }
 
 var file_slot_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_slot_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_slot_proto_goTypes = []interface{}{
-	(Slot)(0), // 0: meme_battle.slot
+	(Slot)(0),              // 0: meme_battle.slot
+	(*CurrAPInfoReq)(nil),  // 1: meme_battle.currAPInfoReq
+	(*CurrAPInfoAck)(nil),  // 2: meme_battle.currAPInfoAck
+	(*APRoomInfos)(nil),    // 3: meme_battle.aPRoomInfos
+	(*NatsCurrAPInfo)(nil), // 4: meme_battle.natsCurrAPInfo
 }
 var file_slot_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: meme_battle.currAPInfoAck.aP_room_infos:type_name -> meme_battle.aPRoomInfos
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_slot_proto_init() }
@@ -104,19 +361,70 @@ func file_slot_proto_init() {
 		return
 	}
 	file_com_proto_init()
+	if !protoimpl.UnsafeEnabled {
+		file_slot_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CurrAPInfoReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CurrAPInfoAck); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*APRoomInfos); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*NatsCurrAPInfo); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_slot_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   0,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_slot_proto_goTypes,
 		DependencyIndexes: file_slot_proto_depIdxs,
 		EnumInfos:         file_slot_proto_enumTypes,
+		MessageInfos:      file_slot_proto_msgTypes,
 	}.Build()
 	File_slot_proto = out.File
 	file_slot_proto_rawDesc = nil

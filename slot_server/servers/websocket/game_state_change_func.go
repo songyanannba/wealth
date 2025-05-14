@@ -92,7 +92,7 @@ func SendGameStartBroadcast(trs *RoomSpace) {
 	//给用户消息
 	global.GVA_LOG.Infof("StartPlay 开始游戏的广播: %v", msgData)
 	responseHeadByte, _ := json.Marshal(msgData)
-	NatsSendAllUserMsg(trs, helper.GetNetMessage(0, 0, int32(pbs.Meb_startPlay), config.NatsMemeBattle, responseHeadByte))
+	NatsSendAllUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_startPlay), config.SlotServer, responseHeadByte))
 
 	trs.ComRoomSpace.SetGameStartTime(helper.LocalTime().Unix()) //游戏开始时间
 }
@@ -118,7 +118,7 @@ func (trs *RoomSpace) ExecSendIssueAndSendCards() {
 
 	trs.InitUserSelfCards()
 
-	netMessageResp := helper.NewNetMessage(0, 0, int32(pbs.Meb_dealCardsMsg), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_dealCardsMsg), config.SlotServer)
 	//发送广播
 	for _, uInfo := range trs.ComRoomSpace.UserInfos {
 		//获取当前轮 用户 没有被随的牌
@@ -219,7 +219,7 @@ func (trs *RoomSpace) SaveAndSendIssue() {
 	}
 	global.GVA_LOG.Infof("SelectIssue 本轮问题的的广播: %v ", msgData)
 	responseHeadByte, _ := json.Marshal(msgData)
-	NatsSendAllUserMsg(trs, helper.GetNetMessage(0, 0, int32(pbs.Meb_issueMsg), config.NatsMemeBattle, responseHeadByte)) //SelectIssue
+	NatsSendAllUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_issueMsg), config.SlotServer, responseHeadByte)) //SelectIssue
 }
 
 // InitUserSelfCards 每轮开始前 初始化自己的牌
@@ -272,7 +272,7 @@ func EntryLikePage(trs *RoomSpace) {
 	//给用户消息
 	global.GVA_LOG.Infof("StartPlay 开始游戏的广播: %v", msgData)
 	responseHeadByte, _ := json.Marshal(msgData)
-	NatsSendAllUserMsg(trs, helper.GetNetMessage(0, 0, int32(pbs.Meb_entryLikePage), config.NatsMemeBattle, responseHeadByte))
+	NatsSendAllUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_entryLikePage), config.SlotServer, responseHeadByte))
 
 	//点赞倒计时
 	trs.ComRoomSpace.SetLikeCountdownTime(helper.LocalTime().Unix())
@@ -364,7 +364,7 @@ func (trs *RoomSpace) CalculateAndEnd() {
 		}
 	}
 
-	netMessageResp := helper.NewNetMessage(0, 0, int32(pbs.Meb_calculateRank), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_calculateRank), config.SlotServer)
 	//发送广播
 	msgData := models.CalculateRankMsg{
 		ProtoNum:       strconv.Itoa(int(pbs.Meb_calculateRank)),
@@ -374,7 +374,7 @@ func (trs *RoomSpace) CalculateAndEnd() {
 	}
 
 	//给用户消息
-	global.GVA_LOG.Infof("EnCalculateAndEnd 本轮最终用户排行计算: %v", msgData)
+	global.GVA_LOG.Infof("EnCalculateAndEnd-本轮最终用户排行计算: %v", msgData)
 	responseHeadByte, _ := json.Marshal(msgData)
 	netMessageResp.Content = responseHeadByte
 	NatsSendAllUserMsg(trs, netMessageResp)

@@ -54,6 +54,7 @@ type UserProperty struct {
 	UserLimitNum int     `json:"user_limit_num"` //房间人数限制
 	WinPrice     float64 `json:"win_price"`      //最终赢钱
 	Bet          float64 `json:"bet"`            //押注
+	BetZoneId    int     `json:"bet_zone_id"`    //押注
 	CharacterId  int     `json:"character_Id"`   //角色ID
 	GameStatus   int     `json:"game_status"`    //0=游戏为开始阶段 1=问题阶段 2=随牌阶段 3=出牌阶段 4=点赞阶段 5=计算阶段 6=游戏结束
 	//机器人

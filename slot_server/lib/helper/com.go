@@ -38,7 +38,7 @@ func NewAttenuationByAge(age int, baseValue, decayRate float64) float64 {
 	return decay
 }
 
-func NewNetMessage(reqUid, ackUid, msgId int32, serviceId string) *pbs.NetMessage {
+func NewNetMessage(reqUid, ackUid string, msgId int32, serviceId string) *pbs.NetMessage {
 	ackMsg := common.GetErrorMessage(common.OK, "")
 	netMessageResp := &pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{
@@ -58,7 +58,7 @@ func NewNetMessage(reqUid, ackUid, msgId int32, serviceId string) *pbs.NetMessag
 	return netMessageResp
 }
 
-func GetNetMessage(reqUid, ackUid, msgId int32, serviceId string, content []byte) *pbs.NetMessage {
+func GetNetMessage(reqUid, ackUid string, msgId int32, serviceId string, content []byte) *pbs.NetMessage {
 	ackMsg := common.GetErrorMessage(common.OK, "")
 	netMessageResp := &pbs.NetMessage{
 		ReqHead: &pbs.ReqHead{

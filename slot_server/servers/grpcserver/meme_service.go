@@ -42,7 +42,7 @@ func (s *MemeBattleService) BeforeExec(ctx context.Context, req *pbs.NetMessage)
 		comResp = &pbs.NetMessage{
 			ReqHead: &pbs.ReqHead{},
 			AckHead: &pbs.AckHead{
-				Uid:     0,
+				Uid:     "",
 				Code:    pbs.Code_OK,
 				Message: "",
 			},

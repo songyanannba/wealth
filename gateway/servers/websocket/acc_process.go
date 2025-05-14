@@ -190,7 +190,7 @@ func ProcessDataNew(client *Client, message []byte) {
 			data interface{}
 		)
 
-		if serviceId == config.NatsMemeBattle {
+		if serviceId == config.NatsSlotServer {
 			if value, ok := getHandlers(cmd); ok {
 				beforeCode := BeforeHandler(client, cmd)
 				if beforeCode != common.OK {

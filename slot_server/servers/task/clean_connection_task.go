@@ -4,6 +4,8 @@ package task
 import (
 	"fmt"
 	"runtime/debug"
+	"slot_server/servers/src/logic"
+	"time"
 )
 
 // Init 初始化
@@ -19,6 +21,22 @@ func Init() {
 
 	//一次性脚本 返回用户的积分 （钓鱼）
 	//Timer(time.Second*10, 100*time.Hour, IncrUserCoinFish, "", nil, nil)
+
+	Timer(3*time.Second, 20*time.Second, AnimalPartyGlobal, "", nil, nil)
+
+}
+
+func AnimalPartyGlobal(param interface{}) (result bool) {
+	result = true
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(" IncrUserCoin stop", r, string(debug.Stack()))
+		}
+	}()
+
+	logic.AnimalPartyGlobal()
+
+	return
 }
 
 func GetBetOnList(param interface{}) (result bool) {

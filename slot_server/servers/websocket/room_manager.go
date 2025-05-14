@@ -3,12 +3,13 @@ package websocket
 import (
 	"encoding/json"
 	"errors"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
+	"slot_server/lib/config"
 	"slot_server/lib/global"
 	"slot_server/lib/helper"
 	"slot_server/lib/models"
 	"slot_server/lib/models/table"
-	"slot_server/lib/src/dao"
 	"sync"
 	"time"
 )
@@ -42,7 +43,7 @@ type roomManager struct {
 	RobotAiUser []*table.RobotAiUser
 }
 
-var MemeRoomManager = roomManager{
+var SlotRoomManager = roomManager{
 	Rooms:             make(map[string]*RoomSpace), //key房间编号
 	CommonRoomManager: GetCommonRoomManager(),
 	MatchIngRoom:      NewMatchIngRoom(),
@@ -91,7 +92,6 @@ func (trMgr *roomManager) Start() {
 
 		case <-matchRoomTimer.C:
 			//匹配房间的算法
-			trMgr.MatchRoomArithmetic()
 
 		case message := <-trMgr.CommonRoomManager.CloseRoom:
 			// 关闭房间
@@ -309,6 +309,24 @@ func (trMgr *roomManager) GetRoomSpace(roomNo string) (*RoomSpace, error) {
 	return roomSpaceInfo, nil
 }
 
+func (trMgr *roomManager) GetCurrRoomSpace() (*RoomSpace, error) {
+	trMgr.CommonRoomManager.Sync.RLock()
+	defer trMgr.CommonRoomManager.Sync.RUnlock()
+
+	if len(trMgr.Rooms) <= 0 {
+		return nil, errors.New("没有房间信息")
+	}
+
+	//todo 后续通过城市
+	roomSpaceInfo := &RoomSpace{}
+	for _, v := range trMgr.Rooms {
+		roomSpaceInfo = v
+		break
+	}
+
+	return roomSpaceInfo, nil
+}
+
 // SendMsgToRoomSpace 房间管理器 消息发送到房间
 func (trMgr *roomManager) SendMsgToRoomSpace(roomNo string, message []byte) error {
 	trMgr.CommonRoomManager.Sync.RLock()
@@ -373,63 +391,47 @@ func (trMgr *roomManager) MatchRoomArithmetic() {
 }
 
 func (trMgr *roomManager) InitDBData() {
-	//records, err := table.GetMbCardConfigByVersion(0)
+
+	//初始化全局动物派对房间
+
+	//1 先创建对局空间
+	roomSpaceInfo := GetRoomSpace()
+	//添加对局用户
+
+	record, err := table.GetMemeRoomByIdDesc()
+	if err != nil {
+		global.GVA_LOG.Error("InitDBData GetMemeRoomByIdDesc err:", zap.Error(err))
+	}
+	period := "1"
+	if record.ID >= 0 {
+		period = helper.Itoa(helper.Atoi(record.Period) + 1)
+	}
+
+	animalPartyRoom := table.NewAnimalPartyRoom("1", "1", uuid.New().String(), config.AnimalPartyGlobal, "匹配房间", period,
+		table.TavernRoomOpen, table.RoomTypeMatch, 0, 0, 0, 0)
+	err = table.CreateMemeRoom(animalPartyRoom)
+	if err != nil {
+		global.GVA_LOG.Error("NewAnimalPartyRoom:{%v},roomInfo:%v", zap.Error(err), zap.Any("NewAnimalPartyRoom", animalPartyRoom.RoomNo))
+		return
+	}
+
+	//给用户创建房间 并发送游戏开始的广播
+	//slotRoom, err := table.SlotRoomByRoomNo(config.AnimalPartyGlobal)
 	//if err != nil {
-	//	global.GVA_LOG.Error("GetTavernCards ", zap.Error(err))
-	//	//return
+	//	global.GVA_LOG.Error("MebJoinRoom ", zap.Error(err))
 	//}
-	//cards := []models.Card{}
-	//for k, _ := range records {
-	//	memeCards := records[k]
-	//	item := models.Card{
-	//		CardId:  memeCards.ID,
-	//		Name:    memeCards.Name,
-	//		Point:   0,
-	//		Express: 0,
-	//		Suffix:  memeCards.SuffixName,
-	//		ImgUrl:  memeCards.FImg,
-	//	}
-	//	cards = append(cards, item)
-	//}
-	//trMgr.Cards = cards
+	roomSpaceInfo.RoomInfo = animalPartyRoom
 
-	//基础卡
-	configs, err := table.GetMbCardConfigByVersion(0)
-	if err != nil {
-		global.GVA_LOG.Error("GetTavernRoomConfigs ", zap.Error(err))
-	}
-	if len(configs) > 0 {
-		trMgr.RoomBaseCard = append(trMgr.RoomBaseCard, configs...)
-	}
+	//游戏开始
+	roomSpaceInfo.ComRoomSpace.IsStartGame = true
 
-	//获取所有的版本
-	cardLists := dao.GetCardConfVersion()
-	for _, vConfig := range cardLists {
-		cardConfigByVersion, err := table.GetMbCardConfigByVersion(vConfig.Version)
-		if err != nil {
-			global.GVA_LOG.Error("GetTavernRoomConfigs ", zap.Error(err))
-			continue
-		}
-		if len(cardConfigByVersion) > 0 {
-			if _, ok := trMgr.RoomVersionCard[vConfig.Version]; !ok {
-				trMgr.RoomVersionCard[vConfig.Version] = append(trMgr.RoomVersionCard[vConfig.Version], cardConfigByVersion...)
-			}
-		}
-	}
+	//游戏每 小轮状态 游戏开始
+	roomSpaceInfo.ComRoomSpace.ChangeGameState(EnGameStartIng)
 
-	//基础问题
-	issues, err := table.GetMbIssueConfigs()
-	if err != nil {
-		global.GVA_LOG.Error("GetMbIssueConfigs ", zap.Error(err))
-	}
-	trMgr.RoomIssueConfig = append(trMgr.RoomIssueConfig, issues...)
+	roomSpaceInfo.ComRoomSpace.SetGameStartTime(helper.LocalTime().Unix()) //游戏开始时间
 
-	//机器人
-	robotAiUser, err := table.GetRobotAiUser()
-	if err != nil {
-		global.GVA_LOG.Error("GetRobotAiUser ", zap.Error(err))
-	}
-	trMgr.RobotAiUser = robotAiUser
+	//添加到全局房间管理器
+	SlotRoomManager.AddRoomSpace(animalPartyRoom.RoomNo, roomSpaceInfo)
 }
 
 func (trMgr *roomManager) SendMsg(message []byte) {

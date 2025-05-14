@@ -28,16 +28,16 @@ func NatsSendAimUserMsg(trs *RoomSpace, msg *pbs.NetMessage, userId string) {
 func (trs *RoomSpace) InItFunc() {
 	//初始房间卡牌
 	if len(trs.RoomBaseCard) == 0 {
-		trs.RoomBaseCard = MemeRoomManager.RoomBaseCard
+		trs.RoomBaseCard = SlotRoomManager.RoomBaseCard
 	}
 
 	if trs.RoomVersionCard != nil {
-		trs.RoomVersionCard = MemeRoomManager.RoomVersionCard
+		trs.RoomVersionCard = SlotRoomManager.RoomVersionCard
 	}
 
 	//初始房间问题
 	if len(trs.RoomIssueConfig) == 0 {
-		trs.RoomIssueConfig = MemeRoomManager.RoomIssueConfig
+		trs.RoomIssueConfig = SlotRoomManager.RoomIssueConfig
 	}
 
 	//加入房间
@@ -88,7 +88,7 @@ func LoadCompleted(message []byte, trs *RoomSpace) (resMessage []byte, err error
 	global.GVA_LOG.Infof("LoadCompleted %v", request)
 
 	userId := request.UserId
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_loadCompleted), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_loadCompleted), config.SlotServer)
 
 	if !trs.ComRoomSpace.IsStartGame {
 		global.GVA_LOG.Error("LoadCompleted 还没有开始游戏")
@@ -157,7 +157,7 @@ func LikeCards(message []byte, trs *RoomSpace) (resMessage []byte, err error) {
 	//获取房间用户信息
 	_, err = trs.ComRoomSpace.GetUserInfo(userId)
 	if err != nil {
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_likeCards), config.NatsMemeBattle)
+		netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_likeCards), config.SlotServer)
 		global.GVA_LOG.Error("LikeCards GetUserInfo  ", zap.Error(err))
 		netMessageResp.AckHead.Code = pbs.Code(common.UserNotInRoom)
 		NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
@@ -169,7 +169,7 @@ func LikeCards(message []byte, trs *RoomSpace) (resMessage []byte, err error) {
 	if len(likeUserInfo) > 0 {
 		//该用户已经给别人点过赞
 		global.GVA_LOG.Infof("LikeCards 该用户已经给别人点过赞 userID %v", request.UserId)
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_likeCards), config.NatsMemeBattle)
+		netMessageResp := helper.NewNetMessage(request.UserId, "", int32(pbs.Meb_likeCards), config.SlotServer)
 		netMessageResp.AckHead.Code = pbs.Code(common.HaveLikeCard)
 		NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
 		return nil, err
@@ -179,9 +179,9 @@ func LikeCards(message []byte, trs *RoomSpace) (resMessage []byte, err error) {
 	outCards := trs.ComRoomSpace.GetUserOutEdCards(request.LikeUserId)
 	if len(outCards) == 0 {
 		global.GVA_LOG.Error("LikeCards GetCurrCard", zap.Error(err))
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_likeCards), config.NatsMemeBattle)
-		netMessageResp.AckHead.Code = pbs.Code(common.NotData)
-		NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
+		//netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_likeCards), config.SlotServer)
+		//netMessageResp.AckHead.Code = pbs.Code(common.NotData)
+		//NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
 		return nil, err
 	}
 
@@ -204,7 +204,7 @@ func LikeCards(message []byte, trs *RoomSpace) (resMessage []byte, err error) {
 	}
 	if !isOutCard {
 		global.GVA_LOG.Error("LikeCards GetCurrCard 点赞的牌不存在")
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_likeCards), config.NatsMemeBattle)
+		netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_likeCards), config.SlotServer)
 		netMessageResp.AckHead.Code = pbs.Code(common.NotData)
 		NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
 		return nil, err
@@ -237,7 +237,7 @@ func OperateCards(message []byte, trs *RoomSpace) (resMessage []byte, err error)
 	//获取房间用户信息
 	userInfo, err := trs.ComRoomSpace.GetUserInfo(userId)
 	if err != nil {
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_operateCards), config.NatsMemeBattle)
+		netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_operateCards), config.SlotServer)
 		global.GVA_LOG.Error("OperateCards GetUserInfo  ", zap.Error(err))
 		netMessageResp.AckHead.Code = pbs.Code(common.UserNotInRoom)
 		NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
@@ -248,7 +248,7 @@ func OperateCards(message []byte, trs *RoomSpace) (resMessage []byte, err error)
 	currCards, err := trs.ComRoomSpace.GetCurrCard(userId)
 	if err != nil {
 		global.GVA_LOG.Error("OperateCards GetCurrCard", zap.Error(err))
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_operateCards), config.NatsMemeBattle)
+		netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_operateCards), config.SlotServer)
 		netMessageResp.AckHead.Code = pbs.Code(common.NotData)
 		NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
 		return nil, err
@@ -258,24 +258,24 @@ func OperateCards(message []byte, trs *RoomSpace) (resMessage []byte, err error)
 	//0:看牌 1:出牌 2:表情 3:重随
 	switch opeType {
 	case int32(common.LookCards):
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_LookCards), config.NatsMemeBattle)
-		protoNum := strconv.Itoa(int(pbs.Meb_LookCards))
-		msgData := models.OperateCardsMsg{
-			ProtoNum: protoNum,
-			UserId:   userId,
-			CardNum:  len(cards),
-			//Card:     cards,
-		}
-
-		//给客户消息
-		global.GVA_LOG.Infof("OperateCards 看牌的广播: %v", msgData)
-
-		responseHeadByte, _ := json.Marshal(msgData)
-		netMessageResp.Content = responseHeadByte
-		NatsSendAllUserMsg(trs, netMessageResp) //OperateCards
+		//netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_LookCards), config.SlotServer)
+		//protoNum := strconv.Itoa(int(pbs.Meb_LookCards))
+		//msgData := models.OperateCardsMsg{
+		//	ProtoNum: protoNum,
+		//	UserId:   userId,
+		//	CardNum:  len(cards),
+		//	//Card:     cards,
+		//}
+		//
+		////给客户消息
+		//global.GVA_LOG.Infof("OperateCards 看牌的广播: %v", msgData)
+		//
+		//responseHeadByte, _ := json.Marshal(msgData)
+		//netMessageResp.Content = responseHeadByte
+		//NatsSendAllUserMsg(trs, netMessageResp) //OperateCards
 		return nil, nil
 	case int32(common.OpeEmoji):
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_opeEmoji), config.NatsMemeBattle)
+		netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_opeEmoji), config.SlotServer)
 		protoNum := strconv.Itoa(int(pbs.Meb_opeEmoji))
 		msgData := models.OperateCardsMsg{
 			ProtoNum: protoNum,
@@ -292,109 +292,109 @@ func OperateCards(message []byte, trs *RoomSpace) (resMessage []byte, err error)
 		NatsSendAllUserMsg(trs, netMessageResp) //OperateCards
 		return nil, nil
 	case int32(common.ReMakeCards): //随牌
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_reMakeCards), config.NatsMemeBattle)
-		//判断是否在重随 时间段
-		gameStatus, turnTime := trs.CurrGameTurnStateAndDownTime()
-		global.GVA_LOG.Infof("CurrGameTurnStateAndDownTime 随牌 OperateCards gameStatus %v, turnTime %v", gameStatus, turnTime)
-		if gameStatus != int(CliRemakeCard) {
-			netMessageResp.AckHead.Code = pbs.Code(common.OutReMakeCardTime)
-			NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
-			return nil, nil
-		}
-
-		//第几次从随 金币是否够
-		extractCard := trs.ComRoomSpace.GetExtractCard(userInfo.UserID)
-		if len(extractCard) >= 4 {
-			//重随过 需要扣积分
-			extractCardNum := helper.CeilDiv(len(extractCard), 4)
-			if extractCardNum > 0 {
-				coinConsumeConfig := dao.GetCoinConsumeConfigByType(int(table.GetCoinConsume(extractCardNum)))
-				//判断金币是否够
-				experienceInfo := dao.GetUserCoinExperience(request.UserId)
-				if experienceInfo.CoinNum <= coinConsumeConfig.CoinNum {
-					netMessageResp.AckHead.Code = pbs.Code_KingCoinNotEnough
-					NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
-					return nil, nil
-				}
-				//扣金币
-				err := dao.UpdateUserCoinNumOrExperience(request.UserId, -coinConsumeConfig.CoinNum, 0, 2)
-				if err != nil {
-					global.GVA_LOG.Error("UnpackCardController ,UpdateUserCoinNumOrExperience err", zap.Any("err", err))
-				}
-			}
-		}
+		//netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_reMakeCards), config.SlotServer)
+		////判断是否在重随 时间段
+		//gameStatus, turnTime := trs.CurrGameTurnStateAndDownTime()
+		//global.GVA_LOG.Infof("CurrGameTurnStateAndDownTime 随牌 OperateCards gameStatus %v, turnTime %v", gameStatus, turnTime)
+		//if gameStatus != int(CliRemakeCard) {
+		//	netMessageResp.AckHead.Code = pbs.Code(common.OutReMakeCardTime)
+		//	NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
+		//	return nil, nil
+		//}
+		//
+		////第几次从随 金币是否够
+		//extractCard := trs.ComRoomSpace.GetExtractCard(userInfo.UserID)
+		//if len(extractCard) >= 4 {
+		//	//重随过 需要扣积分
+		//	extractCardNum := helper.CeilDiv(len(extractCard), 4)
+		//	if extractCardNum > 0 {
+		//		coinConsumeConfig := dao.GetCoinConsumeConfigByType(int(table.GetCoinConsume(extractCardNum)))
+		//		//判断金币是否够
+		//		experienceInfo := dao.GetUserCoinExperience(request.UserId)
+		//		if experienceInfo.CoinNum <= coinConsumeConfig.CoinNum {
+		//			netMessageResp.AckHead.Code = pbs.Code_KingCoinNotEnough
+		//			NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
+		//			return nil, nil
+		//		}
+		//		//扣金币
+		//		err := dao.UpdateUserCoinNumOrExperience(request.UserId, -coinConsumeConfig.CoinNum, 0, 2)
+		//		if err != nil {
+		//			global.GVA_LOG.Error("UnpackCardController ,UpdateUserCoinNumOrExperience err", zap.Any("err", err))
+		//		}
+		//	}
+		//}
 
 		//判断是否有可被选择的牌
-		extractCards, err := trs.ComRoomSpace.GetNotExtractCard(userInfo.UserID)
-		if err != nil || len(extractCards) == 0 {
-			global.GVA_LOG.Error("OperateCards GetNotExtractCard", zap.Error(err))
-			netMessageResp.AckHead.Code = pbs.Code(common.NotExtractCard)
-			NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
-			return nil, nil
-		}
+		//extractCards, err := trs.ComRoomSpace.GetNotExtractCard(userInfo.UserID)
+		//if err != nil || len(extractCards) == 0 {
+		//	global.GVA_LOG.Error("OperateCards GetNotExtractCard", zap.Error(err))
+		//	netMessageResp.AckHead.Code = pbs.Code(common.NotExtractCard)
+		//	NatsSendAimUserMsg(trs, netMessageResp, request.UserId)
+		//	return nil, nil
+		//}
 
 		//重置手中的牌
 
 		//所有牌随机打乱
-		helper.SliceShuffle(extractCards)
-		var (
-			newCards = make([]*table.MbCardConfig, 0) //未被选的牌
-			outCards = make([]*table.MbCardConfig, 0) //给用户要发的牌
-			perCards = make([]*models.Card, 0)        //每个人获取4张牌
-		)
-
-		for _, val := range extractCards {
-			if len(perCards) < 4 {
-				v := &models.Card{
-					CardId:  val.ID,
-					Name:    val.Name,
-					Suffix:  val.SuffixName,
-					Level:   val.Level,
-					AddRate: val.AddRate,
-					UserID:  userId}
-				perCards = append(perCards, v)
-				outCards = append(outCards, val)
-			} else {
-				newCards = append(newCards, val)
-			}
-		}
+		//helper.SliceShuffle(extractCards)
+		//var (
+		//	newCards = make([]*table.MbCardConfig, 0) //未被选的牌
+		//	outCards = make([]*table.MbCardConfig, 0) //给用户要发的牌
+		//	perCards = make([]*models.Card, 0)        //每个人获取4张牌
+		//)
+		//
+		//for _, val := range extractCards {
+		//	if len(perCards) < 4 {
+		//		v := &models.Card{
+		//			CardId:  val.ID,
+		//			Name:    val.Name,
+		//			Suffix:  val.SuffixName,
+		//			Level:   val.Level,
+		//			AddRate: val.AddRate,
+		//			UserID:  userId}
+		//		perCards = append(perCards, v)
+		//		outCards = append(outCards, val)
+		//	} else {
+		//		newCards = append(newCards, val)
+		//	}
+		//}
 
 		//把手里的牌放到本轮随过的数据结构里面
 		//用户当前的牌
 		//用户重随 这个要跟着重置
-		err = trs.ComRoomSpace.AddCurrCard(userInfo.UserID, perCards)
-		if err != nil {
-			global.GVA_LOG.Error("dealCards  AddCurrCard", zap.Error(err))
-		}
-
-		//重置 未抽过的牌
-		trs.ComRoomSpace.ReMakeExtractCard(userInfo.UserID, newCards)
-
-		//把手里的牌放到本轮随过的数据结构里面
-		//保留抽过的牌
-		trs.ComRoomSpace.SaveExtractCard(userInfo.UserID, outCards)
-
-		//发牌:给每一个用户发对应的牌
-		msgData := models.DealCardsMsg{
-			ProtoNum:  strconv.Itoa(int(pbs.Meb_reMakeCards)),
-			Timestamp: time.Now().Unix(),
-			UserId:    userInfo.UserID,
-			RoomNo:    trs.RoomInfo.RoomNo,
-			Turn:      trs.ComRoomSpace.GetTurn(),
-			Cards:     perCards,
-		}
-
-		//给用户发送消息
-		global.GVA_LOG.Infof("发牌的广播: %v", msgData)
-		userStateRespMarshal, _ := json.Marshal(msgData)
-		netMessageResp.Content = userStateRespMarshal
-		NatsSendAimUserMsg(trs, netMessageResp, userInfo.UserID)
+		//err = trs.ComRoomSpace.AddCurrCard(userInfo.UserID, perCards)
+		//if err != nil {
+		//	global.GVA_LOG.Error("dealCards  AddCurrCard", zap.Error(err))
+		//}
+		//
+		////重置 未抽过的牌
+		//trs.ComRoomSpace.ReMakeExtractCard(userInfo.UserID, newCards)
+		//
+		////把手里的牌放到本轮随过的数据结构里面
+		////保留抽过的牌
+		//trs.ComRoomSpace.SaveExtractCard(userInfo.UserID, outCards)
+		//
+		////发牌:给每一个用户发对应的牌
+		//msgData := models.DealCardsMsg{
+		//	ProtoNum:  strconv.Itoa(int(pbs.Meb_reMakeCards)),
+		//	Timestamp: time.Now().Unix(),
+		//	UserId:    userInfo.UserID,
+		//	RoomNo:    trs.RoomInfo.RoomNo,
+		//	Turn:      trs.ComRoomSpace.GetTurn(),
+		//	Cards:     perCards,
+		//}
+		//
+		////给用户发送消息
+		//global.GVA_LOG.Infof("发牌的广播: %v", msgData)
+		//userStateRespMarshal, _ := json.Marshal(msgData)
+		//netMessageResp.Content = userStateRespMarshal
+		//NatsSendAimUserMsg(trs, netMessageResp, userInfo.UserID)
 
 		//随完牌纪录一下具体数据 （mysql 暂时先不纪录）
 		//perCardsMarshal, _ := json.Marshal(perCards)
 		//dao.AddTurnDetails(trs.RoomInfo.RoomNo, userInfo.LikeUserId, userInfo.Nickname, trs.ComRoomSpace.GetTurn(), string(perCardsMarshal), "{}")
 	case int32(common.OperateCards):
-		netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_operateCards), config.NatsMemeBattle)
+		netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_operateCards), config.SlotServer)
 		global.GVA_LOG.Infof("操作牌 用户信息 OperateCards:%v", userInfo)
 
 		if len(cards) != 4 {
@@ -444,7 +444,7 @@ func KickRoom(message []byte, trs *RoomSpace) (resMessage []byte, err error) {
 	}
 	global.GVA_LOG.Infof("KickRoom %v", request)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.OwnerId)), 0, int32(pbs.Meb_kickRoom), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(request.OwnerId, "", int32(pbs.Meb_kickRoom), config.SlotServer)
 
 	if trs.ComRoomSpace.UserOwner.UserID != request.OwnerId {
 		global.GVA_LOG.Error("KickRoom 不是房主 不能踢人 ", zap.Error(err))
@@ -516,7 +516,7 @@ func InviteFriend(message []byte, trs *RoomSpace) (resMessage []byte, err error)
 	}
 	global.GVA_LOG.Infof("InviteFriend %v", request)
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(request.OwnerId)), 0, int32(pbs.Meb_inviteFriend), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_inviteFriend), config.SlotServer)
 
 	if trs.ComRoomSpace.UserOwner.UserID != request.OwnerId {
 		global.GVA_LOG.Error("InviteFriend 不是房主 不能邀请", zap.Error(err))
@@ -546,7 +546,7 @@ func InviteFriend(message []byte, trs *RoomSpace) (resMessage []byte, err error)
 	netMessageResp.Content = responseHeadByte
 
 	//返回的用户id
-	netMessageResp.AckHead.Uid = int32(helper.GetIntUserId(request.InviteUserId))
+	netMessageResp.AckHead.Uid = request.InviteUserId
 
 	global.GVA_LOG.Infof("InviteFriend LikeUserId:{%v} 给客户端发消息:{%v}", request.InviteUserId, msgData)
 
@@ -570,7 +570,7 @@ func StartPlay(message []byte, trs *RoomSpace) (resMessage []byte, err error) {
 
 	userId := request.UserId
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_startPlay), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_startPlay), config.SlotServer)
 
 	userInfo, err := trs.ComRoomSpace.GetUserInfo(userId)
 	if err != nil {
@@ -666,7 +666,7 @@ func JoinRoom(message []byte, trs *RoomSpace) (resMessage []byte, err error) {
 
 	userId = request.UserId
 	roomNo = request.RoomNo
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_joinRoom), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_joinRoom), config.SlotServer)
 
 	//房间满员
 	if int(trs.RoomInfo.IsOpen) == table.RoomStatusFill || trs.RoomInfo.IsOpen != table.RoomStatusOpen {
@@ -834,7 +834,7 @@ func JoinRoom(message []byte, trs *RoomSpace) (resMessage []byte, err error) {
 }
 
 func GoOnJoinRoom(trs *RoomSpace, userId, roomNo string, userInfo *models.UserInfo) error {
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_joinRoom), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_joinRoom), config.SlotServer)
 	//如果原来的房主 回到房间 还是房主
 	if userId == trs.RoomInfo.UserId {
 		trs.RoomInfo.Owner = userId
@@ -934,7 +934,7 @@ func ReJoinRoom(message []byte, trs *RoomSpace) (resMessage []byte, err error) {
 		}
 	}
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_reJoinRoom), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_reJoinRoom), config.SlotServer)
 
 	msgData := models.JoinRoomMsg{
 		ProtoNum:  strconv.Itoa(int(pbs.Meb_reJoinRoom)),
@@ -975,7 +975,7 @@ func Ready(message []byte, trs *RoomSpace) (resMessage []byte, err error) {
 	global.GVA_LOG.Infof("Ready %v", request)
 	userId := request.UserId
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_readyMsg), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_readyMsg), config.SlotServer)
 
 	//获取房间用户信息
 	userInfo, err := trs.ComRoomSpace.GetUserInfo(request.UserId)
@@ -1027,7 +1027,7 @@ func CancelReady(message []byte, trs *RoomSpace) (resMessage []byte, err error) 
 	global.GVA_LOG.Infof("CancelReady %v", request)
 	userId := request.UserId
 
-	netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_cancelReadyMsg), config.NatsMemeBattle)
+	netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_cancelReadyMsg), config.SlotServer)
 
 	//获取房间用户信息
 	userInfo, err := trs.ComRoomSpace.GetUserInfo(request.UserId)
@@ -1111,7 +1111,7 @@ func LeaveRoom(message []byte, trs *RoomSpace) (resMessage []byte, err error) {
 			}
 			responseHeadByte, _ := json.Marshal(msgData)
 
-			netMessageResp := helper.NewNetMessage(int32(helper.GetIntUserId(userId)), 0, int32(pbs.Meb_leaveRoom), config.NatsMemeBattle)
+			netMessageResp := helper.NewNetMessage(userId, "", int32(pbs.Meb_leaveRoom), config.SlotServer)
 			netMessageResp.AckHead.Code = pbs.Code(leaveRoomNotStartGameCode)
 			netMessageResp.Content = responseHeadByte
 

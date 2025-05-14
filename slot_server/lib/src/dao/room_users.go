@@ -77,7 +77,7 @@ func UpdateRoomWinPrice(uid, roomNo string, winPrice float64) error {
 	return nil
 }
 
-func NewestRoomUser(userId string) (tavernRoomUser *table.RoomUsers, err error) {
+func NewestRoomUser(userId string) (tavernRoomUser *table.AnimalPartyRoomUsers, err error) {
 	record, err := table.NewestRoomUsersByUid(userId)
 	if err != nil {
 		global.GVA_LOG.Error("NewestTavernRoomUser", zap.Any("err", err))
@@ -104,8 +104,8 @@ func GetRoomUser(roomNo string, turn int) ([]models.MemeRoomUser, error) {
 		}
 		//character, _ := table.GetUserCharacter(roomUser.UserId)
 		userItem := models.MemeRoomUser{
-			UserID:   roomUser.UserId,
-			Seat:     roomUser.Seat,
+			UserID: roomUser.UserId,
+			//Seat:     roomUser.Seat,
 			Turn:     turn,
 			Nickname: roomUser.Nickname,
 			IsOwner:  isOwner,

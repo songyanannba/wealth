@@ -32,3 +32,18 @@ func LoginAck() {
 
 	})
 }
+
+func CurrAPInfoAck() {
+	CommonService.RegisterHandlers(int32(pbs.ProtocNum_CurrAPInfoAck), func(msg *pbs.NetMessage) {
+		fmt.Println("", msg)
+
+		reqData := &pbs.CurrAPInfoAck{}
+
+		err := proto.Unmarshal(msg.Content, reqData)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("", reqData)
+
+	})
+}

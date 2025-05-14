@@ -2,40 +2,33 @@ package websocket
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"gateway/common"
 	"gateway/global"
-	"gateway/models"
 	"gateway/protoc/pbs"
 	"github.com/golang/protobuf/proto"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"log"
-	"strconv"
 	"time"
 )
 
 const (
-	//MemeBattle 流绑定了2个主题 ，每个主题有一个消费者
-	MemeBattle = "meme_battle" // 流名称
+	AnimalParty = "animal_party" // 流名称
 
-	//发送到 meme服务项目
-	MemeBattleTopic = "meme.battle.topic" // 流绑定的 主题
-	ConsumerName    = "meme_battle_consumer"
+	AnimalPartyTopic        = "animal.party.topic1"   // 流绑定的主题
+	AnimalPartyConsumerName = "animal_party_consumer" //消费者
 
-	//接收 meme项目的返回消息
-	MemeBattleTopicResp = "meme.battle.topic.resp"    // 流绑定的 主题
-	ProducerSubjectResp = "meme_battle_resp_consumer" // 消费者
-
+	AnimalPartyTopicResp           = "animal.party.topic.resp1"   // 流绑定的 主题
+	AnimalPartyProducerSubjectResp = "animal_party_resp_consumer" // 消费者
 )
 
 // memeBattleEnsureStream 确保流存在
 func memeBattleEnsureStream(js jetstream.JetStream) error {
 	_, err := js.CreateStream(context.Background(), jetstream.StreamConfig{
-		Name:      MemeBattle,
-		Subjects:  []string{MemeBattleTopic, MemeBattleTopicResp},
+		Name:      AnimalParty,
+		Subjects:  []string{AnimalPartyTopic, AnimalPartyTopicResp},
 		Retention: jetstream.WorkQueuePolicy,
 		Storage:   jetstream.FileStorage, // 存储类型（文件存储）
 		MaxAge:    2 * time.Hour,         // 消息保留时间
@@ -49,7 +42,7 @@ func memeBattleEnsureStream(js jetstream.JetStream) error {
 
 func (n *natsManager) NewPublishMessages(msg *pbs.NetMessage, js jetstream.JetStream) {
 	marshal, _ := proto.Marshal(msg)
-	if _, err := js.Publish(context.Background(), MemeBattleTopic, marshal); err != nil {
+	if _, err := js.Publish(context.Background(), AnimalPartyTopic, marshal); err != nil {
 		global.GVA_LOG.Error("NewPublishMessages 发布消息失败: %v", zap.Error(err))
 	} else {
 		global.GVA_LOG.Infof("NewPublishMessages 发布消息: %s", string(marshal))
@@ -59,15 +52,15 @@ func (n *natsManager) NewPublishMessages(msg *pbs.NetMessage, js jetstream.JetSt
 // 拉模式消费者服务
 func (n *natsManager) memeBattleServiceSubConsumer() {
 	time.Sleep(2 * time.Second)
-	js, err := n.GetNatsJs(MemeBattle)
+	js, err := n.GetNatsJs(AnimalParty)
 	if err != nil {
 		global.GVA_LOG.Infof("memeBattleServiceSubConsumer %v", zap.Error(err))
 		return
 	}
 
-	cons, err := js.CreateConsumer(context.Background(), MemeBattle, jetstream.ConsumerConfig{
-		Durable:       "MemeBattleTopicResp_Consumer",
-		FilterSubject: MemeBattleTopicResp,
+	cons, err := js.CreateConsumer(context.Background(), AnimalParty, jetstream.ConsumerConfig{
+		Durable:       "AnimalPartyTopicResp_Consumer",
+		FilterSubject: AnimalPartyTopicResp,
 		AckPolicy:     jetstream.AckExplicitPolicy,
 		MaxDeliver:    3,
 		AckWait:       30 * time.Second,
@@ -121,59 +114,85 @@ func (n *natsManager) memeBattleServiceSubConsumer() {
 			}
 
 			//有的协议是广播 现在根据返回头是否存在uid来判断
-			if req.AckHead.Uid == 0 {
+			if req.AckHead.Uid == "" {
 				//jsonData
 				//clientManager.sendAppIDAll([]byte(), appID, ignoreClient)
 
 			} else {
-				uidStr := strconv.Itoa(int(req.AckHead.Uid))
+				uidStr := req.AckHead.Uid
 				clientInfo := GetUserClient(common.AppId10, uidStr)
 				if clientInfo == nil {
 					global.GVA_LOG.Infof(" memeBattleServiceSubConsumer 用户没有客户端,用户可能没登陆 UserID:%v ", req)
 					continue
 				}
 
+				//直接返回客户端
+				if req.AckHead.Code != pbs.Code_OK {
+					message := common.GetErrorMessage(uint32(req.AckHead.Code), "")
+					req.AckHead.Message = message
+				}
+				ackReMarshal, _ := proto.Marshal(req)
+				clientInfo.SendMsg(ackReMarshal)
+
 				//处理返回的消息 返回客户端
 				// 采用 map 注册的方式
-				if value, ok := getNatsProtoResp(req.MsgId); ok {
-					var (
-						code uint32
-						//respMsgId uint32
-						cmd  string
-						data interface{}
-					)
-
-					if req.AckHead.Code != pbs.Code_OK {
-						cmd = strconv.Itoa(int(req.MsgId))
-						code = uint32(req.AckHead.Code)
-					} else {
-						_, code, data = value(req.MsgId, req.Content)
-						cmd = strconv.Itoa(int(req.MsgId))
-						//message := common.GetErrorMessage(code, "")
-						//responseHead := models.NewResponseHead("", cmd, code, message, data)
-						//headByte, err := json.Marshal(responseHead)
-						//if err != nil {
-						//	global.GVA_LOG.Infof("处理数据 json Marshal %v", err)
-						//	continue
-						//}
-						//clientInfo.SendMsg(headByte)
-						//global.GVA_LOG.Infof("gate_way_response send %v %v %v cmd %vcode %v ", clientInfo.Addr, clientInfo.AppID, clientInfo.UserID, req.MsgId, code)
-					}
-
-					message := common.GetErrorMessage(code, "")
-					responseHead := models.NewResponseHead("", cmd, code, message, data)
-					headByte, err := json.Marshal(responseHead)
-					if err != nil {
-						global.GVA_LOG.Infof("处理数据 json Marshal %v", err)
-						continue
-					}
-					clientInfo.SendMsg(headByte)
-					global.GVA_LOG.Infof("gate_way_response send %v %v %v cmd %vcode %v ", clientInfo.Addr, clientInfo.AppID, clientInfo.UserID, req.MsgId, code)
-
-				} else {
-					global.GVA_LOG.Error("处理数据 路由不存在", zap.Any("Addr", clientInfo.Addr), zap.Any("cmd", req.MsgId))
-					continue
-				}
+				//if value, ok := getNatsProtoResp(req.MsgId); ok {
+				//	var (
+				//		code uint32
+				//		//respMsgId uint32
+				//		cmd  string
+				//		data interface{}
+				//	)
+				//
+				//	if req.AckHead.Code != pbs.Code_OK {
+				//		cmd = strconv.Itoa(int(req.MsgId))
+				//		code = uint32(req.AckHead.Code)
+				//	} else {
+				//		_, code, data = value(req.MsgId, req.Content)
+				//		cmd = strconv.Itoa(int(req.MsgId))
+				//		//message := common.GetErrorMessage(code, "")
+				//		//responseHead := models.NewResponseHead("", cmd, code, message, data)
+				//		//headByte, err := json.Marshal(responseHead)
+				//		//if err != nil {
+				//		//	global.GVA_LOG.Infof("处理数据 json Marshal %v", err)
+				//		//	continue
+				//		//}
+				//		//clientInfo.SendMsg(headByte)
+				//		//global.GVA_LOG.Infof("gate_way_response send %v %v %v cmd %vcode %v ", clientInfo.Addr, clientInfo.AppID, clientInfo.UserID, req.MsgId, code)
+				//	}
+				//
+				//	ackMsgId, ackCode, contentByte := value(client, netMessage.MsgId, netMessage.Content)
+				//	ackMsg := common.GetErrorMessage(ackCode, "")
+				//	//client.SendMsg(headByte)
+				//	netMessageResp := &pbs.NetMessage{
+				//		ReqHead: netMessage.ReqHead,
+				//		AckHead: &pbs.AckHead{
+				//			Uid:     netMessage.ReqHead.Uid,
+				//			Code:    pbs.Code(ackCode),
+				//			Message: ackMsg,
+				//		},
+				//		ServiceId: netMessage.ServiceId,
+				//		MsgId:     ackMsgId,
+				//		Content:   contentByte,
+				//	}
+				//	netMessageRespMarshal, _ := proto.Marshal(netMessageResp)
+				//	global.GVA_LOG.Infof("gate_way_response send headByte:%v ", string(contentByte))
+				//	client.SendMsg(netMessageRespMarshal)
+				//
+				//	message := common.GetErrorMessage(code, "")
+				//	responseHead := models.NewResponseHead("", cmd, code, message, data)
+				//	headByte, err := json.Marshal(responseHead)
+				//	if err != nil {
+				//		global.GVA_LOG.Infof("处理数据 json Marshal %v", err)
+				//		continue
+				//	}
+				//	clientInfo.SendMsg(headByte)
+				//	global.GVA_LOG.Infof("gate_way_response send %v %v %v cmd %vcode %v ", clientInfo.Addr, clientInfo.AppID, clientInfo.UserID, req.MsgId, code)
+				//
+				//} else {
+				//	global.GVA_LOG.Error("处理数据 路由不存在", zap.Any("Addr", clientInfo.Addr), zap.Any("cmd", req.MsgId))
+				//	continue
+				//}
 			}
 
 		}

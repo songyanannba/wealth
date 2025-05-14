@@ -37,6 +37,8 @@ const (
 	UnauthorizedUserToken = 1059 // 非法的用户token
 	NotLogin              = 1069 // 未登陆
 	NotSelfKickSelf       = 1100 // 自己不能踢自己
+	NotRoom               = 1032 // 没有房间
+	PasswordErr           = 1033 // 密码错误
 
 )
 
@@ -78,6 +80,8 @@ func GetErrorMessage(code uint32, message string) string {
 		NotRegister:           "not register",
 		UnauthorizedUserToken: "非法的用户token",
 		NotLogin:              "not login",
+		NotRoom:               "not room",
+		PasswordErr:           "密码错误",
 	}
 
 	if message == "" {
