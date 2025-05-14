@@ -43,7 +43,7 @@ func CurrAPInfoAck() {
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println("", reqData)
+		fmt.Println("CurrAPInfoAck", reqData, string(msg.Content))
 
 	})
 }

@@ -65,7 +65,7 @@ func (ws *wsClientService) Start() {
 	go ws.Write()
 	go ws.Read()
 
-	//ws.Test123()
+	ws.Test123()
 	//time.Sleep(2 * time.Second)
 	ws.TestCurrAPInfo()
 	//ws.TestGame()

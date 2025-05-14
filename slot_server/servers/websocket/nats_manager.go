@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"log"
 	"slot_server/lib/config"
@@ -18,16 +17,14 @@ import (
 
 type natsManager struct {
 	NatsConn  *nats.Conn
-	NatsMebJs jetstream.JetStream
-	//PlayersSub map[string]*nats.Subscription
-	Sync sync.Mutex
+	NatsMebJs nats.JetStreamContext
+	Sync      sync.Mutex
 }
 
 var NastManager = natsManager{
 	NatsConn:  nil,
 	NatsMebJs: nil,
-	//PlayersSub: make(map[string]*nats.Subscription),
-	Sync: sync.Mutex{},
+	Sync:      sync.Mutex{},
 }
 
 // 拉模式消费者服务
@@ -35,40 +32,47 @@ func (n *natsManager) consumer() {
 	time.Sleep(2 * time.Second)
 	js := n.NatsMebJs
 
-	cons, err := js.CreateConsumer(context.Background(), config.AnimalParty, jetstream.ConsumerConfig{
-		Durable:       "AnimalPartyTopic_Consumer",
-		FilterSubject: config.AnimalPartyTopic,
-		AckPolicy:     jetstream.AckExplicitPolicy,
-		MaxDeliver:    3,
-		AckWait:       30 * time.Second,
-	})
+	//cons, err := js.CreateConsumer(context.Background(), config.AnimalParty, jetstream.ConsumerConfig{
+	//	Durable:       "AnimalPartyTopic_Consumer",
+	//	FilterSubject: config.AnimalPartyTopic,
+	//	AckPolicy:     jetstream.AckExplicitPolicy,
+	//	MaxDeliver:    3,
+	//	AckWait:       30 * time.Second,
+	//})
+
+	cons, err := js.PullSubscribe(config.AnimalPartyTopic, config.AnimalParty, nats.MaxRequestExpires(10*time.Second), nats.AckWait(30*time.Second), nats.MaxDeliver(3))
+	if err != nil {
+		global.GVA_LOG.Error("memeBattleServiceSubConsumer 创建消费者失败: ", zap.Error(err))
+		return
+	}
+
 	if err != nil {
 		global.GVA_LOG.Error("consumer 创建消费者失败: ", zap.Error(err))
 		return
 	}
 	for {
-		msgs, err := cons.Fetch(100, jetstream.FetchMaxWait(5*time.Second))
+		msgs, err := cons.Fetch(100, nats.MaxWait(5*time.Second))
 
 		if errors.Is(err, context.DeadlineExceeded) {
 			continue
 		} else if err != nil {
-			log.Printf("拉取失败: %v", err)
-			time.Sleep(5 * time.Second)
+			//log.Printf("拉取失败: %v", err)
+			global.GVA_LOG.Infof("consumer 拉取失败:%v ", zap.Error(err))
 			continue
 		}
 		//global.GVA_LOG.Infof("Processing consumer: %v", len(msgs.Messages()))
 
 		// 处理消息
-		for msg := range msgs.Messages() {
-			global.GVA_LOG.Infof("Processing message: %s", string(msg.Data()))
+		for _, msg := range msgs {
+			global.GVA_LOG.Infof("Processing message: %s", string(msg.Data))
 			// 发送处理结果给生产者
 
-			response := []byte("Processed: " + string(msg.Data()))
+			response := []byte("Processed: " + string(msg.Data))
 			global.GVA_LOG.Infof("Sending response: %s", string(response))
 
 			// 发送处理结果给生产者
 			req := &pbs.NetMessage{}
-			err := proto.Unmarshal(msg.Data(), req)
+			err := proto.Unmarshal(msg.Data, req)
 			if err != nil {
 				global.GVA_LOG.Error("Error unmarshalling message: %v", zap.Error(err))
 				continue
@@ -83,7 +87,7 @@ func (n *natsManager) consumer() {
 			if err := msg.Ack(); err != nil {
 				global.GVA_LOG.Infof("Failed to acknowledge message: %v", err)
 			} else {
-				global.GVA_LOG.Infof("Acknowledged: %v", string(msg.Data()))
+				global.GVA_LOG.Infof("Acknowledged: %v", string(msg.Data))
 			}
 
 		}
@@ -91,26 +95,41 @@ func (n *natsManager) consumer() {
 }
 
 func (n *natsManager) Producer(msgData []byte) {
-	_, err := n.NatsMebJs.Publish(context.Background(), config.AnimalPartyTopicResp, msgData)
+	_, err := n.NatsMebJs.Publish(config.AnimalPartyTopicResp, msgData)
+
+	//marshal, _ := proto.Marshal(msg)
+	//if _, err := js.Publish(AnimalPartyTopic, marshal); err != nil {
+	//	global.GVA_LOG.Error("NewPublishMessages 发布消息失败: %v", zap.Error(err))
+	//} else {
+	//	global.GVA_LOG.Infof("NewPublishMessages 发布消息: %s", string(marshal))
+	//}
+
 	if err != nil {
-		global.GVA_LOG.Infof("Failed to send response: %v", err)
+		global.GVA_LOG.Error("Failed to send response: %v", zap.Error(err))
 	}
 }
 
-func memeBattleEnsureStream(js jetstream.JetStream) error {
-	_, err := js.CreateStream(context.Background(), jetstream.StreamConfig{
+func memeBattleEnsureStream(js nats.JetStreamContext) error {
+	streamConfig := &nats.StreamConfig{
 		Name:      config.AnimalParty,
 		Subjects:  []string{config.AnimalPartyTopic, config.AnimalPartyTopicResp},
-		Retention: jetstream.WorkQueuePolicy,
-		Storage:   jetstream.FileStorage, // 存储类型（文件存储）
-		MaxAge:    2 * time.Hour,         // 消息保留时间
-		Replicas:  1,
-	})
-
-	if err != nil && !errors.Is(err, jetstream.ErrStreamNameAlreadyInUse) {
-		return fmt.Errorf("创建流失败: %w", err)
+		Retention: nats.WorkQueuePolicy,
+		//MaxBytes:  1 * 1024 * 1024 * 1024, // 1GB
+		Storage:  nats.FileStorage, // 存储类型（文件存储）
+		MaxAge:   2 * time.Hour,
+		Replicas: 1,
 	}
-	return nil
+
+	// 检查流是否已存在
+	if info, err := js.StreamInfo(config.AnimalParty); err == nil {
+		global.GVA_LOG.Infof("流 %s 已存在，跳过创建\n", info.Config.Name)
+		return nil
+	}
+
+	// 创建新流
+	_, err := js.AddStream(streamConfig)
+	return err
+
 }
 
 func (n *natsManager) Start() {
@@ -139,9 +158,9 @@ func (n *natsManager) Start() {
 }
 
 func (n *natsManager) CreatNatsPubMTJs() {
-	//js, err := n.NatsConn.JetStream()
+	js, err := n.NatsConn.JetStream()
 
-	js, err := jetstream.New(n.NatsConn)
+	//js, err := jetstream.New(n.NatsConn)
 
 	if err != nil {
 		n.Close()

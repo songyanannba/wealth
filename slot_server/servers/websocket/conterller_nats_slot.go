@@ -18,7 +18,7 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 	}
 	global.GVA_LOG.Infof("CurrAPInfos %v", request)
 
-	netMessageResp := helper.NewNetMessage(request.UserId, request.UserId, int32(pbs.ProtocNum_CurrAPInfoReq), config.SlotServer)
+	netMessageResp := helper.NewNetMessage(request.UserId, request.UserId, int32(pbs.ProtocNum_CurrAPInfoAck), config.SlotServer)
 
 	res := &pbs.CurrAPInfoAck{
 		RoomNo:        "",

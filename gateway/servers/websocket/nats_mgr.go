@@ -2,12 +2,9 @@ package websocket
 
 import (
 	"errors"
-	"fmt"
 	"gateway/global"
 	"gateway/protoc/pbs"
-	"github.com/golang/protobuf/proto"
 	"github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"log"
 	"sync"
@@ -15,17 +12,18 @@ import (
 )
 
 type natsManager struct {
-	NatsConn     *nats.Conn
-	NatsPubJsMap map[string]jetstream.JetStream
-	//PlayersSub  map[string]*nats.Subscription
+	NatsConn *nats.Conn
+	//NatsPubJsMap map[string]jetstream.JetStream
+	NatsPubJsMap map[string]nats.JetStreamContext
+
 	Sync *sync.RWMutex
 }
 
 var NastManager = natsManager{
-	NatsConn:     nil,
-	NatsPubJsMap: make(map[string]jetstream.JetStream),
-	//PlayersSub:  make(map[string]*nats.Subscription),
-	Sync: new(sync.RWMutex),
+	NatsConn: nil,
+	//NatsPubJsMap: make(map[string]jetstream.JetStream),
+	NatsPubJsMap: make(map[string]nats.JetStreamContext),
+	Sync:         new(sync.RWMutex),
 }
 
 func (n *natsManager) Start() {
@@ -60,9 +58,8 @@ func (n *natsManager) Start() {
 }
 
 func (n *natsManager) CreatNatsPubMTJs(key string) {
-	//js, err := n.NatsConn.JetStream()
-
-	js, err := jetstream.New(n.NatsConn)
+	js, err := n.NatsConn.JetStream()
+	//js, err := jetstream.New(n.NatsConn)
 
 	if err != nil {
 		n.Close()
@@ -73,7 +70,7 @@ func (n *natsManager) CreatNatsPubMTJs(key string) {
 	n.NatsPubJsMap[key] = js
 
 	// 初始化 JetStream
-	err = memeBattleEnsureStream(js)
+	err = slotServerEnsureStream(js)
 	if err != nil {
 		log.Fatalf("Failed to initialize JetStream: %v", err)
 	}
@@ -83,13 +80,13 @@ func (n *natsManager) Close() {
 	n.NatsConn.Close()
 }
 
-func (n *natsManager) servicePub(where string, msg *pbs.NetMessage) {
-	marshal, _ := proto.Marshal(msg)
-	err := n.NatsConn.Publish(where, marshal)
-	if err != nil {
-		fmt.Println("natsManager err : ", err)
-	}
-}
+//func (n *natsManager) servicePub(where string, msg *pbs.NetMessage) {
+//	marshal, _ := proto.Marshal(msg)
+//	err := n.NatsConn.Publish(where, marshal)
+//	if err != nil {
+//		fmt.Println("natsManager err : ", err)
+//	}
+//}
 
 //func (n *natsManager) SendMemeJs(msg *pbs.NetMessage) {
 //	err := n.publishMessages(msg)
@@ -98,7 +95,7 @@ func (n *natsManager) servicePub(where string, msg *pbs.NetMessage) {
 //	}
 //}
 
-func (n *natsManager) GetNatsJs(topic string) (jetstream.JetStream, error) {
+func (n *natsManager) GetNatsJs(topic string) (nats.JetStreamContext, error) {
 	n.Sync.RLock()
 	defer n.Sync.RUnlock()
 	js, ok := n.NatsPubJsMap[topic]
@@ -122,6 +119,6 @@ func (n *natsManager) SendMemeJs(msg *pbs.NetMessage) {
 
 }
 
-func (n *natsManager) Send(where string, msg *pbs.NetMessage) {
-	n.servicePub(where, msg)
-}
+//func (n *natsManager) Send(where string, msg *pbs.NetMessage) {
+//	n.servicePub(where, msg)
+//}

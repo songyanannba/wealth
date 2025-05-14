@@ -561,24 +561,32 @@ func (rs *ComRoomSpace) NatsSendAllUserMsg(msg *pbs.NetMessage) {
 
 func (rs *ComRoomSpace) NatsSendAimUserMsg(msg *pbs.NetMessage, userId string) {
 	//给客户消息
-	userInfo, ok := rs.UserInfos[userId]
-	if ok {
-		global.GVA_LOG.Infof("NatsSendAimUserMsg UserID:{%v} 给客户端发消息:{%v}", userInfo.UserID, msg)
-		if len(userInfo.UserID) == 0 || userInfo.UserProperty.IsLeave == 1 || userInfo.UserProperty.IsRobot == 1 {
-			return
-		}
-		//userIDInt, err := strconv.Atoi(userInfo.UserID)
-		//if err != nil {
-		//	global.GVA_LOG.Error("NatsSendAimUserMsg err", zap.Any("err", err))
-		//	return
-		//}
-		msg.AckHead.Uid = userId
-		netMessageRespMarshal, _ := proto.Marshal(msg)
-		global.GVA_LOG.Infof("NatsSendAimUserMsg UserID:{%v} 给客户端发消息:{%v}", userInfo.UserID, msg)
-		NastManager.Producer(netMessageRespMarshal)
-	}
-
+	msg.AckHead.Uid = userId
+	netMessageRespMarshal, _ := proto.Marshal(msg)
+	global.GVA_LOG.Infof("NatsSendAimUserMsg UserID:{%v} 给客户端发消息:{%v}", userId, msg)
+	NastManager.Producer(netMessageRespMarshal)
 }
+
+//func (rs *ComRoomSpace) NatsSendAimUserMsg(msg *pbs.NetMessage, userId string) {
+//	//给客户消息
+//	userInfo, ok := rs.UserInfos[userId]
+//	if ok {
+//		global.GVA_LOG.Infof("NatsSendAimUserMsg UserID:{%v} 给客户端发消息:{%v}", userInfo.UserID, msg)
+//		if len(userInfo.UserID) == 0 || userInfo.UserProperty.IsLeave == 1 || userInfo.UserProperty.IsRobot == 1 {
+//			return
+//		}
+//		//userIDInt, err := strconv.Atoi(userInfo.UserID)
+//		//if err != nil {
+//		//	global.GVA_LOG.Error("NatsSendAimUserMsg err", zap.Any("err", err))
+//		//	return
+//		//}
+//		msg.AckHead.Uid = userId
+//		netMessageRespMarshal, _ := proto.Marshal(msg)
+//		global.GVA_LOG.Infof("NatsSendAimUserMsg UserID:{%v} 给客户端发消息:{%v}", userInfo.UserID, msg)
+//		NastManager.Producer(netMessageRespMarshal)
+//	}
+//
+//}
 
 // MatsSendExcludeUserMsg 排除制定用户
 func (rs *ComRoomSpace) MatsSendExcludeUserMsg(msg *pbs.NetMessage, userId string) {
