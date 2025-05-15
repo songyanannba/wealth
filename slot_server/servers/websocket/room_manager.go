@@ -426,12 +426,16 @@ func (trMgr *roomManager) InitDBData() {
 	roomSpaceInfo.ComRoomSpace.IsStartGame = true
 
 	//游戏每 小轮状态 游戏开始
-	roomSpaceInfo.ComRoomSpace.ChangeGameState(EnGameStartIng)
+	roomSpaceInfo.ComRoomSpace.ChangeGameState(BetIng)
 
 	roomSpaceInfo.ComRoomSpace.SetGameStartTime(helper.LocalTime().Unix()) //游戏开始时间
 
 	//添加到全局房间管理器
-	SlotRoomManager.AddRoomSpace(animalPartyRoom.RoomNo, roomSpaceInfo)
+	SlotRoomManager.AddRoomSpace(animalPartyRoom.Name, roomSpaceInfo)
+
+	//颜色配置
+	roomSpaceInfo.ColorConfigs = GetColorWheel()
+	go roomSpaceInfo.Start()
 }
 
 func (trMgr *roomManager) SendMsg(message []byte) {

@@ -17,6 +17,29 @@ import (
 	"time"
 )
 
+func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
+	global.GVA_LOG.Infof("AnimalPartyCalculateExecFunc 房间 {%v}", trs.RoomInfo.RoomNo)
+
+	//告诉最外轮在的所在位置
+
+}
+
+func AnimalPartyCalculateExecFunc(trs *RoomSpace) {
+	global.GVA_LOG.Infof("AnimalPartyCalculateExecFunc 房间 {%v}", trs.RoomInfo.RoomNo)
+
+	//计算逻辑
+
+	//当前指针所在方向
+
+	//当前所有用户的押注分布
+
+	//哪些用户赢钱
+
+	//保存数据库
+
+	//推送消息
+}
+
 // CalculateExecFunc  计算 并结束
 func CalculateExecFunc(trs *RoomSpace) {
 	global.GVA_LOG.Infof("CalculateExecFunc 房间 {%v} 第{%v} 轮 都点过赞了", trs.RoomInfo.RoomNo, trs.ComRoomSpace.GetTurn())

@@ -24,39 +24,24 @@ const (
 	*/
 
 	EnGameStartExec //游戏开始 还没执行发送广播
-	EnGameStartIng  //游戏开始 已经发送完广播 在开始中 还有用户没有加载
-	DisGameStart
+
+	EnGameStartIng //游戏开始 已经发送完广播 在开始中 还有用户没有加载
+
+	//BetIng 押注阶段
+	BetIng
+
+	//EnWheelAnimalPartyCalculateExec 计算阶段
+	EnWheelAnimalPartyCalculateExec
+	EnAnimalPartyCalculateExec
 
 	//EnLoadExec 加载
 	EnLoadExec // 加载阶段
-	EnLoadIng
-	DisLoad // 加载阶段结束 到达这个状态哦 说明是问题阶段开始的信号
 
-	/**
-	问题阶段/执行发牌 是内部阶段 状态只存在理论上
-	*/
-
-	// IssueStage 问题阶段
-	IssueStage //IssueStage 问题阶段，收到问题 还没收到牌 说明是随牌阶段开始的信号
-	// OutCartExec 执行发牌
-	OutCartExec
-	EnOutCart
-	DisOutCart
-
-	// RemakeCardExec 随牌阶段 + 出牌阶段
-	RemakeCardExec
 	RemakeCardIng //随牌阶段
-	OutCartIng    //出牌阶段
-	OutCartEd     //出牌阶段 结束 ；当全部用户出完牌  说明是点赞阶段开始的信号
 
 	// EnLikePageExec 点赞阶段
 	EnLikePageExec
-	//EnLikePage  //点赞阶段 进入点赞页面服务状态 (全部用户出完牌的时候)
-	//DisLikePage //点赞阶段 通知所有用户 进入点赞页面的完成
-
 	EnLikeCardIng //点赞进行中
-	EnLikeCard    //点赞阶段 全部用户完成点赞的时候 ｜ 本轮是否都已点赞 如果是，进入下一轮或者游戏结束
-	DisLikeCard   //点赞阶段 通知全部用户完成点赞完成 ； 说明是计算阶段开始的信号 或者下一轮问题阶段开始的信号
 
 	//EnNextTurnExec 计算或者结束阶段
 	EnNextTurnExec  //进入下一轮阶段 进入下轮轮后是随牌阶段
@@ -268,15 +253,17 @@ func (trs *RoomSpace) ExecProcessTurnStateFunc(key GameTurnState) {
 
 func (trs *RoomSpace) InItTurnStateFunc() {
 	//房主开始游戏的执行逻辑
-	trs.RegisterTurnStateFunc(EnGameStartExec, SendGameStartBroadcast)
-	//记载完成的执行逻辑
-	trs.RegisterTurnStateFunc(EnLoadExec, SendEnLoadBroadcast)
-	//都出过牌的时候 发送进入点赞页面的广播
-	trs.RegisterTurnStateFunc(EnLikePageExec, EntryLikePage)
-	//点赞结束 进入下一轮
-	trs.RegisterTurnStateFunc(EnNextTurnExec, NextTurnExecFunc)
+	//trs.RegisterTurnStateFunc(EnGameStartExec, SendGameStartBroadcast)
+	////记载完成的执行逻辑
+	//trs.RegisterTurnStateFunc(EnLoadExec, SendEnLoadBroadcast)
+	////都出过牌的时候 发送进入点赞页面的广播
+	//trs.RegisterTurnStateFunc(EnLikePageExec, EntryLikePage)
+	////点赞结束 进入下一轮
+	//trs.RegisterTurnStateFunc(EnNextTurnExec, NextTurnExecFunc)
 	//点赞结束 计算
-	trs.RegisterTurnStateFunc(EnCalculateExec, CalculateExecFunc)
+	//trs.RegisterTurnStateFunc(EnCalculateExec, CalculateExecFunc)
+
+	trs.RegisterTurnStateFunc(EnWheelAnimalPartyCalculateExec, WheelAnimalPartyCalculateExec)
 }
 
 func (trs *RoomSpace) ExecAutoNextTurnState(key GameTurnState) {

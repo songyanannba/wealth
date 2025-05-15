@@ -26,52 +26,56 @@ func NatsSendAimUserMsg(trs *RoomSpace, msg *pbs.NetMessage, userId string) {
 }
 
 func (trs *RoomSpace) InItFunc() {
+
+	//动物配置
+	trs.AnimalConfigs = GetAnimalWheel()
+
 	//初始房间卡牌
-	if len(trs.RoomBaseCard) == 0 {
-		trs.RoomBaseCard = SlotRoomManager.RoomBaseCard
-	}
-
-	if trs.RoomVersionCard != nil {
-		trs.RoomVersionCard = SlotRoomManager.RoomVersionCard
-	}
-
-	//初始房间问题
-	if len(trs.RoomIssueConfig) == 0 {
-		trs.RoomIssueConfig = SlotRoomManager.RoomIssueConfig
-	}
+	//if len(trs.RoomBaseCard) == 0 {
+	//	trs.RoomBaseCard = SlotRoomManager.RoomBaseCard
+	//}
+	//
+	//if trs.RoomVersionCard != nil {
+	//	trs.RoomVersionCard = SlotRoomManager.RoomVersionCard
+	//}
+	//
+	////初始房间问题
+	//if len(trs.RoomIssueConfig) == 0 {
+	//	trs.RoomIssueConfig = SlotRoomManager.RoomIssueConfig
+	//}
 
 	//加入房间
-	trs.Register(strconv.Itoa(int(pbs.Meb_joinRoom)), JoinRoom)
-
-	//重新加入房间
-	trs.Register(strconv.Itoa(int(pbs.Meb_reJoinRoom)), ReJoinRoom)
-
-	//离开房间
-	trs.Register(strconv.Itoa(int(pbs.Meb_leaveRoom)), LeaveRoom)
-
-	//就绪
-	trs.Register(strconv.Itoa(int(pbs.Meb_readyMsg)), Ready)
-
-	//取消就绪
-	trs.Register(strconv.Itoa(int(pbs.Meb_cancelReady)), CancelReady)
-
-	//被踢
-	trs.Register(strconv.Itoa(int(pbs.Meb_kickRoom)), KickRoom)
-
-	//开始游戏
-	trs.Register(strconv.Itoa(int(pbs.Meb_startPlay)), StartPlay)
-
-	//确认加载完成
-	trs.Register(strconv.Itoa(int(pbs.Meb_loadCompleted)), LoadCompleted)
-
-	//邀请
-	trs.Register(strconv.Itoa(int(pbs.Meb_inviteFriend)), InviteFriend)
-
-	//操作牌 Meb_operateCards
-	trs.Register(strconv.Itoa(int(pbs.Meb_operateCards)), OperateCards)
-
-	//点赞
-	trs.Register(strconv.Itoa(int(pbs.Meb_likeCards)), LikeCards)
+	//trs.Register(strconv.Itoa(int(pbs.Meb_joinRoom)), JoinRoom)
+	//
+	////重新加入房间
+	//trs.Register(strconv.Itoa(int(pbs.Meb_reJoinRoom)), ReJoinRoom)
+	//
+	////离开房间
+	//trs.Register(strconv.Itoa(int(pbs.Meb_leaveRoom)), LeaveRoom)
+	//
+	////就绪
+	//trs.Register(strconv.Itoa(int(pbs.Meb_readyMsg)), Ready)
+	//
+	////取消就绪
+	//trs.Register(strconv.Itoa(int(pbs.Meb_cancelReady)), CancelReady)
+	//
+	////被踢
+	//trs.Register(strconv.Itoa(int(pbs.Meb_kickRoom)), KickRoom)
+	//
+	////开始游戏
+	//trs.Register(strconv.Itoa(int(pbs.Meb_startPlay)), StartPlay)
+	//
+	////确认加载完成
+	//trs.Register(strconv.Itoa(int(pbs.Meb_loadCompleted)), LoadCompleted)
+	//
+	////邀请
+	//trs.Register(strconv.Itoa(int(pbs.Meb_inviteFriend)), InviteFriend)
+	//
+	////操作牌 Meb_operateCards
+	//trs.Register(strconv.Itoa(int(pbs.Meb_operateCards)), OperateCards)
+	//
+	////点赞
+	//trs.Register(strconv.Itoa(int(pbs.Meb_likeCards)), LikeCards)
 
 }
 

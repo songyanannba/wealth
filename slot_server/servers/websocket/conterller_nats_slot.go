@@ -20,12 +20,35 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 
 	netMessageResp := helper.NewNetMessage(request.UserId, request.UserId, int32(pbs.ProtocNum_CurrAPInfoAck), config.SlotServer)
 
+	aPRoomInfos := &pbs.APRoomInfos{
+		UserBetInfos: make([]*pbs.UserBetInfos, 0),
+		ColorConfig:  make([]*pbs.ColorConfig, 0),
+		AnimalConfig: make([]*pbs.AnimalConfig, 0),
+	}
+
 	res := &pbs.CurrAPInfoAck{
 		RoomNo:        "",
 		CurrPeriod:    "",
 		GameStartTime: 0,
 		GameTurnState: 0,
-		APRoomInfos:   nil,
+		APRoomInfos:   aPRoomInfos,
+		BetZoneConf:   make([]*pbs.BetZoneConfig, 0),
+	}
+
+	for _, betZoneFigure := range GetBetZoneFigure() {
+		var colorIdArr []int32
+		if len(betZoneFigure.ColorId) > 0 {
+			for _, colorId := range betZoneFigure.ColorId {
+				colorIdArr = append(colorIdArr, int32(colorId))
+			}
+		}
+		res.BetZoneConf = append(res.BetZoneConf, &pbs.BetZoneConfig{
+			Seat:     int32(betZoneFigure.Seat),
+			AnimalId: int32(betZoneFigure.AnimalId),
+			ColorId:  colorIdArr,
+			Size:     int32(betZoneFigure.Size),
+			BetRate:  float32(betZoneFigure.BetRate),
+		})
 	}
 
 	//房间是否存活
@@ -52,11 +75,27 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 		res.GameStartTime = roomSpaceInfo.ComRoomSpace.GetGameStartTime()
 
 		for uid, uInfo := range roomSpaceInfo.ComRoomSpace.UserInfos {
-			res.APRoomInfos = append(res.APRoomInfos, &pbs.APRoomInfos{
+			res.APRoomInfos.UserBetInfos = append(res.APRoomInfos.UserBetInfos, &pbs.UserBetInfos{
 				UserId:    uid,
 				BetZoneId: int32(uInfo.UserProperty.BetZoneId),
 				Bet:       float32(uInfo.UserProperty.Bet),
 			})
+		}
+
+		for _, colorConfig := range roomSpaceInfo.ColorConfigs {
+			res.APRoomInfos.ColorConfig = append(res.APRoomInfos.ColorConfig, &pbs.ColorConfig{
+				Seat:    int32(colorConfig.Seat),
+				ColorId: int32(colorConfig.ColorId),
+			})
+		}
+
+		if len(roomSpaceInfo.AnimalConfigs) > 0 {
+			for _, animalConfig := range roomSpaceInfo.AnimalConfigs {
+				res.APRoomInfos.AnimalConfig = append(res.APRoomInfos.AnimalConfig, &pbs.AnimalConfig{
+					Seat:     int32(animalConfig.Seat),
+					AnimalId: int32(animalConfig.AnimalId),
+				})
+			}
 		}
 
 		ptAck, _ := proto.Marshal(res)

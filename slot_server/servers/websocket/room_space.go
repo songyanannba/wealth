@@ -28,6 +28,10 @@ type RoomSpace struct {
 	//房间信息
 	RoomInfo *table.AnimalPartyRoom
 
+	AnimalConfigs []*AnimalConfig
+
+	ColorConfigs []*ColorConfig
+
 	//房间配置
 	MemeRoomConfig *table.MemeRoomConfig
 
@@ -69,6 +73,7 @@ type RoomSpace struct {
 func GetRoomSpace() *RoomSpace {
 	trSpace := &RoomSpace{
 		RoomInfo:              &table.AnimalPartyRoom{},
+		AnimalConfigs:         []*AnimalConfig{},
 		MemeRoomConfig:        &table.MemeRoomConfig{},
 		RoomBaseCard:          make([]*table.MbCardConfig, 0),
 		RoomVersionCard:       make(map[int][]*table.MbCardConfig),
@@ -107,7 +112,7 @@ func (trs *RoomSpace) Start() {
 	defer serviceTimer.Stop()
 
 	//游戏轮状态检测
-	GameTurnStateTimer := time.NewTicker(time.Second * 3)
+	GameTurnStateTimer := time.NewTicker(time.Second * 5)
 	defer GameTurnStateTimer.Stop()
 
 	defer func() {
@@ -149,7 +154,8 @@ func (trs *RoomSpace) Start() {
 			//trs.AnalyzeRoom()
 		case message := <-trs.ComRoomSpace.ReceiveMsg:
 			// 接收待处理的事件
-			trs.ProcessData(message)
+			global.GVA_LOG.Infof("ReceiveMsg message %v ", message)
+			//trs.ProcessData(message)
 		case <-clearRobotRoomTimer.C:
 			//如果长时间 用户不进入下一轮 判定为见好就收
 			global.GVA_LOG.Infof("clearRobotRoomTimer 房间编号 %v", trs.RoomInfo.RoomNo)
@@ -203,33 +209,70 @@ func (trs *RoomSpace) GetHandlers(key string) (value MemeDisposeFunc, ok bool) {
 	return
 }
 
-// GameTurnStateCheck 每3秒检查一下状态变化
 func (trs *RoomSpace) GameTurnStateCheck() {
 	trs.ComRoomSpace.Sync.Lock()
 	defer trs.ComRoomSpace.Sync.Unlock()
 
 	var (
-		currTime = time.Now().Unix()
+		currTime = helper.LocalTime().Unix()
 	)
-	global.GVA_LOG.Infof("GameTurnStateCheck 执行,currTime:%v 房间编号 %v", currTime, trs.RoomInfo.RoomNo)
 
 	//不同状态 触发不同方法
 
+	//gState := trs.ComRoomSpace.GetGameState()
+	//global.GVA_LOG.Infof("GameTurnStateCheck 游戏状态%v", gState)
+
+	//1 -30 押注期间
+	//30-60 理论上的计算期间
+	//计算期间不让押注
+	//计算完 推送计算结果
+	//计算完 自动开始下一轮
+
 	gState := trs.ComRoomSpace.GetGameState()
-	global.GVA_LOG.Infof("GameTurnStateCheck 游戏状态%v", gState)
+	currGameStartTime := trs.ComRoomSpace.GetGameStartTime()
+	global.GVA_LOG.Infof("GameTurnStateCheck 执行,currTime:%v 房间编号:%v ,gState:%v ,currGameStartTime:%v", currTime, trs.RoomInfo.RoomNo, gState, currGameStartTime)
 
-	//自动判断执行逻辑
-	trs.ExecProcessTurnStateFunc(gState)
+	//押注期间
+	if gState == BetIng {
+		return
+	}
 
-	//自动判断 进入下一个状态
-	//trs.ExecAutoNextTurnState(gState)
+	if currTime-currGameStartTime > 30 {
+		//告诉客户端开始计算
+		trs.ComRoomSpace.ChangeGameState(EnWheelAnimalPartyCalculateExec)
+	}
 
-	//机器人用户行为
-	trs.RobotAction()
+	trs.ExecProcessTurnStateFunc(trs.ComRoomSpace.GetGameState())
 
-	//超时自动出牌
-	trs.OutTimePlayHand()
 }
+
+// GameTurnStateCheck 每3秒检查一下状态变化
+//func (trs *RoomSpace) GameTurnStateCheck() {
+//	trs.ComRoomSpace.Sync.Lock()
+//	defer trs.ComRoomSpace.Sync.Unlock()
+//
+//	var (
+//		currTime = time.Now().Unix()
+//	)
+//	global.GVA_LOG.Infof("GameTurnStateCheck 执行,currTime:%v 房间编号 %v", currTime, trs.RoomInfo.RoomNo)
+//
+//	//不同状态 触发不同方法
+//
+//	gState := trs.ComRoomSpace.GetGameState()
+//	global.GVA_LOG.Infof("GameTurnStateCheck 游戏状态%v", gState)
+//
+//	//自动判断执行逻辑
+//	trs.ExecProcessTurnStateFunc(gState)
+//
+//	//自动判断 进入下一个状态
+//	//trs.ExecAutoNextTurnState(gState)
+//
+//	//机器人用户行为
+//	trs.RobotAction()
+//
+//	//超时自动出牌
+//	trs.OutTimePlayHand()
+//}
 
 // OutTimePlayHand 超时出牌（托管）
 func (trs *RoomSpace) OutTimePlayHand() {
@@ -448,6 +491,8 @@ func (trs *RoomSpace) IntoNextRoom(roomNo string) {
 
 	//2 添加到全局房间管理器
 	SlotRoomManager.AddRoomSpace(roomInfo.RoomNo, roomSpaceInfo)
+
+	roomSpaceInfo.ComRoomSpace.ChangeGameState(BetIng)
 
 	//每个小房间是一个 协成
 	go roomSpaceInfo.Start()
