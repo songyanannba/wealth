@@ -132,19 +132,21 @@ func (trs *RoomSpace) Start() {
 			global.GVA_LOG.Infof("游戏结束 关闭房间 ============ %v 中", trs.RoomInfo)
 			//没有开始的房间
 			if trs.RoomInfo.IsOpen == table.RoomStatusIng {
-				//计算最终收益
+				//回收资源 开始下一期
 				trs.AnalyzeFinalIncome()
 			}
+
+			//trs.AnalyzeFinalIncome()
 
 			//关闭资源
 			close(trs.ComRoomSpace.Broadcast)
 			close(trs.ComRoomSpace.ReceiveMsg)
 
 			//清理房间管理器的房间
-			_, ok := SlotRoomManager.Rooms[trs.RoomInfo.RoomNo]
-			if ok {
-				SlotRoomManager.DelRoom(trs.RoomInfo.RoomNo)
-			}
+			//_, ok := SlotRoomManager.Rooms[trs.RoomInfo.RoomNo]
+			//if ok {
+			//	SlotRoomManager.DelRoom(trs.RoomInfo.RoomNo)
+			//}
 			return
 		case <-GameTurnStateTimer.C:
 			//游戏轮状态检测
@@ -233,11 +235,11 @@ func (trs *RoomSpace) GameTurnStateCheck() {
 	global.GVA_LOG.Infof("GameTurnStateCheck 执行,currTime:%v 房间编号:%v ,gState:%v ,currGameStartTime:%v", currTime, trs.RoomInfo.RoomNo, gState, currGameStartTime)
 
 	//押注期间
-	if gState == BetIng {
+	if gState == BetIng && currTime-currGameStartTime <= BetIngPeriod {
 		return
 	}
 
-	if currTime-currGameStartTime > 30 {
+	if gState == BetIng && currTime-currGameStartTime > BetIngPeriod {
 		//告诉客户端开始计算
 		trs.ComRoomSpace.ChangeGameState(EnWheelAnimalPartyCalculateExec)
 	}
@@ -247,32 +249,54 @@ func (trs *RoomSpace) GameTurnStateCheck() {
 }
 
 // GameTurnStateCheck 每3秒检查一下状态变化
-//func (trs *RoomSpace) GameTurnStateCheck() {
-//	trs.ComRoomSpace.Sync.Lock()
-//	defer trs.ComRoomSpace.Sync.Unlock()
-//
-//	var (
-//		currTime = time.Now().Unix()
-//	)
-//	global.GVA_LOG.Infof("GameTurnStateCheck 执行,currTime:%v 房间编号 %v", currTime, trs.RoomInfo.RoomNo)
-//
-//	//不同状态 触发不同方法
-//
-//	gState := trs.ComRoomSpace.GetGameState()
-//	global.GVA_LOG.Infof("GameTurnStateCheck 游戏状态%v", gState)
-//
-//	//自动判断执行逻辑
-//	trs.ExecProcessTurnStateFunc(gState)
-//
-//	//自动判断 进入下一个状态
-//	//trs.ExecAutoNextTurnState(gState)
-//
-//	//机器人用户行为
-//	trs.RobotAction()
-//
-//	//超时自动出牌
-//	trs.OutTimePlayHand()
-//}
+func (trs *RoomSpace) GameTurnStateCheck1() {
+	trs.ComRoomSpace.Sync.Lock()
+	defer trs.ComRoomSpace.Sync.Unlock()
+
+	var (
+		currTime = time.Now().Unix()
+	)
+	global.GVA_LOG.Infof("GameTurnStateCheck 执行,currTime:%v 房间编号 %v", currTime, trs.RoomInfo.RoomNo)
+
+	//不同状态 触发不同方法
+
+	gState := trs.ComRoomSpace.GetGameState()
+	global.GVA_LOG.Infof("GameTurnStateCheck 游戏状态%v", gState)
+
+	//自动判断执行逻辑
+	trs.ExecProcessTurnStateFunc(gState)
+
+	//自动判断 进入下一个状态
+	//trs.ExecAutoNextTurnState(gState)
+
+	//机器人用户行为
+	trs.RobotAction()
+
+	//超时自动出牌
+	trs.OutTimePlayHand()
+}
+
+func (trs *RoomSpace) GetAnimalConfigsBySeat(seat int) *AnimalConfig {
+	res := &AnimalConfig{}
+	for _, animalConfigs := range trs.AnimalConfigs {
+		if animalConfigs.Seat == seat {
+			res = animalConfigs
+			break
+		}
+	}
+	return res
+}
+
+func (trs *RoomSpace) GetColorConfigsBySeat(seat int) *ColorConfig {
+	res := &ColorConfig{}
+	for _, colorConfigs := range trs.ColorConfigs {
+		if colorConfigs.Seat == seat {
+			res = colorConfigs
+			break
+		}
+	}
+	return res
+}
 
 // OutTimePlayHand 超时出牌（托管）
 func (trs *RoomSpace) OutTimePlayHand() {
@@ -396,106 +420,67 @@ func (trs *RoomSpace) OutTimePlayHand() {
 
 func (trs *RoomSpace) AnalyzeFinalIncome() {
 	//var tavernRoomUsers []models.MemeRoomUser
-	//房间最终玩家
-
-	//给最终赢钱玩家发钱
-	winUser := &models.UserInfo{}
-	//for _, userInfo := range trs.ComRoomSpace.UserInfos {
-	//	if userInfo.GetUserIsKilled() == 1 {
-	//		continue
-	//	}
-	//	payPrice, _ := strconv.ParseFloat(fmt.Sprintf("%.2f", helper.Mul(trs.MemeRoomConfig.Bet, trs.RoomInfo.UserNumLimit)), 64)
-	//	err := logic.AddUserScore(userInfo.UserID, trs.RoomInfo.RoomNo, 0, payPrice, models.TavernStoryWinAddCoin, "最终赢钱玩家")
-	//	if err != nil {
-	//		global.GVA_LOG.Error("AnalyzeFinalIncome AddUserScore 最终赢钱玩家", zap.Error(err))
-	//	}
-	//	userInfo.UserProperty.WinPrice = payPrice
-	//	winUser = userInfo
-	//
-	//	// 最终结算 埋点（每个用户当天的收益）
-	//	dao.TavernRoomUserProfitDay(userInfo.UserID, payPrice, 1, 1)
-	//
-	//	//最终赢钱的时候计算场次费用（全部用户当天的收益）
-	//	admissionPrice, _ := strconv.ParseFloat(fmt.Sprintf("%.2f", helper.Mul(trs.MemeRoomConfig.AdmissionPrice, trs.RoomInfo.UserNumLimit)), 64)
-	//	dao.UpdateTavernRoomAllUserDay(admissionPrice, 0)
-	//
-	//	err = dao.UpdateTavernRoomWinPrice(userInfo.UserID, trs.RoomInfo.RoomNo, payPrice)
-	//	if err != nil {
-	//		global.GVA_LOG.Error("AnalyzeFinalIncome UpdateTavernRoomWinPrice ", zap.Error(err))
-	//	}
-	//	//dao.UpdateTavernRoomTurnDetails(trs.RoomInfo.RoomNo, userInfo.UserID, trs.ComRoomSpace.GetTurn(), payPrice)
-	//	break
-	//}
-
-	tavernRoomUsers, _ := trs.ComRoomSpace.UserInfoToRoomUser()
-	for _, userInfo := range tavernRoomUsers {
-		if userInfo.UserID == winUser.UserID {
-			userInfo.WinPrice = winUser.UserProperty.WinPrice
-		}
-
-		tavernUserRoomData := table.NewUserRoom(userInfo.UserID, "", "", 0, 0, 0, 0, 0, 0, 0)
-		err := dao.CreateOrUpdateUsersRoom(tavernUserRoomData)
-		if err != nil {
-			global.GVA_LOG.Error("AnalyzeFinalIncome", zap.Any("CreateOrUpdateUsersRoom", err))
-		}
-	}
 
 	//继续游戏的房间
 	nNo := uuid.New().String()
-	trs.IntoNextRoom(nNo)
+	//trs.IntoNextRoom(nNo)
+	newRoomSpace := trs.IntoNextRoom(nNo)
 
-	netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_memeBattleOver), config.SlotServer)
-	//发送广播
-	msgData := models.GameOverMsg{
-		ProtoNum:  strconv.Itoa(int(pbs.Meb_memeBattleOver)),
-		Timestamp: time.Now().Unix(),
-		RoomCom: models.RoomCom{
-			RoomNo:     trs.RoomInfo.RoomNo,
-			NextRoomNo: nNo,
-		},
-		RoomUserList: tavernRoomUsers,
+	if newRoomSpace == nil {
+		return
 	}
+
+	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_ColorSortMsg), config.SlotServer)
+	//发送广播
+	msgData := &pbs.ColorSortMsg{}
+	for _, colorConfig := range newRoomSpace.ColorConfigs {
+		msgData.ColorConfig = append(msgData.ColorConfig, &pbs.ColorConfig{
+			Seat:    int32(colorConfig.Seat),
+			ColorId: int32(colorConfig.ColorId),
+		})
+	}
+
 	//给用户消息
-	global.GVA_LOG.Infof("游戏结束: %v", msgData)
+	global.GVA_LOG.Infof("游戏结束 下一轮开始: %v", msgData)
 	responseHeadByte, _ := json.Marshal(msgData)
 	netMessageResp.Content = responseHeadByte
-	NatsSendAllUserMsg(trs, netMessageResp)
+	NatsSendAimUserMsg(trs, netMessageResp, "")
 
-	//直接设置游戏结束
-	//trs.ComRoomSpace.ChangeGameState(GameOver)
+}
 
+func (trs *RoomSpace) IntoNextRoom(roomNo string) *RoomSpace {
 	trs.RoomInfo.IsOpen = table.RoomStatusStop
 	err := table.SaveMemeRoom(trs.RoomInfo)
 	if err != nil {
 		global.GVA_LOG.Error("LeaveRoom SaveMemeRoom", zap.Error(err))
 	}
-}
 
-func (trs *RoomSpace) IntoNextRoom(roomNo string) {
-	roomInfo := table.NewAnimalPartyRoom(trs.RoomInfo.UserId, "", roomNo, trs.RoomInfo.Name, "继续游戏房间", "",
+	period := helper.Itoa(helper.Atoi(trs.RoomInfo.Period) + 1)
+
+	roomInfo := table.NewAnimalPartyRoom("", "", roomNo, trs.RoomInfo.Name, "第"+period+"期", helper.Itoa(helper.Atoi(trs.RoomInfo.Period)+1),
 		table.TavernRoomOpen, trs.RoomInfo.RoomType, trs.RoomInfo.RoomLevel, table.RoomClassMatch, trs.RoomInfo.RoomTurnNum, trs.RoomInfo.UserNumLimit)
 	roomInfo.IsGoOn = 1
-	err := table.CreateMemeRoom(roomInfo)
+	err = table.CreateMemeRoom(roomInfo)
 	if err != nil {
 		global.GVA_LOG.Error("IntoNextRoom CreateMemeRoom:{%v},roomInfo:%v", zap.Error(err))
-		return
+		return nil
 	}
 
 	//1 先创建对局空间
 	roomSpaceInfo := GetRoomSpace()
 	roomSpaceInfo.RoomInfo = roomInfo
-
-	roomSpaceInfo.ComRoomSpace.AddTurn()
-
-	//roomSpaceInfo.MemeRoomConfig = trs.MemeRoomConfig
+	roomSpaceInfo.ComRoomSpace.ChangeGameState(BetIng)
+	roomSpaceInfo.ComRoomSpace.IsStartGame = true
+	roomSpaceInfo.ComRoomSpace.SetGameStartTime(helper.LocalTime().Unix()) //游戏开始时间
+	roomSpaceInfo.ColorConfigs = GetColorWheel()
 
 	//2 添加到全局房间管理器
-	SlotRoomManager.AddRoomSpace(roomInfo.RoomNo, roomSpaceInfo)
-
-	roomSpaceInfo.ComRoomSpace.ChangeGameState(BetIng)
+	SlotRoomManager.ReRoomSpace(roomInfo.Name, roomSpaceInfo)
 
 	//每个小房间是一个 协成
 	go roomSpaceInfo.Start()
+
+	return roomSpaceInfo
 }
 
 func (trs *RoomSpace) ClearRoom() bool {

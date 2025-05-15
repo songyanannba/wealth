@@ -34,6 +34,15 @@ enum ProtocNum {
   CurrAPInfoReq =10004;
   CurrAPInfoAck =10005;
 
+  //押注停止后 主动下发最外圈的动物排序，第一个排在最上面 位置0开始
+  AnimalSortMsg =10006;
+
+  //当前期是否赢钱的通知
+  CurrPeriodUserWinMsg =10007;
+
+  //当前轮结束 下一轮开始发送颜色列表
+  ColorSortMsg =10008;
+
 }
 
 

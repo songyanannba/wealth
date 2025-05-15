@@ -79,7 +79,7 @@ func Login(client *Client, msgId int32, message []byte) (respMsgId int32, code u
 	if err != nil {
 		code = common.ServerRedisError
 		global.GVA_LOG.Error("用户登录 SetUserOnlineInfo", zap.Any("", err))
-		return
+		return int32(pbs.ProtocNum_LoginAck), uint32(common.ServerRedisError), []byte{}
 	}
 
 	// 用户登录

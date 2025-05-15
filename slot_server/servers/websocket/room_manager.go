@@ -298,6 +298,18 @@ func (trMgr *roomManager) AddRoomSpace(roomNo string, roomSpaceInfo *RoomSpace) 
 	}
 }
 
+// ReRoomSpace 重置房间信息
+func (trMgr *roomManager) ReRoomSpace(roomNo string, roomSpaceInfo *RoomSpace) {
+	trMgr.CommonRoomManager.Sync.Lock()
+	defer trMgr.CommonRoomManager.Sync.Unlock()
+
+	_, b := trMgr.Rooms[roomNo]
+	if b {
+		delete(trMgr.Rooms, roomNo)
+	}
+	trMgr.Rooms[roomNo] = roomSpaceInfo
+}
+
 func (trMgr *roomManager) GetRoomSpace(roomNo string) (*RoomSpace, error) {
 	trMgr.CommonRoomManager.Sync.RLock()
 	defer trMgr.CommonRoomManager.Sync.RUnlock()
@@ -407,19 +419,13 @@ func (trMgr *roomManager) InitDBData() {
 		period = helper.Itoa(helper.Atoi(record.Period) + 1)
 	}
 
-	animalPartyRoom := table.NewAnimalPartyRoom("1", "1", uuid.New().String(), config.AnimalPartyGlobal, "匹配房间", period,
-		table.TavernRoomOpen, table.RoomTypeMatch, 0, 0, 0, 0)
+	animalPartyRoom := table.NewAnimalPartyRoom("1", "1", uuid.New().String(), config.AnimalPartyGlobal, "第"+period+"期", period, table.TavernRoomOpen, table.RoomTypeMatch, 0, 0, 0, 0)
 	err = table.CreateMemeRoom(animalPartyRoom)
 	if err != nil {
 		global.GVA_LOG.Error("NewAnimalPartyRoom:{%v},roomInfo:%v", zap.Error(err), zap.Any("NewAnimalPartyRoom", animalPartyRoom.RoomNo))
 		return
 	}
 
-	//给用户创建房间 并发送游戏开始的广播
-	//slotRoom, err := table.SlotRoomByRoomNo(config.AnimalPartyGlobal)
-	//if err != nil {
-	//	global.GVA_LOG.Error("MebJoinRoom ", zap.Error(err))
-	//}
 	roomSpaceInfo.RoomInfo = animalPartyRoom
 
 	//游戏开始

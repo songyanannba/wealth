@@ -63,6 +63,12 @@ type ComRoomSpace struct {
 	//key是用户ID 用户信息 {用户押注/获取房间的时候添加 }
 	UserInfos map[string]*models.UserInfo
 
+	CurrAnimalConfigs []*AnimalConfig
+
+	WinSeat int
+
+	WinBetZoneConfig *BetZoneConfig
+
 	//接收消息处理
 	ReceiveMsg chan []byte
 
@@ -98,6 +104,9 @@ type ComRoomSpace struct {
 
 type TurnMateInfo struct {
 	TurnSync *sync.RWMutex
+
+	//区域 ｜ 用户
+	BetZoneUserInfoMap map[int]map[string]*models.UserInfo
 
 	UserIsWin bool
 
@@ -206,39 +215,82 @@ func (rs *ComRoomSpace) UpdateTurnMateInfo(turn int, countdownTime int64, matchU
 // GetComRoomSpace ss
 func GetComRoomSpace() *ComRoomSpace {
 	return &ComRoomSpace{
-		UserOwner:     &models.UserInfo{},
-		IsProtection:  false,
-		UserInfos:     make(map[string]*models.UserInfo),
-		Broadcast:     make(chan []byte),
-		ReceiveMsg:    make(chan []byte, 10000),
-		Close:         make(chan bool),
-		CurrentOpTime: time.Now().Unix(), //内存中房间协程创建时间
-		IsStopGame:    false,
-		IsStartGame:   false,
-		Sync:          new(sync.Mutex),
-		UserSync:      new(sync.RWMutex),
+		UserOwner:         &models.UserInfo{},
+		IsProtection:      false,
+		UserInfos:         make(map[string]*models.UserInfo),
+		Broadcast:         make(chan []byte),
+		ReceiveMsg:        make(chan []byte, 10000),
+		Close:             make(chan bool),
+		CurrentOpTime:     time.Now().Unix(), //内存中房间协程创建时间
+		IsStopGame:        false,
+		IsStartGame:       false,
+		CurrAnimalConfigs: []*AnimalConfig{},
+		WinBetZoneConfig:  &BetZoneConfig{},
+		Sync:              new(sync.Mutex),
+		UserSync:          new(sync.RWMutex),
 		TurnMateInfo: TurnMateInfo{
-			TurnSync:          new(sync.RWMutex),
-			Turn:              0,
-			UserIsWin:         false,
-			TurnUserInfoMap:   make(map[int][]*models.UserInfo),
-			Cards:             make(map[int]map[string][]*models.Card),
-			OutCards:          make(map[int]map[string][]*TurnUserCard),
-			FraudCard:         make(map[int]*models.Card),
-			likeCards:         make(map[int][]*models.LikeCard),
-			likeUserInfo:      make(map[int]map[string][]*models.LikeCard),
-			LastUserOutCards:  make(map[string]*TurnUserCard),
-			IsReGiveCard:      make(map[int]bool),
-			SelectIssue:       make(map[int]*models.Issue),
-			ExtractCard:       make(map[int]map[string][]*table.MbCardConfig),
-			NotExtractCard:    make(map[int]map[string][]*table.MbCardConfig),
-			UserOwnCards:      make(map[string][]*table.MbCardConfig),
-			GameTurnStatus:    0,
-			CountdownTime:     0,
-			GameStartTime:     0,
-			LikeCountdownTime: 0,
+			TurnSync:           new(sync.RWMutex),
+			BetZoneUserInfoMap: make(map[int]map[string]*models.UserInfo),
+			Turn:               0,
+			UserIsWin:          false,
+			TurnUserInfoMap:    make(map[int][]*models.UserInfo),
+			Cards:              make(map[int]map[string][]*models.Card),
+			OutCards:           make(map[int]map[string][]*TurnUserCard),
+			FraudCard:          make(map[int]*models.Card),
+			likeCards:          make(map[int][]*models.LikeCard),
+			likeUserInfo:       make(map[int]map[string][]*models.LikeCard),
+			LastUserOutCards:   make(map[string]*TurnUserCard),
+			IsReGiveCard:       make(map[int]bool),
+			SelectIssue:        make(map[int]*models.Issue),
+			ExtractCard:        make(map[int]map[string][]*table.MbCardConfig),
+			NotExtractCard:     make(map[int]map[string][]*table.MbCardConfig),
+			UserOwnCards:       make(map[string][]*table.MbCardConfig),
+			GameTurnStatus:     0,
+			CountdownTime:      0,
+			GameStartTime:      0,
+			LikeCountdownTime:  0,
 		},
 	}
+}
+
+// AddBetZoneUserInfoMap 给对应区域增加用户 或者用户押注
+func (rs *ComRoomSpace) AddBetZoneUserInfoMap(batZoneId int, bat float32, userInfo *models.UserInfo) {
+	rs.TurnMateInfo.TurnSync.Lock()
+	defer rs.TurnMateInfo.TurnSync.Unlock()
+
+	_, ok := rs.TurnMateInfo.BetZoneUserInfoMap[batZoneId]
+	if !ok {
+		rs.TurnMateInfo.BetZoneUserInfoMap[batZoneId] = make(map[string]*models.UserInfo)
+	}
+
+	uInfo, ok := rs.TurnMateInfo.BetZoneUserInfoMap[batZoneId][userInfo.UserID]
+	if !ok {
+		userInfo.UserProperty.Bet = float64(bat)
+		rs.TurnMateInfo.BetZoneUserInfoMap[batZoneId][userInfo.UserID] = userInfo
+	} else {
+		uInfo.UserProperty.Bet = uInfo.UserProperty.Bet + float64(bat)
+		rs.TurnMateInfo.BetZoneUserInfoMap[batZoneId][userInfo.UserID] = uInfo
+	}
+
+}
+
+// GetBetZoneUserInfos 根据押注区域ID 获取赢钱和输钱用户
+func (rs *ComRoomSpace) GetBetZoneUserInfos(batZoneId int) (winUserArr []*models.UserInfo, loseUserArr []*models.UserInfo) {
+	rs.TurnMateInfo.TurnSync.Lock()
+	defer rs.TurnMateInfo.TurnSync.Unlock()
+
+	for batZoneKey, mapUInfo := range rs.TurnMateInfo.BetZoneUserInfoMap {
+		if batZoneKey == batZoneId {
+			for _, uInfo := range mapUInfo {
+				winUserArr = append(winUserArr, uInfo)
+			}
+		} else {
+			for _, uInfo := range mapUInfo {
+				loseUserArr = append(winUserArr, uInfo)
+			}
+		}
+	}
+	return
 }
 
 func (rs *ComRoomSpace) SetLikeUserInfo(userId string, likeCards *models.LikeCard) {
@@ -544,14 +596,6 @@ func (rs *ComRoomSpace) NatsSendAllUserMsg(msg *pbs.NetMessage) {
 	//给客户消息
 	for _, userInfo := range rs.UserInfos {
 		//离开或者机器人不发送消息
-		if len(userInfo.UserID) == 0 || userInfo.UserProperty.IsLeave == 1 || userInfo.UserProperty.IsRobot == 1 {
-			continue
-		}
-		//userIDInt, err := strconv.Atoi(userInfo.UserID)
-		//if err != nil {
-		//	global.GVA_LOG.Error("NatsSendAllUserMsg err", zap.Any("err", err))
-		//	continue
-		//}
 		msg.AckHead.Uid = userInfo.UserID
 		netMessageRespMarshal, _ := proto.Marshal(msg)
 		global.GVA_LOG.Infof("NatsSendAllUserMsg UserID:{%v} 给客户端发消息:{%v}", userInfo.UserID, msg)

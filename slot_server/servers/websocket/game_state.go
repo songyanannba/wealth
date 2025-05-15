@@ -4,6 +4,7 @@ import (
 	"go.uber.org/zap"
 	"slot_server/lib/global"
 	"slot_server/lib/helper"
+	"slot_server/lib/models/table"
 )
 
 type GameTurnState int
@@ -30,9 +31,14 @@ const (
 	//BetIng 押注阶段
 	BetIng
 
-	//EnWheelAnimalPartyCalculateExec 计算阶段
+	//EnWheelAnimalPartyCalculateExec 押注结束 给端侧发送动物排序
 	EnWheelAnimalPartyCalculateExec
+
+	//EnAnimalPartyCalculateExecIng 开始执行计算
+	EnAnimalPartyCalculateExecIng
 	EnAnimalPartyCalculateExec
+
+	StartNextPeriod
 
 	//EnLoadExec 加载
 	EnLoadExec // 加载阶段
@@ -261,28 +267,41 @@ func (trs *RoomSpace) InItTurnStateFunc() {
 	////点赞结束 进入下一轮
 	//trs.RegisterTurnStateFunc(EnNextTurnExec, NextTurnExecFunc)
 	//点赞结束 计算
-	//trs.RegisterTurnStateFunc(EnCalculateExec, CalculateExecFunc)
+	trs.RegisterTurnStateFunc(EnCalculateExec, CalculateExecFunc)
 
-	trs.RegisterTurnStateFunc(EnWheelAnimalPartyCalculateExec, WheelAnimalPartyCalculateExec)
+	//发送动物排序
+	trs.RegisterTurnStateFunc(EnWheelAnimalPartyCalculateExec, WheelAnimalSortCalculateExec)
+	//计算
+	trs.RegisterTurnStateFunc(EnAnimalPartyCalculateExec, WheelAnimalPartyCalculateExec)
 }
 
 func (trs *RoomSpace) ExecAutoNextTurnState(key GameTurnState) {
-	if key == EnGameStartExec {
-		//游戏的开始状态 只能进入游戏开始结束状态
-		//DisGameStart 功能是发送广播
-		trs.ComRoomSpace.GameStateTransition(EnGameStartExec, EnGameStartIng)
-	} else if key == EnLoadExec {
-		//
-		trs.ComRoomSpace.GameStateTransition(EnLoadExec, RemakeCardIng)
-	} else if key == EnLikePageExec {
-		//
-		trs.ComRoomSpace.GameStateTransition(EnLikePageExec, EnLikeCardIng)
-	} else if key == EnNextTurnExec {
-		//
-		trs.ComRoomSpace.GameStateTransition(EnNextTurnExec, RemakeCardIng)
-	} else if key == EnCalculateExec {
-		//最后一轮进入结算状态
-		trs.ComRoomSpace.GameStateTransition(EnCalculateExec, GameOver)
+	//if key == EnGameStartExec {
+	//	//游戏的开始状态 只能进入游戏开始结束状态
+	//	//DisGameStart 功能是发送广播
+	//	trs.ComRoomSpace.GameStateTransition(EnGameStartExec, EnGameStartIng)
+	//} else if key == EnLoadExec {
+	//	//
+	//	trs.ComRoomSpace.GameStateTransition(EnLoadExec, RemakeCardIng)
+	//} else if key == EnLikePageExec {
+	//	//
+	//	trs.ComRoomSpace.GameStateTransition(EnLikePageExec, EnLikeCardIng)
+	//} else if key == EnNextTurnExec {
+	//	//
+	//	trs.ComRoomSpace.GameStateTransition(EnNextTurnExec, RemakeCardIng)
+	//} else if key == EnCalculateExec {
+	//	//最后一轮进入结算状态
+	//trs.ComRoomSpace.GameStateTransition(EnCalculateExec, GameOver)
+	//}
+
+	if key == EnWheelAnimalPartyCalculateExec {
+		trs.ComRoomSpace.GameStateTransition(EnWheelAnimalPartyCalculateExec, EnAnimalPartyCalculateExec)
+	}
+
+	if key == EnAnimalPartyCalculateExec {
+		trs.CloseRoom(trs.RoomInfo.Name, table.RoomStatusStop)
+		trs.RoomInfo.IsOpen = table.RoomStatusIng
+		trs.ComRoomSpace.GameStateTransition(EnAnimalPartyCalculateExec, StartNextPeriod)
 	}
 }
 

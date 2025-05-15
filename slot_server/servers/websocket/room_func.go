@@ -54,7 +54,7 @@ func (trs *RoomSpace) InItFunc() {
 	//trs.Register(strconv.Itoa(int(pbs.Meb_leaveRoom)), LeaveRoom)
 	//
 	////就绪
-	//trs.Register(strconv.Itoa(int(pbs.Meb_readyMsg)), Ready)
+	trs.Register(strconv.Itoa(int(pbs.Meb_readyMsg)), Ready)
 	//
 	////取消就绪
 	//trs.Register(strconv.Itoa(int(pbs.Meb_cancelReady)), CancelReady)

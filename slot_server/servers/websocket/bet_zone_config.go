@@ -1,5 +1,7 @@
 package websocket
 
+import "slot_server/lib/helper"
+
 type SizeConfig struct {
 	Seat int
 }
@@ -138,4 +140,21 @@ func GetBetZoneFigure() []*BetZoneConfig {
 	}
 
 	return betZoneConfigs
+}
+
+func GetBetZoneConfigByAnimalIdAndColorId(animalId, colorId int) *BetZoneConfig {
+	res := &BetZoneConfig{}
+
+	for _, betZoneFigure := range GetBetZoneFigure() {
+
+		if !helper.InArr(colorId, betZoneFigure.ColorId) {
+			continue
+		}
+
+		if betZoneFigure.AnimalId == animalId {
+			res = betZoneFigure
+			break
+		}
+	}
+	return res
 }

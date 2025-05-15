@@ -130,7 +130,15 @@ func (n *natsManager) slotServiceSubConsumer() {
 			if req.AckHead.Uid == "" {
 				//jsonData
 				//clientManager.sendAppIDAll([]byte(), appID, ignoreClient)
-
+				clients := clientManager.GetUserClients()
+				for _, clientInfo := range clients {
+					if req.AckHead.Code != pbs.Code_OK {
+						message := common.GetErrorMessage(uint32(req.AckHead.Code), "")
+						req.AckHead.Message = message
+					}
+					ackReMarshal, _ := proto.Marshal(req)
+					clientInfo.SendMsg(ackReMarshal)
+				}
 			} else {
 				uidStr := req.AckHead.Uid
 				clientInfo := GetUserClient(common.AppId10, uidStr)

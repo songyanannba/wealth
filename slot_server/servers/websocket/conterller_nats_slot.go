@@ -89,8 +89,8 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 			})
 		}
 
-		if len(roomSpaceInfo.AnimalConfigs) > 0 {
-			for _, animalConfig := range roomSpaceInfo.AnimalConfigs {
+		if len(roomSpaceInfo.ComRoomSpace.CurrAnimalConfigs) > 0 {
+			for _, animalConfig := range roomSpaceInfo.ComRoomSpace.CurrAnimalConfigs {
 				res.APRoomInfos.AnimalConfig = append(res.APRoomInfos.AnimalConfig, &pbs.AnimalConfig{
 					Seat:     int32(animalConfig.Seat),
 					AnimalId: int32(animalConfig.AnimalId),

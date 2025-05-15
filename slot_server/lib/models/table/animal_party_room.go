@@ -111,6 +111,7 @@ func NewAnimalPartyRoom(userID, owner, roomNo, name, desc, period string, isOpen
 		RoomNo:       roomNo,
 		Name:         name,
 		Desc:         desc,
+		Period:       period,
 		IsOpen:       isOpen,
 		RoomType:     roomType,
 		RoomLevel:    roomLevel,

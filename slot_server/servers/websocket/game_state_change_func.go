@@ -17,10 +17,83 @@ import (
 	"time"
 )
 
-func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
+func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 	global.GVA_LOG.Infof("AnimalPartyCalculateExecFunc 房间 {%v}", trs.RoomInfo.RoomNo)
 
 	//告诉最外轮在的所在位置
+
+	helper.SliceShuffle(trs.AnimalConfigs)
+
+	//todo 优化
+	//要根据当前的押注 计算可以盈利的区间 然后指定到合适的位置
+
+	trs.ComRoomSpace.CurrAnimalConfigs = trs.AnimalConfigs
+	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_AnimalSortMsg), config.SlotServer)
+
+	//现在是随机
+	winSeat := helper.RandInt(len(trs.AnimalConfigs))
+	trs.ComRoomSpace.WinSeat = winSeat
+
+	msgData := &pbs.AnimalSortMsg{
+		WinSeat:      int32(winSeat),
+		BetRate:      0,
+		AnimalConfig: make([]*pbs.AnimalConfig, 0),
+	}
+	for _, v := range trs.AnimalConfigs {
+		msgData.AnimalConfig = append(msgData.AnimalConfig, &pbs.AnimalConfig{
+			Seat:     int32(v.Seat),
+			AnimalId: int32(v.AnimalId),
+		})
+	}
+
+	animalConfig := trs.GetAnimalConfigsBySeat(winSeat)
+	colorConfig := trs.GetColorConfigsBySeat(winSeat)
+	betZoneConfig := GetBetZoneConfigByAnimalIdAndColorId(animalConfig.AnimalId, colorConfig.ColorId)
+	global.GVA_LOG.Infof("中奖组合 betZoneConfig %v", betZoneConfig)
+
+	trs.ComRoomSpace.WinBetZoneConfig = betZoneConfig
+	msgData.BetRate = float32(betZoneConfig.BetRate)
+
+	//获取房间人数
+	global.GVA_LOG.Infof("  押注停止后 主动下发最外圈的动物排序，第一个排在最上面 位置0开始: %v", msgData)
+	responseHeadByte, _ := json.Marshal(msgData)
+	netMessageResp.Content = responseHeadByte
+
+	NatsSendAimUserMsg(trs, netMessageResp, "")
+}
+
+func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
+	//获取所有的用户押注情况
+	winBetZoneConfig := trs.ComRoomSpace.WinBetZoneConfig
+
+	//先发中奖组合
+	winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(winBetZoneConfig.Seat)
+	global.GVA_LOG.Infof("WheelAnimalPartyCalculateExec 中奖用户 winUserArr: %v , loseUserAr %v", winUserArr, loseUserArr)
+
+	currPeriodUserWinMsg := &pbs.CurrPeriodUserWinMsg{
+		UserBetSettle: make([]*pbs.UserBetSettle, 0),
+	}
+
+	for _, uInfo := range winUserArr {
+		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+			WinCoin: float32(helper.Sum(uInfo.UserProperty.Bet, winBetZoneConfig.BetRate)),
+			UserId:  uInfo.UserID,
+		})
+	}
+
+	for _, uInfo := range loseUserArr {
+		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+			LoseCoin: float32(uInfo.UserProperty.Bet),
+			UserId:   uInfo.UserID,
+		})
+	}
+
+	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_CurrPeriodUserWinMsg), config.SlotServer)
+
+	responseHeadByte, _ := json.Marshal(currPeriodUserWinMsg)
+	netMessageResp.Content = responseHeadByte
+	//NatsSendAllUserMsg(trs, netMessageResp)
+	NatsSendAimUserMsg(trs, netMessageResp, "")
 
 }
 
