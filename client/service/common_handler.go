@@ -24,7 +24,6 @@ func LoginAck() {
 			fmt.Println(err)
 		}
 		fmt.Println("LoginAck === ", reqData)
-
 	})
 }
 

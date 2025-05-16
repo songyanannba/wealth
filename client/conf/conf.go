@@ -6,7 +6,8 @@ import "github.com/jinzhu/configor"
 //const PATH = "/zs_game"
 
 const HOST = "127.0.0.1:8081"
-//const HOST = "47.97.201.179:8081"
+
+// const HOST = "47.97.201.179:8081" //我的阿里云
 const PATH = "/gate_way"
 
 var CliConf struct {

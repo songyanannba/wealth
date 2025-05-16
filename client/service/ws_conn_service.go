@@ -37,7 +37,7 @@ var WsClientService = wsClientService{
 
 func (ws *wsClientService) Start() {
 
-	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc0NjQ4NDMsInN1YiI6IiIsInVzZXJfaWQiOiJiMzcwM2M1MS0xMjM4LTRjN2MtYWU3MS05ZDczZmQ0YmYxZjEifQ.tlvKxNmgysRT1ba0XQgS4M9_c8O7ZsVVEKfoEEz2QjI"
+	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc0NzA5ODUsInN1YiI6IiIsInVzZXJfaWQiOiI0NjVhNTE2ZC00OWQ2LTQxNDMtODNkZS0wY2M4NjU1MjNlMGIifQ.61qTYeBjDIeVn9z0uKyfMRyz4QBBEuFFCIGaDWPiYls"
 
 	header := http.Header{}
 	header.Add("userId", "syn")
@@ -67,15 +67,17 @@ func (ws *wsClientService) Start() {
 
 	ws.Test123()
 	//time.Sleep(2 * time.Second)
-	//获取当局信息
-	//ws.TestCurrAPInfo()
-	//ws.TestGame()
-
-	//押注TestBetReq
-	//ws.TestBetReq()
 
 	//获取在线列表
 	ws.TestOnLineUser()
+
+	//获取当局信息
+	ws.TestCurrAPInfo()
+
+	//ws.TestGame()
+
+	//押注TestBetReq
+	ws.TestBetReq()
 
 	time.Sleep(1000 * time.Second * 10000)
 }
