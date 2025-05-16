@@ -12,38 +12,79 @@ func Test1() {
 		//request.Do = "sd"
 		//request.To = "hhahah"
 		//request.Todo = "会面吧"
-
 		//发送
-
 	})
 }
 
 func LoginAck() {
 	CommonService.RegisterHandlers(int32(pbs.ProtocNum_LoginAck), func(msg *pbs.NetMessage) {
-		fmt.Println("", msg)
-
 		reqData := &pbs.LoginAck{}
-
 		err := proto.Unmarshal(msg.Content, reqData)
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println("", reqData)
+		fmt.Println("LoginAck === ", reqData)
 
 	})
 }
 
 func CurrAPInfoAck() {
 	CommonService.RegisterHandlers(int32(pbs.ProtocNum_CurrAPInfoAck), func(msg *pbs.NetMessage) {
-		fmt.Println("", msg)
-
 		reqData := &pbs.CurrAPInfoAck{}
+		err := proto.Unmarshal(msg.Content, reqData)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("CurrAPInfoAck === ", reqData, string(msg.Content))
+
+	})
+}
+
+func UserBetAck() {
+	CommonService.RegisterHandlers(int32(pbs.ProtocNum_betAck), func(msg *pbs.NetMessage) {
+		reqData := &pbs.UserBetAck{}
 
 		err := proto.Unmarshal(msg.Content, reqData)
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println("CurrAPInfoAck", reqData, string(msg.Content))
 
+		fmt.Println("UserBetAck === ", reqData)
+	})
+}
+
+func ReceivedAnimalSortMsg() {
+	CommonService.RegisterHandlers(int32(pbs.ProtocNum_AnimalSortMsg), func(msg *pbs.NetMessage) {
+		msgData := &pbs.AnimalSortMsg{}
+		err := proto.Unmarshal(msg.Content, msgData)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println("ReceivedAnimalSortMsg === ", msgData, string(msg.Content))
+	})
+}
+
+func ReceivedCurrPeriodUserWinMsg() {
+	CommonService.RegisterHandlers(int32(pbs.ProtocNum_CurrPeriodUserWinMsg), func(msg *pbs.NetMessage) {
+		msgData := &pbs.CurrPeriodUserWinMsg{}
+		err := proto.Unmarshal(msg.Content, msgData)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println("ReceivedCurrPeriodUserWinMsg === ", msgData, string(msg.Content))
+	})
+}
+
+func ReceivedColorSortMsg() {
+	CommonService.RegisterHandlers(int32(pbs.ProtocNum_ColorSortMsg), func(msg *pbs.NetMessage) {
+		msgData := &pbs.ColorSortMsg{}
+		err := proto.Unmarshal(msg.Content, msgData)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println("ReceivedColorSortMsg === ", msgData, string(msg.Content))
 	})
 }

@@ -76,7 +76,7 @@ const (
 	ErrCode_ErrCode0        ErrCode = 0
 	ErrCode_NotLogin        ErrCode = 1000 //未登录
 	ErrCode_TokenExpiration ErrCode = 1001 //token 过期
-	ErrCode_ServerError     ErrCode = 1004 //系统错误
+	ErrCode_ServerError     ErrCode = 1004 // 系统错误
 	ErrCode_NotRegister     ErrCode = 1031 //未注册 和http请求保持一致
 	ErrCode_NotRoom         ErrCode = 1032 //没有房间
 	ErrCode_NotBetPeriod    ErrCode = 1033 //不在押注时间段
@@ -140,7 +140,7 @@ const (
 	ProtocNum_LoginAck ProtocNum = 10001
 	ProtocNum_HeartReq ProtocNum = 10002
 	ProtocNum_HeartAck ProtocNum = 10003
-	// 获取动物派对的信息
+	// 获取当前局动物派对的信息
 	ProtocNum_CurrAPInfoReq ProtocNum = 10004
 	ProtocNum_CurrAPInfoAck ProtocNum = 10005
 	// 押注停止后 主动下发最外圈的动物排序，第一个排在最上面 位置0开始
@@ -355,11 +355,11 @@ type NetMessage struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ReqHead   *ReqHead `protobuf:"bytes,1,opt,name=req_head,json=reqHead,proto3" json:"req_head,omitempty"`       // 返回统一协议
-	AckHead   *AckHead `protobuf:"bytes,2,opt,name=ack_head,json=ackHead,proto3" json:"ack_head,omitempty"`       // 返回统一协议
-	ServiceId string   `protobuf:"bytes,3,opt,name=Service_id,json=ServiceId,proto3" json:"Service_id,omitempty"` //服务号
-	MsgId     int32    `protobuf:"varint,4,opt,name=msg_id,json=msgId,proto3" json:"msg_id,omitempty"`            //协议号
-	Content   []byte   `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                      //协议内容
+	ReqHead *ReqHead `protobuf:"bytes,1,opt,name=req_head,json=reqHead,proto3" json:"req_head,omitempty"` // 返回统一协议
+	AckHead *AckHead `protobuf:"bytes,2,opt,name=ack_head,json=ackHead,proto3" json:"ack_head,omitempty"` // 返回统一协议
+	ServiceId string `protobuf:"bytes,3,opt,name=Service_id,json=ServiceId,proto3" json:"Service_id,omitempty"` //服务号
+	MsgId     int32  `protobuf:"varint,4,opt,name=msg_id,json=msgId,proto3" json:"msg_id,omitempty"`            //协议号
+	Content   []byte `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                      //协议内容
 }
 
 func (x *NetMessage) Reset() {

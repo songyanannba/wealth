@@ -22,9 +22,9 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 	netMessageResp := helper.NewNetMessage(request.UserId, request.UserId, int32(pbs.ProtocNum_CurrAPInfoAck), config.SlotServer)
 
 	aPRoomInfos := &pbs.APRoomInfos{
-		UserBetInfos: make([]*pbs.UserBetInfos, 0),
-		ColorConfig:  make([]*pbs.ColorConfig, 0),
-		AnimalConfig: make([]*pbs.AnimalConfig, 0),
+		//UserBetInfos: make([]*pbs.UserBetInfos, 0),
+		//ColorConfig:  make([]*pbs.ColorConfig, 0),
+		//AnimalConfig: make([]*pbs.AnimalConfig, 0),
 	}
 
 	res := &pbs.CurrAPInfoAck{
@@ -33,12 +33,13 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 		GameStartTime: 0,
 		GameTurnState: 0,
 		APRoomInfos:   aPRoomInfos,
-		BetZoneConf:   make([]*pbs.BetZoneConfig, 0),
+		//BetZoneConf:   make([]*pbs.BetZoneConfig, 0),
 	}
+	getBetZoneFigure := GetBetZoneFigure()
 
-	for _, betZoneFigure := range GetBetZoneFigure() {
+	for _, betZoneFigure := range getBetZoneFigure {
 		var colorIdArr []int32
-		if len(betZoneFigure.ColorId) > 0 {
+		if betZoneFigure.ColorId != nil && len(betZoneFigure.ColorId) > 0 {
 			for _, colorId := range betZoneFigure.ColorId {
 				colorIdArr = append(colorIdArr, int32(colorId))
 			}
@@ -122,7 +123,12 @@ func UserBetReq(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data 
 
 	//是否是押注时间段
 
-	res := &pbs.UserBetAck{}
+	res := &pbs.UserBetAck{
+		Bet:       request.Bet,
+		GameId:    request.GameId,
+		BetZoneId: request.BetZoneId,
+		UserId:    netMessage.ReqHead.Uid,
+	}
 
 	//房间是否存活
 	roomSpaceInfo, err := SlotRoomManager.GetCurrRoomSpace()
@@ -177,7 +183,8 @@ func UserBetReq(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data 
 			roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(int(request.BetZoneId), request.Bet, userInfo)
 			ptAck, _ := proto.Marshal(res)
 			netMessageResp.Content = ptAck
-			NatsSendAimUserMsg(roomSpaceInfo, netMessageResp, netMessage.ReqHead.Uid)
+
+			NatsSendAimUserMsg(roomSpaceInfo, netMessageResp, "")
 		}
 	}
 

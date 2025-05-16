@@ -3,6 +3,7 @@ package websocket
 import (
 	"encoding/json"
 	"errors"
+	"github.com/golang/protobuf/proto"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"runtime/debug"
@@ -230,6 +231,13 @@ func (trs *RoomSpace) GameTurnStateCheck() {
 	//计算完 推送计算结果
 	//计算完 自动开始下一轮
 
+	//如果当前没有押注的用户 不往下执行
+	if len(trs.ComRoomSpace.UserInfos) <= 0 {
+		global.GVA_LOG.Infof("没有人押注")
+		trs.ComRoomSpace.SetGameStartTime(helper.LocalTime().Unix()) //游戏开始时间
+		return
+	}
+
 	gState := trs.ComRoomSpace.GetGameState()
 	currGameStartTime := trs.ComRoomSpace.GetGameStartTime()
 	global.GVA_LOG.Infof("GameTurnStateCheck 执行,currTime:%v 房间编号:%v ,gState:%v ,currGameStartTime:%v", currTime, trs.RoomInfo.RoomNo, gState, currGameStartTime)
@@ -442,7 +450,7 @@ func (trs *RoomSpace) AnalyzeFinalIncome() {
 
 	//给用户消息
 	global.GVA_LOG.Infof("游戏结束 下一轮开始: %v", msgData)
-	responseHeadByte, _ := json.Marshal(msgData)
+	responseHeadByte, _ := proto.Marshal(msgData)
 	netMessageResp.Content = responseHeadByte
 	NatsSendAimUserMsg(trs, netMessageResp, "")
 

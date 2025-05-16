@@ -37,7 +37,7 @@ var WsClientService = wsClientService{
 
 func (ws *wsClientService) Start() {
 
-	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDczMDkwMzgsInN1YiI6IiIsInVzZXJfaWQiOiJiMzcwM2M1MS0xMjM4LTRjN2MtYWU3MS05ZDczZmQ0YmYxZjEifQ.GihVT_Kwe_Ge6iu26lRN1J3z-XHMRGeFRO0yUxND4MY"
+	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc0NjQ4NDMsInN1YiI6IiIsInVzZXJfaWQiOiJiMzcwM2M1MS0xMjM4LTRjN2MtYWU3MS05ZDczZmQ0YmYxZjEifQ.tlvKxNmgysRT1ba0XQgS4M9_c8O7ZsVVEKfoEEz2QjI"
 
 	header := http.Header{}
 	header.Add("userId", "syn")
@@ -67,8 +67,12 @@ func (ws *wsClientService) Start() {
 
 	ws.Test123()
 	//time.Sleep(2 * time.Second)
-	ws.TestCurrAPInfo()
+	//获取当局信息
+	//ws.TestCurrAPInfo()
 	//ws.TestGame()
+
+	//押注TestBetReq
+	ws.TestBetReq()
 
 	time.Sleep(1000 * time.Second * 10000)
 }
@@ -201,7 +205,7 @@ func (ws *wsClientService) Test123() {
 }
 
 func (ws *wsClientService) TestCurrAPInfo() {
-
+	time.Sleep(3 * time.Second)
 	req1 := &pbs.CurrAPInfoReq{}
 	req1M, _ := proto.Marshal(req1)
 	reqq := &pbs.NetMessage{
@@ -217,6 +221,38 @@ func (ws *wsClientService) TestCurrAPInfo() {
 		},
 		ServiceId: "slot_server",
 		MsgId:     int32(pbs.ProtocNum_CurrAPInfoReq),
+		Content:   req1M,
+	}
+
+	reqM, _ := proto.Marshal(reqq)
+
+	ws.context <- reqM
+	/*for {
+		time.Sleep(30 * time.Second)
+	}*/
+}
+
+func (ws *wsClientService) TestBetReq() {
+	time.Sleep(2 * time.Second)
+	req1 := &pbs.UserBetReq{
+		Bet:       1,
+		GameId:    1,
+		BetZoneId: 1,
+	}
+	req1M, _ := proto.Marshal(req1)
+	reqq := &pbs.NetMessage{
+		ReqHead: &pbs.ReqHead{
+			Uid:      "",
+			Token:    "",
+			Platform: "",
+		},
+		AckHead: &pbs.AckHead{
+			Uid:     "",
+			Code:    0,
+			Message: "",
+		},
+		ServiceId: "slot_server",
+		MsgId:     int32(pbs.ProtocNum_betReq),
 		Content:   req1M,
 	}
 

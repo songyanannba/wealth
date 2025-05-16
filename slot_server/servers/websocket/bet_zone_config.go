@@ -19,7 +19,7 @@ type BetZoneConfig struct {
 }
 
 func GetBetZoneFigure() []*BetZoneConfig {
-	betZoneConfigs := make([]*BetZoneConfig, 18)
+	betZoneConfigs := make([]*BetZoneConfig, 16)
 
 	// 1 大猩猩    1
 	// 2 LUCKY    1

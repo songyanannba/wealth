@@ -45,7 +45,10 @@ message userBetReq {
 }
 
 message userBetAck {
-
+  float bet = 1;
+  int32 game_id = 2; // 1=动物派对 2=火箭 3=赏金女王
+  int32 bet_zone_id = 3; //押注的位置
+  string  user_id = 4 ;
 }
 
 //当前期是否赢钱的通知

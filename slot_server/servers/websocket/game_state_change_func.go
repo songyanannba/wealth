@@ -3,6 +3,7 @@ package websocket
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"go.uber.org/zap"
 	"slot_server/lib/config"
 	"slot_server/lib/global"
@@ -56,7 +57,7 @@ func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 
 	//获取房间人数
 	global.GVA_LOG.Infof("  押注停止后 主动下发最外圈的动物排序，第一个排在最上面 位置0开始: %v", msgData)
-	responseHeadByte, _ := json.Marshal(msgData)
+	responseHeadByte, _ := proto.Marshal(msgData)
 	netMessageResp.Content = responseHeadByte
 
 	NatsSendAimUserMsg(trs, netMessageResp, "")
@@ -90,9 +91,8 @@ func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 
 	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_CurrPeriodUserWinMsg), config.SlotServer)
 
-	responseHeadByte, _ := json.Marshal(currPeriodUserWinMsg)
+	responseHeadByte, _ := proto.Marshal(currPeriodUserWinMsg)
 	netMessageResp.Content = responseHeadByte
-	//NatsSendAllUserMsg(trs, netMessageResp)
 	NatsSendAimUserMsg(trs, netMessageResp, "")
 
 }

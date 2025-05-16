@@ -63,6 +63,586 @@ func (Slot) EnumDescriptor() ([]byte, []int) {
 	return file_slot_proto_rawDescGZIP(), []int{0}
 }
 
+// 在线用户列表请求
+type OnLineUserListReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *OnLineUserListReq) Reset() {
+	*x = OnLineUserListReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OnLineUserListReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OnLineUserListReq) ProtoMessage() {}
+
+func (x *OnLineUserListReq) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OnLineUserListReq.ProtoReflect.Descriptor instead.
+func (*OnLineUserListReq) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{0}
+}
+
+// 在线用户列表返回
+type OnLineUserListAck struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	OnlineUser []*OnlineUser `protobuf:"bytes,1,rep,name=online_user,json=onlineUser,proto3" json:"online_user,omitempty"` //房间当前押注信息
+}
+
+func (x *OnLineUserListAck) Reset() {
+	*x = OnLineUserListAck{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OnLineUserListAck) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OnLineUserListAck) ProtoMessage() {}
+
+func (x *OnLineUserListAck) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OnLineUserListAck.ProtoReflect.Descriptor instead.
+func (*OnLineUserListAck) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *OnLineUserListAck) GetOnlineUser() []*OnlineUser {
+	if x != nil {
+		return x.OnlineUser
+	}
+	return nil
+}
+
+type OnlineUser struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId   string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserName string `protobuf:"bytes,4,opt,name=user_name,json=userName,proto3" json:"user_name,omitempty"`
+}
+
+func (x *OnlineUser) Reset() {
+	*x = OnlineUser{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OnlineUser) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OnlineUser) ProtoMessage() {}
+
+func (x *OnlineUser) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OnlineUser.ProtoReflect.Descriptor instead.
+func (*OnlineUser) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *OnlineUser) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *OnlineUser) GetUserName() string {
+	if x != nil {
+		return x.UserName
+	}
+	return ""
+}
+
+// 押注
+type UserBetReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Bet       float32 `protobuf:"fixed32,1,opt,name=bet,proto3" json:"bet,omitempty"`
+	GameId    int32   `protobuf:"varint,2,opt,name=game_id,json=gameId,proto3" json:"game_id,omitempty"`            // 1=动物派对 2=火箭 3=赏金女王
+	BetZoneId int32   `protobuf:"varint,3,opt,name=bet_zone_id,json=betZoneId,proto3" json:"bet_zone_id,omitempty"` //押注的位置
+}
+
+func (x *UserBetReq) Reset() {
+	*x = UserBetReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserBetReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserBetReq) ProtoMessage() {}
+
+func (x *UserBetReq) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserBetReq.ProtoReflect.Descriptor instead.
+func (*UserBetReq) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *UserBetReq) GetBet() float32 {
+	if x != nil {
+		return x.Bet
+	}
+	return 0
+}
+
+func (x *UserBetReq) GetGameId() int32 {
+	if x != nil {
+		return x.GameId
+	}
+	return 0
+}
+
+func (x *UserBetReq) GetBetZoneId() int32 {
+	if x != nil {
+		return x.BetZoneId
+	}
+	return 0
+}
+
+type UserBetAck struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Bet       float32 `protobuf:"fixed32,1,opt,name=bet,proto3" json:"bet,omitempty"`
+	GameId    int32   `protobuf:"varint,2,opt,name=game_id,json=gameId,proto3" json:"game_id,omitempty"`            // 1=动物派对 2=火箭 3=赏金女王
+	BetZoneId int32   `protobuf:"varint,3,opt,name=bet_zone_id,json=betZoneId,proto3" json:"bet_zone_id,omitempty"` //押注的位置
+	UserId    string  `protobuf:"bytes,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+}
+
+func (x *UserBetAck) Reset() {
+	*x = UserBetAck{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserBetAck) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserBetAck) ProtoMessage() {}
+
+func (x *UserBetAck) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserBetAck.ProtoReflect.Descriptor instead.
+func (*UserBetAck) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *UserBetAck) GetBet() float32 {
+	if x != nil {
+		return x.Bet
+	}
+	return 0
+}
+
+func (x *UserBetAck) GetGameId() int32 {
+	if x != nil {
+		return x.GameId
+	}
+	return 0
+}
+
+func (x *UserBetAck) GetBetZoneId() int32 {
+	if x != nil {
+		return x.BetZoneId
+	}
+	return 0
+}
+
+func (x *UserBetAck) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+// 当前期是否赢钱的通知
+type CurrPeriodUserWinMsg struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserBetSettle []*UserBetSettle `protobuf:"bytes,1,rep,name=user_bet_settle,json=userBetSettle,proto3" json:"user_bet_settle,omitempty"`
+}
+
+func (x *CurrPeriodUserWinMsg) Reset() {
+	*x = CurrPeriodUserWinMsg{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CurrPeriodUserWinMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CurrPeriodUserWinMsg) ProtoMessage() {}
+
+func (x *CurrPeriodUserWinMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CurrPeriodUserWinMsg.ProtoReflect.Descriptor instead.
+func (*CurrPeriodUserWinMsg) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *CurrPeriodUserWinMsg) GetUserBetSettle() []*UserBetSettle {
+	if x != nil {
+		return x.UserBetSettle
+	}
+	return nil
+}
+
+// 用户押注结果
+type UserBetSettle struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	WinCoin  float32 `protobuf:"fixed32,1,opt,name=win_coin,json=winCoin,proto3" json:"win_coin,omitempty"`    //赢钱金额
+	LoseCoin float32 `protobuf:"fixed32,2,opt,name=lose_coin,json=loseCoin,proto3" json:"lose_coin,omitempty"` //输钱金额
+	UserId   string  `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+}
+
+func (x *UserBetSettle) Reset() {
+	*x = UserBetSettle{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserBetSettle) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserBetSettle) ProtoMessage() {}
+
+func (x *UserBetSettle) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserBetSettle.ProtoReflect.Descriptor instead.
+func (*UserBetSettle) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *UserBetSettle) GetWinCoin() float32 {
+	if x != nil {
+		return x.WinCoin
+	}
+	return 0
+}
+
+func (x *UserBetSettle) GetLoseCoin() float32 {
+	if x != nil {
+		return x.LoseCoin
+	}
+	return 0
+}
+
+func (x *UserBetSettle) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+// 最外圈动物排序
+type AnimalSortMsg struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	WinSeat      int32           `protobuf:"varint,1,opt,name=win_seat,json=winSeat,proto3" json:"win_seat,omitempty"`               //赢钱位置
+	BetRate      float32         `protobuf:"fixed32,2,opt,name=bet_rate,json=betRate,proto3" json:"bet_rate,omitempty"`              //赢钱倍率
+	AnimalConfig []*AnimalConfig `protobuf:"bytes,3,rep,name=animal_config,json=animalConfig,proto3" json:"animal_config,omitempty"` //动物配置
+}
+
+func (x *AnimalSortMsg) Reset() {
+	*x = AnimalSortMsg{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AnimalSortMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimalSortMsg) ProtoMessage() {}
+
+func (x *AnimalSortMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimalSortMsg.ProtoReflect.Descriptor instead.
+func (*AnimalSortMsg) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *AnimalSortMsg) GetWinSeat() int32 {
+	if x != nil {
+		return x.WinSeat
+	}
+	return 0
+}
+
+func (x *AnimalSortMsg) GetBetRate() float32 {
+	if x != nil {
+		return x.BetRate
+	}
+	return 0
+}
+
+func (x *AnimalSortMsg) GetAnimalConfig() []*AnimalConfig {
+	if x != nil {
+		return x.AnimalConfig
+	}
+	return nil
+}
+
+type ColorSortMsg struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ColorConfig []*ColorConfig `protobuf:"bytes,1,rep,name=color_config,json=colorConfig,proto3" json:"color_config,omitempty"` //颜色配置
+}
+
+func (x *ColorSortMsg) Reset() {
+	*x = ColorSortMsg{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ColorSortMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ColorSortMsg) ProtoMessage() {}
+
+func (x *ColorSortMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ColorSortMsg.ProtoReflect.Descriptor instead.
+func (*ColorSortMsg) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ColorSortMsg) GetColorConfig() []*ColorConfig {
+	if x != nil {
+		return x.ColorConfig
+	}
+	return nil
+}
+
+type BetZoneConfig struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Seat     int32   `protobuf:"varint,1,opt,name=seat,proto3" json:"seat,omitempty"` //位置
+	AnimalId int32   `protobuf:"varint,2,opt,name=animal_id,json=animalId,proto3" json:"animal_id,omitempty"`
+	ColorId  []int32 `protobuf:"varint,3,rep,packed,name=color_id,json=colorId,proto3" json:"color_id,omitempty"`
+	Size     int32   `protobuf:"varint,4,opt,name=size,proto3" json:"size,omitempty"` //1大(粉色) 2小（紫色）
+	BetRate  float32 `protobuf:"fixed32,5,opt,name=bet_rate,json=betRate,proto3" json:"bet_rate,omitempty"`
+}
+
+func (x *BetZoneConfig) Reset() {
+	*x = BetZoneConfig{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BetZoneConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BetZoneConfig) ProtoMessage() {}
+
+func (x *BetZoneConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BetZoneConfig.ProtoReflect.Descriptor instead.
+func (*BetZoneConfig) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *BetZoneConfig) GetSeat() int32 {
+	if x != nil {
+		return x.Seat
+	}
+	return 0
+}
+
+func (x *BetZoneConfig) GetAnimalId() int32 {
+	if x != nil {
+		return x.AnimalId
+	}
+	return 0
+}
+
+func (x *BetZoneConfig) GetColorId() []int32 {
+	if x != nil {
+		return x.ColorId
+	}
+	return nil
+}
+
+func (x *BetZoneConfig) GetSize() int32 {
+	if x != nil {
+		return x.Size
+	}
+	return 0
+}
+
+func (x *BetZoneConfig) GetBetRate() float32 {
+	if x != nil {
+		return x.BetRate
+	}
+	return 0
+}
+
+// 动物派对当前局信息
 type CurrAPInfoReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -72,7 +652,7 @@ type CurrAPInfoReq struct {
 func (x *CurrAPInfoReq) Reset() {
 	*x = CurrAPInfoReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_slot_proto_msgTypes[0]
+		mi := &file_slot_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -85,7 +665,7 @@ func (x *CurrAPInfoReq) String() string {
 func (*CurrAPInfoReq) ProtoMessage() {}
 
 func (x *CurrAPInfoReq) ProtoReflect() protoreflect.Message {
-	mi := &file_slot_proto_msgTypes[0]
+	mi := &file_slot_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -98,7 +678,7 @@ func (x *CurrAPInfoReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CurrAPInfoReq.ProtoReflect.Descriptor instead.
 func (*CurrAPInfoReq) Descriptor() ([]byte, []int) {
-	return file_slot_proto_rawDescGZIP(), []int{0}
+	return file_slot_proto_rawDescGZIP(), []int{10}
 }
 
 type CurrAPInfoAck struct {
@@ -106,17 +686,18 @@ type CurrAPInfoAck struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	RoomNo        string         `protobuf:"bytes,1,opt,name=room_no,json=roomNo,proto3" json:"room_no,omitempty"`                         //房间编号
-	CurrPeriod    string         `protobuf:"bytes,2,opt,name=curr_period,json=currPeriod,proto3" json:"curr_period,omitempty"`             //当前期
-	GameStartTime int64          `protobuf:"varint,3,opt,name=game_start_time,json=gameStartTime,proto3" json:"game_start_time,omitempty"` //游戏的开始时间戳
-	GameTurnState int32          `protobuf:"varint,4,opt,name=game_turn_state,json=gameTurnState,proto3" json:"game_turn_state,omitempty"` //游戏的状态 ； 1=可以押注 ；2=计算阶段不可以押注
-	APRoomInfos   []*APRoomInfos `protobuf:"bytes,5,rep,name=aP_room_infos,json=aPRoomInfos,proto3" json:"aP_room_infos,omitempty"`        //
+	RoomNo        string           `protobuf:"bytes,1,opt,name=room_no,json=roomNo,proto3" json:"room_no,omitempty"`                         //房间编号
+	CurrPeriod    string           `protobuf:"bytes,2,opt,name=curr_period,json=currPeriod,proto3" json:"curr_period,omitempty"`             //当前期
+	GameStartTime int64            `protobuf:"varint,3,opt,name=game_start_time,json=gameStartTime,proto3" json:"game_start_time,omitempty"` //游戏的开始时间戳
+	GameTurnState int32            `protobuf:"varint,4,opt,name=game_turn_state,json=gameTurnState,proto3" json:"game_turn_state,omitempty"` //游戏的状态 ； 1=可以押注 ；2=计算阶段不可以押注
+	APRoomInfos   *APRoomInfos     `protobuf:"bytes,5,opt,name=aP_room_infos,json=aPRoomInfos,proto3" json:"aP_room_infos,omitempty"`        //房间信息
+	BetZoneConf   []*BetZoneConfig `protobuf:"bytes,6,rep,name=bet_zone_conf,json=betZoneConf,proto3" json:"bet_zone_conf,omitempty"`        //赔率配置
 }
 
 func (x *CurrAPInfoAck) Reset() {
 	*x = CurrAPInfoAck{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_slot_proto_msgTypes[1]
+		mi := &file_slot_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -129,7 +710,7 @@ func (x *CurrAPInfoAck) String() string {
 func (*CurrAPInfoAck) ProtoMessage() {}
 
 func (x *CurrAPInfoAck) ProtoReflect() protoreflect.Message {
-	mi := &file_slot_proto_msgTypes[1]
+	mi := &file_slot_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -142,7 +723,7 @@ func (x *CurrAPInfoAck) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CurrAPInfoAck.ProtoReflect.Descriptor instead.
 func (*CurrAPInfoAck) Descriptor() ([]byte, []int) {
-	return file_slot_proto_rawDescGZIP(), []int{1}
+	return file_slot_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *CurrAPInfoAck) GetRoomNo() string {
@@ -173,9 +754,16 @@ func (x *CurrAPInfoAck) GetGameTurnState() int32 {
 	return 0
 }
 
-func (x *CurrAPInfoAck) GetAPRoomInfos() []*APRoomInfos {
+func (x *CurrAPInfoAck) GetAPRoomInfos() *APRoomInfos {
 	if x != nil {
 		return x.APRoomInfos
+	}
+	return nil
+}
+
+func (x *CurrAPInfoAck) GetBetZoneConf() []*BetZoneConfig {
+	if x != nil {
+		return x.BetZoneConf
 	}
 	return nil
 }
@@ -185,15 +773,15 @@ type APRoomInfos struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId    string  `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	BetZoneId int32   `protobuf:"varint,2,opt,name=bet_zone_id,json=betZoneId,proto3" json:"bet_zone_id,omitempty"` //押注ID 押的那个
-	Bet       float32 `protobuf:"fixed32,3,opt,name=bet,proto3" json:"bet,omitempty"`                               //押注多少
+	UserBetInfos []*UserBetInfos `protobuf:"bytes,1,rep,name=user_bet_infos,json=userBetInfos,proto3" json:"user_bet_infos,omitempty"` //房间当前押注信息
+	ColorConfig  []*ColorConfig  `protobuf:"bytes,2,rep,name=color_config,json=colorConfig,proto3" json:"color_config,omitempty"`      //颜色配置
+	AnimalConfig []*AnimalConfig `protobuf:"bytes,3,rep,name=animal_config,json=animalConfig,proto3" json:"animal_config,omitempty"`   //动物配置
 }
 
 func (x *APRoomInfos) Reset() {
 	*x = APRoomInfos{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_slot_proto_msgTypes[2]
+		mi := &file_slot_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -206,7 +794,7 @@ func (x *APRoomInfos) String() string {
 func (*APRoomInfos) ProtoMessage() {}
 
 func (x *APRoomInfos) ProtoReflect() protoreflect.Message {
-	mi := &file_slot_proto_msgTypes[2]
+	mi := &file_slot_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -219,26 +807,211 @@ func (x *APRoomInfos) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use APRoomInfos.ProtoReflect.Descriptor instead.
 func (*APRoomInfos) Descriptor() ([]byte, []int) {
-	return file_slot_proto_rawDescGZIP(), []int{2}
+	return file_slot_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *APRoomInfos) GetUserId() string {
+func (x *APRoomInfos) GetUserBetInfos() []*UserBetInfos {
+	if x != nil {
+		return x.UserBetInfos
+	}
+	return nil
+}
+
+func (x *APRoomInfos) GetColorConfig() []*ColorConfig {
+	if x != nil {
+		return x.ColorConfig
+	}
+	return nil
+}
+
+func (x *APRoomInfos) GetAnimalConfig() []*AnimalConfig {
+	if x != nil {
+		return x.AnimalConfig
+	}
+	return nil
+}
+
+type UserBetInfos struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId    string  `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	BetZoneId int32   `protobuf:"varint,2,opt,name=bet_zone_id,json=betZoneId,proto3" json:"bet_zone_id,omitempty"` //押注ID 押的那个
+	Bet       float32 `protobuf:"fixed32,3,opt,name=bet,proto3" json:"bet,omitempty"`                               //押注多少
+}
+
+func (x *UserBetInfos) Reset() {
+	*x = UserBetInfos{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserBetInfos) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserBetInfos) ProtoMessage() {}
+
+func (x *UserBetInfos) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserBetInfos.ProtoReflect.Descriptor instead.
+func (*UserBetInfos) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *UserBetInfos) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
 	return ""
 }
 
-func (x *APRoomInfos) GetBetZoneId() int32 {
+func (x *UserBetInfos) GetBetZoneId() int32 {
 	if x != nil {
 		return x.BetZoneId
 	}
 	return 0
 }
 
-func (x *APRoomInfos) GetBet() float32 {
+func (x *UserBetInfos) GetBet() float32 {
 	if x != nil {
 		return x.Bet
+	}
+	return 0
+}
+
+// 1 黄
+// 2 绿
+// 3 红
+// 4 三色
+type ColorConfig struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Seat    int32 `protobuf:"varint,1,opt,name=seat,proto3" json:"seat,omitempty"`
+	ColorId int32 `protobuf:"varint,2,opt,name=color_id,json=colorId,proto3" json:"color_id,omitempty"`
+}
+
+func (x *ColorConfig) Reset() {
+	*x = ColorConfig{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ColorConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ColorConfig) ProtoMessage() {}
+
+func (x *ColorConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ColorConfig.ProtoReflect.Descriptor instead.
+func (*ColorConfig) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ColorConfig) GetSeat() int32 {
+	if x != nil {
+		return x.Seat
+	}
+	return 0
+}
+
+func (x *ColorConfig) GetColorId() int32 {
+	if x != nil {
+		return x.ColorId
+	}
+	return 0
+}
+
+// 1 大猩猩    1
+// 2 LUCKY    1
+// 3 皇冠      1
+// 4 蛇       1
+// 5 狮子     2
+// 6 大象     3
+// 7 犀牛     4
+// 8 斑马     5
+type AnimalConfig struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Seat     int32 `protobuf:"varint,1,opt,name=seat,proto3" json:"seat,omitempty"`
+	AnimalId int32 `protobuf:"varint,2,opt,name=animal_id,json=animalId,proto3" json:"animal_id,omitempty"`
+}
+
+func (x *AnimalConfig) Reset() {
+	*x = AnimalConfig{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_slot_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AnimalConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimalConfig) ProtoMessage() {}
+
+func (x *AnimalConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_slot_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimalConfig.ProtoReflect.Descriptor instead.
+func (*AnimalConfig) Descriptor() ([]byte, []int) {
+	return file_slot_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *AnimalConfig) GetSeat() int32 {
+	if x != nil {
+		return x.Seat
+	}
+	return 0
+}
+
+func (x *AnimalConfig) GetAnimalId() int32 {
+	if x != nil {
+		return x.AnimalId
 	}
 	return 0
 }
@@ -255,7 +1028,7 @@ type NatsCurrAPInfo struct {
 func (x *NatsCurrAPInfo) Reset() {
 	*x = NatsCurrAPInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_slot_proto_msgTypes[3]
+		mi := &file_slot_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -268,7 +1041,7 @@ func (x *NatsCurrAPInfo) String() string {
 func (*NatsCurrAPInfo) ProtoMessage() {}
 
 func (x *NatsCurrAPInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_slot_proto_msgTypes[3]
+	mi := &file_slot_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -281,7 +1054,7 @@ func (x *NatsCurrAPInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NatsCurrAPInfo.ProtoReflect.Descriptor instead.
 func (*NatsCurrAPInfo) Descriptor() ([]byte, []int) {
-	return file_slot_proto_rawDescGZIP(), []int{3}
+	return file_slot_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *NatsCurrAPInfo) GetUserId() string {
@@ -296,33 +1069,115 @@ var File_slot_proto protoreflect.FileDescriptor
 var file_slot_proto_rawDesc = []byte{
 	0x0a, 0x0a, 0x73, 0x6c, 0x6f, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0b, 0x6d, 0x65,
 	0x6d, 0x65, 0x5f, 0x62, 0x61, 0x74, 0x74, 0x6c, 0x65, 0x1a, 0x09, 0x63, 0x6f, 0x6d, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x0f, 0x0a, 0x0d, 0x63, 0x75, 0x72, 0x72, 0x41, 0x50, 0x49, 0x6e,
-	0x66, 0x6f, 0x52, 0x65, 0x71, 0x22, 0xd7, 0x01, 0x0a, 0x0d, 0x63, 0x75, 0x72, 0x72, 0x41, 0x50,
-	0x49, 0x6e, 0x66, 0x6f, 0x41, 0x63, 0x6b, 0x12, 0x17, 0x0a, 0x07, 0x72, 0x6f, 0x6f, 0x6d, 0x5f,
-	0x6e, 0x6f, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x6f, 0x6f, 0x6d, 0x4e, 0x6f,
-	0x12, 0x1f, 0x0a, 0x0b, 0x63, 0x75, 0x72, 0x72, 0x5f, 0x70, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x63, 0x75, 0x72, 0x72, 0x50, 0x65, 0x72, 0x69, 0x6f,
-	0x64, 0x12, 0x26, 0x0a, 0x0f, 0x67, 0x61, 0x6d, 0x65, 0x5f, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f,
-	0x74, 0x69, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0d, 0x67, 0x61, 0x6d, 0x65,
-	0x53, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x26, 0x0a, 0x0f, 0x67, 0x61, 0x6d,
-	0x65, 0x5f, 0x74, 0x75, 0x72, 0x6e, 0x5f, 0x73, 0x74, 0x61, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01,
-	0x28, 0x05, 0x52, 0x0d, 0x67, 0x61, 0x6d, 0x65, 0x54, 0x75, 0x72, 0x6e, 0x53, 0x74, 0x61, 0x74,
-	0x65, 0x12, 0x3c, 0x0a, 0x0d, 0x61, 0x50, 0x5f, 0x72, 0x6f, 0x6f, 0x6d, 0x5f, 0x69, 0x6e, 0x66,
-	0x6f, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6d, 0x65, 0x6d, 0x65, 0x5f,
-	0x62, 0x61, 0x74, 0x74, 0x6c, 0x65, 0x2e, 0x61, 0x50, 0x52, 0x6f, 0x6f, 0x6d, 0x49, 0x6e, 0x66,
-	0x6f, 0x73, 0x52, 0x0b, 0x61, 0x50, 0x52, 0x6f, 0x6f, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x73, 0x22,
-	0x58, 0x0a, 0x0b, 0x61, 0x50, 0x52, 0x6f, 0x6f, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x73, 0x12, 0x17,
-	0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x1e, 0x0a, 0x0b, 0x62, 0x65, 0x74, 0x5f, 0x7a,
-	0x6f, 0x6e, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x62, 0x65,
-	0x74, 0x5a, 0x6f, 0x6e, 0x65, 0x49, 0x64, 0x12, 0x10, 0x0a, 0x03, 0x62, 0x65, 0x74, 0x18, 0x03,
-	0x20, 0x01, 0x28, 0x02, 0x52, 0x03, 0x62, 0x65, 0x74, 0x22, 0x29, 0x0a, 0x0e, 0x6e, 0x61, 0x74,
-	0x73, 0x43, 0x75, 0x72, 0x72, 0x41, 0x50, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x17, 0x0a, 0x07, 0x75,
-	0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73,
-	0x65, 0x72, 0x49, 0x64, 0x2a, 0x0e, 0x0a, 0x04, 0x73, 0x6c, 0x6f, 0x74, 0x12, 0x06, 0x0a, 0x02,
-	0x73, 0x30, 0x10, 0x00, 0x32, 0x0d, 0x0a, 0x0b, 0x73, 0x6c, 0x6f, 0x74, 0x53, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x42, 0x06, 0x5a, 0x04, 0x2f, 0x70, 0x62, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x13, 0x0a, 0x11, 0x6f, 0x6e, 0x4c, 0x69, 0x6e, 0x65, 0x55, 0x73,
+	0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x22, 0x4d, 0x0a, 0x11, 0x6f, 0x6e, 0x4c,
+	0x69, 0x6e, 0x65, 0x55, 0x73, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x6b, 0x12, 0x38,
+	0x0a, 0x0b, 0x6f, 0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x5f, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20,
+	0x03, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x6d, 0x65, 0x6d, 0x65, 0x5f, 0x62, 0x61, 0x74, 0x74, 0x6c,
+	0x65, 0x2e, 0x6f, 0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x0a, 0x6f, 0x6e,
+	0x6c, 0x69, 0x6e, 0x65, 0x55, 0x73, 0x65, 0x72, 0x22, 0x42, 0x0a, 0x0a, 0x6f, 0x6e, 0x6c, 0x69,
+	0x6e, 0x65, 0x55, 0x73, 0x65, 0x72, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69,
+	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12,
+	0x1b, 0x0a, 0x09, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x08, 0x75, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x22, 0x57, 0x0a, 0x0a,
+	0x75, 0x73, 0x65, 0x72, 0x42, 0x65, 0x74, 0x52, 0x65, 0x71, 0x12, 0x10, 0x0a, 0x03, 0x62, 0x65,
+	0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x02, 0x52, 0x03, 0x62, 0x65, 0x74, 0x12, 0x17, 0x0a, 0x07,
+	0x67, 0x61, 0x6d, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x67,
+	0x61, 0x6d, 0x65, 0x49, 0x64, 0x12, 0x1e, 0x0a, 0x0b, 0x62, 0x65, 0x74, 0x5f, 0x7a, 0x6f, 0x6e,
+	0x65, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x62, 0x65, 0x74, 0x5a,
+	0x6f, 0x6e, 0x65, 0x49, 0x64, 0x22, 0x70, 0x0a, 0x0a, 0x75, 0x73, 0x65, 0x72, 0x42, 0x65, 0x74,
+	0x41, 0x63, 0x6b, 0x12, 0x10, 0x0a, 0x03, 0x62, 0x65, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x02,
+	0x52, 0x03, 0x62, 0x65, 0x74, 0x12, 0x17, 0x0a, 0x07, 0x67, 0x61, 0x6d, 0x65, 0x5f, 0x69, 0x64,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x67, 0x61, 0x6d, 0x65, 0x49, 0x64, 0x12, 0x1e,
+	0x0a, 0x0b, 0x62, 0x65, 0x74, 0x5f, 0x7a, 0x6f, 0x6e, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x09, 0x62, 0x65, 0x74, 0x5a, 0x6f, 0x6e, 0x65, 0x49, 0x64, 0x12, 0x17,
+	0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x5a, 0x0a, 0x14, 0x63, 0x75, 0x72, 0x72, 0x50,
+	0x65, 0x72, 0x69, 0x6f, 0x64, 0x55, 0x73, 0x65, 0x72, 0x57, 0x69, 0x6e, 0x4d, 0x73, 0x67, 0x12,
+	0x42, 0x0a, 0x0f, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x62, 0x65, 0x74, 0x5f, 0x73, 0x65, 0x74, 0x74,
+	0x6c, 0x65, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x6d, 0x65, 0x6d, 0x65, 0x5f,
+	0x62, 0x61, 0x74, 0x74, 0x6c, 0x65, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x42, 0x65, 0x74, 0x53, 0x65,
+	0x74, 0x74, 0x6c, 0x65, 0x52, 0x0d, 0x75, 0x73, 0x65, 0x72, 0x42, 0x65, 0x74, 0x53, 0x65, 0x74,
+	0x74, 0x6c, 0x65, 0x22, 0x60, 0x0a, 0x0d, 0x55, 0x73, 0x65, 0x72, 0x42, 0x65, 0x74, 0x53, 0x65,
+	0x74, 0x74, 0x6c, 0x65, 0x12, 0x19, 0x0a, 0x08, 0x77, 0x69, 0x6e, 0x5f, 0x63, 0x6f, 0x69, 0x6e,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x02, 0x52, 0x07, 0x77, 0x69, 0x6e, 0x43, 0x6f, 0x69, 0x6e, 0x12,
+	0x1b, 0x0a, 0x09, 0x6c, 0x6f, 0x73, 0x65, 0x5f, 0x63, 0x6f, 0x69, 0x6e, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x02, 0x52, 0x08, 0x6c, 0x6f, 0x73, 0x65, 0x43, 0x6f, 0x69, 0x6e, 0x12, 0x17, 0x0a, 0x07,
+	0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75,
+	0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x85, 0x01, 0x0a, 0x0d, 0x61, 0x6e, 0x69, 0x6d, 0x61, 0x6c,
+	0x53, 0x6f, 0x72, 0x74, 0x4d, 0x73, 0x67, 0x12, 0x19, 0x0a, 0x08, 0x77, 0x69, 0x6e, 0x5f, 0x73,
+	0x65, 0x61, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07, 0x77, 0x69, 0x6e, 0x53, 0x65,
+	0x61, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x62, 0x65, 0x74, 0x5f, 0x72, 0x61, 0x74, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x02, 0x52, 0x07, 0x62, 0x65, 0x74, 0x52, 0x61, 0x74, 0x65, 0x12, 0x3e, 0x0a,
+	0x0d, 0x61, 0x6e, 0x69, 0x6d, 0x61, 0x6c, 0x5f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x03,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x6d, 0x65, 0x6d, 0x65, 0x5f, 0x62, 0x61, 0x74, 0x74,
+	0x6c, 0x65, 0x2e, 0x61, 0x6e, 0x69, 0x6d, 0x61, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52,
+	0x0c, 0x61, 0x6e, 0x69, 0x6d, 0x61, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x22, 0x4b, 0x0a,
+	0x0c, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x53, 0x6f, 0x72, 0x74, 0x4d, 0x73, 0x67, 0x12, 0x3b, 0x0a,
+	0x0c, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x5f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x01, 0x20,
+	0x03, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6d, 0x65, 0x6d, 0x65, 0x5f, 0x62, 0x61, 0x74, 0x74, 0x6c,
+	0x65, 0x2e, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x0b, 0x63,
+	0x6f, 0x6c, 0x6f, 0x72, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x22, 0x8a, 0x01, 0x0a, 0x0d, 0x62,
+	0x65, 0x74, 0x5a, 0x6f, 0x6e, 0x65, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x12, 0x0a, 0x04,
+	0x73, 0x65, 0x61, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x73, 0x65, 0x61, 0x74,
+	0x12, 0x1b, 0x0a, 0x09, 0x61, 0x6e, 0x69, 0x6d, 0x61, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x08, 0x61, 0x6e, 0x69, 0x6d, 0x61, 0x6c, 0x49, 0x64, 0x12, 0x19, 0x0a,
+	0x08, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x03, 0x28, 0x05, 0x52,
+	0x07, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x73, 0x69, 0x7a, 0x65,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x73, 0x69, 0x7a, 0x65, 0x12, 0x19, 0x0a, 0x08,
+	0x62, 0x65, 0x74, 0x5f, 0x72, 0x61, 0x74, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x02, 0x52, 0x07,
+	0x62, 0x65, 0x74, 0x52, 0x61, 0x74, 0x65, 0x22, 0x0f, 0x0a, 0x0d, 0x63, 0x75, 0x72, 0x72, 0x41,
+	0x50, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x71, 0x22, 0x97, 0x02, 0x0a, 0x0d, 0x63, 0x75, 0x72,
+	0x72, 0x41, 0x50, 0x49, 0x6e, 0x66, 0x6f, 0x41, 0x63, 0x6b, 0x12, 0x17, 0x0a, 0x07, 0x72, 0x6f,
+	0x6f, 0x6d, 0x5f, 0x6e, 0x6f, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x6f, 0x6f,
+	0x6d, 0x4e, 0x6f, 0x12, 0x1f, 0x0a, 0x0b, 0x63, 0x75, 0x72, 0x72, 0x5f, 0x70, 0x65, 0x72, 0x69,
+	0x6f, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x63, 0x75, 0x72, 0x72, 0x50, 0x65,
+	0x72, 0x69, 0x6f, 0x64, 0x12, 0x26, 0x0a, 0x0f, 0x67, 0x61, 0x6d, 0x65, 0x5f, 0x73, 0x74, 0x61,
+	0x72, 0x74, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0d, 0x67,
+	0x61, 0x6d, 0x65, 0x53, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x26, 0x0a, 0x0f,
+	0x67, 0x61, 0x6d, 0x65, 0x5f, 0x74, 0x75, 0x72, 0x6e, 0x5f, 0x73, 0x74, 0x61, 0x74, 0x65, 0x18,
+	0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0d, 0x67, 0x61, 0x6d, 0x65, 0x54, 0x75, 0x72, 0x6e, 0x53,
+	0x74, 0x61, 0x74, 0x65, 0x12, 0x3c, 0x0a, 0x0d, 0x61, 0x50, 0x5f, 0x72, 0x6f, 0x6f, 0x6d, 0x5f,
+	0x69, 0x6e, 0x66, 0x6f, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6d, 0x65,
+	0x6d, 0x65, 0x5f, 0x62, 0x61, 0x74, 0x74, 0x6c, 0x65, 0x2e, 0x61, 0x50, 0x52, 0x6f, 0x6f, 0x6d,
+	0x49, 0x6e, 0x66, 0x6f, 0x73, 0x52, 0x0b, 0x61, 0x50, 0x52, 0x6f, 0x6f, 0x6d, 0x49, 0x6e, 0x66,
+	0x6f, 0x73, 0x12, 0x3e, 0x0a, 0x0d, 0x62, 0x65, 0x74, 0x5f, 0x7a, 0x6f, 0x6e, 0x65, 0x5f, 0x63,
+	0x6f, 0x6e, 0x66, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x6d, 0x65, 0x6d, 0x65,
+	0x5f, 0x62, 0x61, 0x74, 0x74, 0x6c, 0x65, 0x2e, 0x62, 0x65, 0x74, 0x5a, 0x6f, 0x6e, 0x65, 0x43,
+	0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x0b, 0x62, 0x65, 0x74, 0x5a, 0x6f, 0x6e, 0x65, 0x43, 0x6f,
+	0x6e, 0x66, 0x22, 0xcb, 0x01, 0x0a, 0x0b, 0x61, 0x50, 0x52, 0x6f, 0x6f, 0x6d, 0x49, 0x6e, 0x66,
+	0x6f, 0x73, 0x12, 0x3f, 0x0a, 0x0e, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x62, 0x65, 0x74, 0x5f, 0x69,
+	0x6e, 0x66, 0x6f, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x6d, 0x65, 0x6d,
+	0x65, 0x5f, 0x62, 0x61, 0x74, 0x74, 0x6c, 0x65, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x42, 0x65, 0x74,
+	0x49, 0x6e, 0x66, 0x6f, 0x73, 0x52, 0x0c, 0x75, 0x73, 0x65, 0x72, 0x42, 0x65, 0x74, 0x49, 0x6e,
+	0x66, 0x6f, 0x73, 0x12, 0x3b, 0x0a, 0x0c, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x5f, 0x63, 0x6f, 0x6e,
+	0x66, 0x69, 0x67, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6d, 0x65, 0x6d, 0x65,
+	0x5f, 0x62, 0x61, 0x74, 0x74, 0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x43, 0x6f, 0x6e,
+	0x66, 0x69, 0x67, 0x52, 0x0b, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
+	0x12, 0x3e, 0x0a, 0x0d, 0x61, 0x6e, 0x69, 0x6d, 0x61, 0x6c, 0x5f, 0x63, 0x6f, 0x6e, 0x66, 0x69,
+	0x67, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x6d, 0x65, 0x6d, 0x65, 0x5f, 0x62,
+	0x61, 0x74, 0x74, 0x6c, 0x65, 0x2e, 0x61, 0x6e, 0x69, 0x6d, 0x61, 0x6c, 0x43, 0x6f, 0x6e, 0x66,
+	0x69, 0x67, 0x52, 0x0c, 0x61, 0x6e, 0x69, 0x6d, 0x61, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
+	0x22, 0x59, 0x0a, 0x0c, 0x75, 0x73, 0x65, 0x72, 0x42, 0x65, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x73,
+	0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x1e, 0x0a, 0x0b, 0x62, 0x65, 0x74,
+	0x5f, 0x7a, 0x6f, 0x6e, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09,
+	0x62, 0x65, 0x74, 0x5a, 0x6f, 0x6e, 0x65, 0x49, 0x64, 0x12, 0x10, 0x0a, 0x03, 0x62, 0x65, 0x74,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x03, 0x62, 0x65, 0x74, 0x22, 0x3c, 0x0a, 0x0b, 0x63,
+	0x6f, 0x6c, 0x6f, 0x72, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x12, 0x0a, 0x04, 0x73, 0x65,
+	0x61, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x73, 0x65, 0x61, 0x74, 0x12, 0x19,
+	0x0a, 0x08, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x07, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x49, 0x64, 0x22, 0x3f, 0x0a, 0x0c, 0x61, 0x6e, 0x69,
+	0x6d, 0x61, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x12, 0x0a, 0x04, 0x73, 0x65, 0x61,
+	0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x73, 0x65, 0x61, 0x74, 0x12, 0x1b, 0x0a,
+	0x09, 0x61, 0x6e, 0x69, 0x6d, 0x61, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x08, 0x61, 0x6e, 0x69, 0x6d, 0x61, 0x6c, 0x49, 0x64, 0x22, 0x29, 0x0a, 0x0e, 0x6e, 0x61,
+	0x74, 0x73, 0x43, 0x75, 0x72, 0x72, 0x41, 0x50, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x17, 0x0a, 0x07,
+	0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75,
+	0x73, 0x65, 0x72, 0x49, 0x64, 0x2a, 0x0e, 0x0a, 0x04, 0x73, 0x6c, 0x6f, 0x74, 0x12, 0x06, 0x0a,
+	0x02, 0x73, 0x30, 0x10, 0x00, 0x32, 0x0d, 0x0a, 0x0b, 0x73, 0x6c, 0x6f, 0x74, 0x53, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x42, 0x06, 0x5a, 0x04, 0x2f, 0x70, 0x62, 0x73, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -338,21 +1193,42 @@ func file_slot_proto_rawDescGZIP() []byte {
 }
 
 var file_slot_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_slot_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_slot_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_slot_proto_goTypes = []interface{}{
-	(Slot)(0),              // 0: meme_battle.slot
-	(*CurrAPInfoReq)(nil),  // 1: meme_battle.currAPInfoReq
-	(*CurrAPInfoAck)(nil),  // 2: meme_battle.currAPInfoAck
-	(*APRoomInfos)(nil),    // 3: meme_battle.aPRoomInfos
-	(*NatsCurrAPInfo)(nil), // 4: meme_battle.natsCurrAPInfo
+	(Slot)(0),                    // 0: meme_battle.slot
+	(*OnLineUserListReq)(nil),    // 1: meme_battle.onLineUserListReq
+	(*OnLineUserListAck)(nil),    // 2: meme_battle.onLineUserListAck
+	(*OnlineUser)(nil),           // 3: meme_battle.onlineUser
+	(*UserBetReq)(nil),           // 4: meme_battle.userBetReq
+	(*UserBetAck)(nil),           // 5: meme_battle.userBetAck
+	(*CurrPeriodUserWinMsg)(nil), // 6: meme_battle.currPeriodUserWinMsg
+	(*UserBetSettle)(nil),        // 7: meme_battle.UserBetSettle
+	(*AnimalSortMsg)(nil),        // 8: meme_battle.animalSortMsg
+	(*ColorSortMsg)(nil),         // 9: meme_battle.colorSortMsg
+	(*BetZoneConfig)(nil),        // 10: meme_battle.betZoneConfig
+	(*CurrAPInfoReq)(nil),        // 11: meme_battle.currAPInfoReq
+	(*CurrAPInfoAck)(nil),        // 12: meme_battle.currAPInfoAck
+	(*APRoomInfos)(nil),          // 13: meme_battle.aPRoomInfos
+	(*UserBetInfos)(nil),         // 14: meme_battle.userBetInfos
+	(*ColorConfig)(nil),          // 15: meme_battle.colorConfig
+	(*AnimalConfig)(nil),         // 16: meme_battle.animalConfig
+	(*NatsCurrAPInfo)(nil),       // 17: meme_battle.natsCurrAPInfo
 }
 var file_slot_proto_depIdxs = []int32{
-	3, // 0: meme_battle.currAPInfoAck.aP_room_infos:type_name -> meme_battle.aPRoomInfos
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	3,  // 0: meme_battle.onLineUserListAck.online_user:type_name -> meme_battle.onlineUser
+	7,  // 1: meme_battle.currPeriodUserWinMsg.user_bet_settle:type_name -> meme_battle.UserBetSettle
+	16, // 2: meme_battle.animalSortMsg.animal_config:type_name -> meme_battle.animalConfig
+	15, // 3: meme_battle.colorSortMsg.color_config:type_name -> meme_battle.colorConfig
+	13, // 4: meme_battle.currAPInfoAck.aP_room_infos:type_name -> meme_battle.aPRoomInfos
+	10, // 5: meme_battle.currAPInfoAck.bet_zone_conf:type_name -> meme_battle.betZoneConfig
+	14, // 6: meme_battle.aPRoomInfos.user_bet_infos:type_name -> meme_battle.userBetInfos
+	15, // 7: meme_battle.aPRoomInfos.color_config:type_name -> meme_battle.colorConfig
+	16, // 8: meme_battle.aPRoomInfos.animal_config:type_name -> meme_battle.animalConfig
+	9,  // [9:9] is the sub-list for method output_type
+	9,  // [9:9] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_slot_proto_init() }
@@ -363,7 +1239,7 @@ func file_slot_proto_init() {
 	file_com_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_slot_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CurrAPInfoReq); i {
+			switch v := v.(*OnLineUserListReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -375,7 +1251,7 @@ func file_slot_proto_init() {
 			}
 		}
 		file_slot_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CurrAPInfoAck); i {
+			switch v := v.(*OnLineUserListAck); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -387,7 +1263,7 @@ func file_slot_proto_init() {
 			}
 		}
 		file_slot_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*APRoomInfos); i {
+			switch v := v.(*OnlineUser); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -399,6 +1275,162 @@ func file_slot_proto_init() {
 			}
 		}
 		file_slot_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UserBetReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UserBetAck); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CurrPeriodUserWinMsg); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UserBetSettle); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AnimalSortMsg); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ColorSortMsg); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BetZoneConfig); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CurrAPInfoReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CurrAPInfoAck); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*APRoomInfos); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UserBetInfos); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ColorConfig); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AnimalConfig); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_slot_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*NatsCurrAPInfo); i {
 			case 0:
 				return &v.state
@@ -417,7 +1449,7 @@ func file_slot_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_slot_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   4,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

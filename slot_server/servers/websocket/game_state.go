@@ -267,7 +267,7 @@ func (trs *RoomSpace) InItTurnStateFunc() {
 	////点赞结束 进入下一轮
 	//trs.RegisterTurnStateFunc(EnNextTurnExec, NextTurnExecFunc)
 	//点赞结束 计算
-	trs.RegisterTurnStateFunc(EnCalculateExec, CalculateExecFunc)
+	//trs.RegisterTurnStateFunc(EnCalculateExec, CalculateExecFunc)
 
 	//发送动物排序
 	trs.RegisterTurnStateFunc(EnWheelAnimalPartyCalculateExec, WheelAnimalSortCalculateExec)

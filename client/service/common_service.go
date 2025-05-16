@@ -23,6 +23,10 @@ func (cs *commonService) Start() {
 	Test1()
 	LoginAck()
 	CurrAPInfoAck()
+	UserBetAck()
+	ReceivedAnimalSortMsg()
+	ReceivedCurrPeriodUserWinMsg()
+	ReceivedColorSortMsg()
 }
 
 func (cs *commonService) RegisterHandlers(typeInt int32, f func(msg *pbs.NetMessage)) {
