@@ -88,3 +88,15 @@ func ReceivedColorSortMsg() {
 		fmt.Println("ReceivedColorSortMsg === ", msgData, string(msg.Content))
 	})
 }
+
+func OnLineUserListAck() {
+	CommonService.RegisterHandlers(int32(pbs.ProtocNum_OnLineUserListAck), func(msg *pbs.NetMessage) {
+		msgData := &pbs.OnLineUserListAck{}
+		err := proto.Unmarshal(msg.Content, msgData)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println("OnLineUserListAck === ", msgData, string(msg.Content))
+	})
+}

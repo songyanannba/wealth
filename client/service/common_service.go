@@ -27,6 +27,7 @@ func (cs *commonService) Start() {
 	ReceivedAnimalSortMsg()
 	ReceivedCurrPeriodUserWinMsg()
 	ReceivedColorSortMsg()
+	OnLineUserListAck()
 }
 
 func (cs *commonService) RegisterHandlers(typeInt int32, f func(msg *pbs.NetMessage)) {

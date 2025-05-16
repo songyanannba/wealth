@@ -72,7 +72,10 @@ func (ws *wsClientService) Start() {
 	//ws.TestGame()
 
 	//押注TestBetReq
-	ws.TestBetReq()
+	//ws.TestBetReq()
+
+	//获取在线列表
+	ws.TestOnLineUser()
 
 	time.Sleep(1000 * time.Second * 10000)
 }
@@ -253,6 +256,34 @@ func (ws *wsClientService) TestBetReq() {
 		},
 		ServiceId: "slot_server",
 		MsgId:     int32(pbs.ProtocNum_betReq),
+		Content:   req1M,
+	}
+
+	reqM, _ := proto.Marshal(reqq)
+
+	ws.context <- reqM
+	/*for {
+		time.Sleep(30 * time.Second)
+	}*/
+}
+
+func (ws *wsClientService) TestOnLineUser() {
+	time.Sleep(2 * time.Second)
+	req1 := &pbs.OnLineUserListReq{}
+	req1M, _ := proto.Marshal(req1)
+	reqq := &pbs.NetMessage{
+		ReqHead: &pbs.ReqHead{
+			Uid:      "",
+			Token:    "",
+			Platform: "",
+		},
+		AckHead: &pbs.AckHead{
+			Uid:     "",
+			Code:    0,
+			Message: "",
+		},
+		ServiceId: "slot_server",
+		MsgId:     int32(pbs.ProtocNum_OnLineUserListReq),
 		Content:   req1M,
 	}
 
