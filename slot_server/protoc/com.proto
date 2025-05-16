@@ -12,11 +12,12 @@ enum Code {
 
 enum ErrCode {
   ErrCode0 = 0;
-  NotLogin = 1000; //未登录
+  NotLogin = 1000;        //未登录
   TokenExpiration = 1001; //token 过期
-  ServerError = 1004; // 系统错误
-  NotRegister= 1031; //未注册 和http请求保持一致
-  NotRoom = 1032;   //没有房间
+  ServerError = 1004;     //系统错误
+  NotRegister= 1031;      //未注册 和http请求保持一致
+  NotRoom = 1032;         //没有房间
+  NotBetPeriod = 1033;    //不在押注时间段
 
 }
 
@@ -42,6 +43,14 @@ enum ProtocNum {
 
   //当前轮结束 下一轮开始发送颜色列表
   ColorSortMsg =10008;
+
+  //获取所有的在线用户
+  OnLineUserListReq = 10009;
+  OnLineUserListAck = 10010;
+
+  //押注
+  betReq = 100011;
+  betAck = 100012;
 
 }
 

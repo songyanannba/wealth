@@ -1,11 +1,8 @@
 package common
 
-// AppId 1：未定义 2: 钓鱼 3：酒馆故事
 const AppId1 = 1         //默认
-const AppId = 2          //钓鱼
 const AppId3 = 3         //酒馆故事
-const AppId4 = 4         //幽影魔塔
-const AppId10 = 10       //meme
+const AppId10 = 10       //
 const AwaitNextTime = 20 //
 
 const MagicTowerId = "meme_battle"

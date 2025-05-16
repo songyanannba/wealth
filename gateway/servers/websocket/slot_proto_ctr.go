@@ -70,7 +70,11 @@ func Login(client *Client, msgId int32, message []byte) (respMsgId int32, code u
 		return int32(pbs.ProtocNum_LoginAck), uint32(pbs.ErrCode_NotRegister), []byte{}
 	}
 
-	client.Login(10, userInfo.Uuid, currentTime, userInfo.UserName, client.Token)
+	if reqData.AppId != common.AppId10 {
+		reqData.AppId = common.AppId10
+	}
+
+	client.Login(common.AppId10, userInfo.Uuid, currentTime, userInfo.UserName, client.Token)
 
 	global.GVA_LOG.Infof("用户登录成功 client:%v", *client)
 	// 存储数据

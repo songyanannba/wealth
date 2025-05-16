@@ -6,6 +6,7 @@ import (
 	"slot_server/lib/config"
 	"slot_server/lib/global"
 	"slot_server/lib/helper"
+	"slot_server/lib/models"
 	"slot_server/protoc/pbs"
 )
 
@@ -103,5 +104,82 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 		netMessageResp.Content = ptAck
 		NatsSendAimUserMsg(roomSpaceInfo, netMessageResp, request.UserId)
 	}
+	return
+}
+
+func UserBetReq(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data []byte) {
+	//解析请求参数
+	request := &pbs.UserBetReq{}
+	if err := proto.Unmarshal(netMessage.Content, request); err != nil {
+		global.GVA_LOG.Error("UserBetReq:", zap.Error(err))
+		return
+	}
+	global.GVA_LOG.Infof("UserBetReq %v", request)
+
+	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_betAck), config.SlotServer)
+
+	//获取当前的对局
+
+	//是否是押注时间段
+
+	res := &pbs.UserBetAck{}
+
+	//房间是否存活
+	roomSpaceInfo, err := SlotRoomManager.GetCurrRoomSpace()
+	global.GVA_LOG.Infof("UserBetReq roomSpaceInfo %v", &roomSpaceInfo)
+
+	if err != nil {
+		//返回数据，没有房间信息
+		ptAck, _ := proto.Marshal(res)
+		netMessageResp.Content = ptAck
+		//返回的用户id
+		netMessageResp.AckHead.Uid = netMessage.ReqHead.Uid
+		netMessageResp.AckHead.Code = pbs.Code(pbs.ErrCode_NotRoom)
+		global.GVA_LOG.Infof("UserBetReq LikeUserId:{%v} 给客户端发消息:{%v}", netMessage.ReqHead.Uid, res)
+		netMessageRespMarshal, _ := proto.Marshal(netMessageResp)
+		NastManager.Producer(netMessageRespMarshal)
+	} else {
+
+		gState := roomSpaceInfo.ComRoomSpace.GetGameState()
+		currGameStartTime := roomSpaceInfo.ComRoomSpace.GetGameStartTime()
+		global.GVA_LOG.Infof("UserBetReq currTime - currGameStartTime:%v 执行, gState:%v ,currGameStartTime:%v", helper.LocalTime().Unix()-currGameStartTime, gState, currGameStartTime)
+
+		//押注期间
+		if gState != BetIng {
+			//不是押注时间
+			netMessageResp.AckHead.Uid = netMessage.ReqHead.Uid
+			netMessageResp.AckHead.Code = pbs.Code(pbs.ErrCode_NotBetPeriod)
+			global.GVA_LOG.Infof("UserBetReq LikeUserId:{%v} 给客户端发消息:{%v}", netMessage.ReqHead.Uid, res)
+			netMessageRespMarshal, _ := proto.Marshal(netMessageResp)
+			NastManager.Producer(netMessageRespMarshal)
+			return
+		} else {
+			//保留押注用户信息
+			userInfo, _ := roomSpaceInfo.ComRoomSpace.GetUserInfo(netMessage.ReqHead.Uid)
+			if userInfo == nil {
+				//保存用户信息
+				user := models.NewUserInfo(netMessage.ReqHead.Uid, "", models.NewUserProperty(0, 0, false, float64(request.Bet)), models.UserExt{
+					RoomNo: roomSpaceInfo.RoomInfo.RoomNo,
+				})
+				userInfo = &user
+				global.GVA_LOG.Infof("UserBetReq 押注 :%v", userInfo)
+
+				roomSpaceInfo.ComRoomSpace.AddUserInfos(netMessage.ReqHead.Uid, userInfo) //JoinRoom
+			}
+
+			userInfo, _ = roomSpaceInfo.ComRoomSpace.GetUserInfo(netMessage.ReqHead.Uid)
+			if userInfo == nil {
+				global.GVA_LOG.Error("押注保留用户信息错误 UserBetReq userInfo")
+				return
+			}
+
+			//保留押注
+			roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(int(request.BetZoneId), request.Bet, userInfo)
+			ptAck, _ := proto.Marshal(res)
+			netMessageResp.Content = ptAck
+			NatsSendAimUserMsg(roomSpaceInfo, netMessageResp, netMessage.ReqHead.Uid)
+		}
+	}
+
 	return
 }

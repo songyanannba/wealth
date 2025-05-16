@@ -19,4 +19,9 @@ func (rm *slotRouter) SlotRouterInit() {
 	//动物派对全局的房间信息
 	websocket.RegisterProto(int32(pbs.ProtocNum_CurrAPInfoReq), websocket.CurrAPInfo)
 
+	//获取所有的在线用户列表
+	websocket.RegisterProto(int32(pbs.ProtocNum_OnLineUserListReq), websocket.OnLineUserList)
+
+	//押注
+	websocket.RegisterProto(int32(pbs.ProtocNum_betReq), websocket.UserBetReq)
 }

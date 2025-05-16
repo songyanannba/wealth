@@ -1,3 +1,3 @@
 package websocket
 
-const BetIngPeriod = 30 //60暂定
+const BetIngPeriod = 60 //60暂定

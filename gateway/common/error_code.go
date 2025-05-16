@@ -21,6 +21,7 @@ const (
 	UserScoreNotEnough    = 1014 // 用户积分不够
 	SelectRoomProhibit    = 1015 // 房间被占用
 	BetLow                = 1017 // 押注不正确
+	PasswordErr           = 1019 // 密码错误
 	NoReSelectRoom        = 1018 // 已经选择过房间
 	ReLogin               = 1020
 	UserNameRepeat        = 1021 //用户名重复
@@ -38,7 +39,7 @@ const (
 	NotLogin              = 1069 // 未登陆
 	NotSelfKickSelf       = 1100 // 自己不能踢自己
 	NotRoom               = 1032 // 没有房间
-	PasswordErr           = 1033 // 密码错误
+	NotBetPeriod          = 1033 // 不在押注时间段
 
 )
 
@@ -82,6 +83,7 @@ func GetErrorMessage(code uint32, message string) string {
 		NotLogin:              "not login",
 		NotRoom:               "not room",
 		PasswordErr:           "密码错误",
+		NotBetPeriod:          "不在押注时间段",
 	}
 
 	if message == "" {

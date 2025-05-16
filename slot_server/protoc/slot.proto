@@ -21,6 +21,33 @@ service slotService {
 }
 
 
+//在线用户列表请求
+message onLineUserListReq {
+
+}
+
+//在线用户列表返回
+message onLineUserListAck {
+  repeated onlineUser online_user = 1 ; //房间当前押注信息
+}
+
+message onlineUser {
+  string user_id = 1;
+  string user_name = 4;
+}
+
+
+//押注
+message userBetReq {
+  float bet = 1;
+  int32 game_id = 2; // 1=动物派对 2=火箭 3=赏金女王
+  int32 bet_zone_id = 3; //押注的位置
+}
+
+message userBetAck {
+
+}
+
 //当前期是否赢钱的通知
 message  currPeriodUserWinMsg {
   repeated UserBetSettle user_bet_settle = 1;

@@ -70,7 +70,7 @@ func MemeEntry(message []byte, uid string, msgId int32) (code uint32, msg string
 			Platform: "",
 		},
 		AckHead: &pbs.AckHead{
-			Uid:     uid,
+			Uid:     "",
 			Code:    0,
 			Message: "",
 		},

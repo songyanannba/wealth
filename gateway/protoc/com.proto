@@ -17,6 +17,7 @@ enum ErrCode {
   ServerError = 1004; // 系统错误
   NotRegister= 1031; //未注册 和http请求保持一致
   NotRoom = 1032;   //没有房间
+  NotBetPeriod = 1033;    //不在押注时间段
 
 }
 
@@ -30,19 +31,26 @@ enum ProtocNum {
   HeartReq =10002;
   HeartAck =10003;
 
-  //获取动物派对的信息
-  CurrAPInfoReq =10004;
-  CurrAPInfoAck =10005;
+  //获取当前局动物派对的信息
+  CurrAPInfoReq = 10004;
+  CurrAPInfoAck = 10005;
 
   //押注停止后 主动下发最外圈的动物排序，第一个排在最上面 位置0开始
-  AnimalSortMsg =10006;
+  AnimalSortMsg = 10006;
 
   //当前期是否赢钱的通知
-  CurrPeriodUserWinMsg =10007;
+  CurrPeriodUserWinMsg = 10007;
 
   //当前轮结束 下一轮开始发送颜色列表
-  ColorSortMsg =10008;
+  ColorSortMsg = 10008;
 
+  //获取所有的在线用户
+  OnLineUserListReq = 10009;
+  OnLineUserListAck = 10010;
+
+  //押注
+  betReq = 100011;
+  betAck = 100012;
 
 }
 
@@ -115,8 +123,8 @@ message login {
 message loginAck {
     string  user_name = 1;
     string  city = 2;
-    float amount = 3;
-    string userId = 4;
+    float   amount = 3;
+    string  userId = 4;
 }
 
 //心跳

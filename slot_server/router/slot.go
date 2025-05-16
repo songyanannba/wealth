@@ -10,6 +10,8 @@ func NatsSlotInit() {
 
 	websocket.RegisterProto(int32(pbs.ProtocNum_CurrAPInfoReq), websocket.CurrAPInfos)
 
+	websocket.RegisterProto(int32(pbs.ProtocNum_betReq), websocket.UserBetReq)
+
 	//websocket.RegisterProto(int32(pbs.Meb_mtHeartReq), websocket.Heart400)
 	////匹配
 	//websocket.RegisterProto(int32(pbs.Meb_memeMatchRoom), websocket.MatchRoomController)
