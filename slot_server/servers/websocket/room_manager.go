@@ -410,17 +410,17 @@ func (trMgr *roomManager) InitDBData() {
 	roomSpaceInfo := GetRoomSpace()
 	//添加对局用户
 
-	record, err := table.GetMemeRoomByIdDesc()
-	if err != nil {
-		global.GVA_LOG.Error("InitDBData GetMemeRoomByIdDesc err:", zap.Error(err))
-	}
+	//record, err := table.GetMemeRoomByIdDesc()
+	//if err != nil {
+	//	global.GVA_LOG.Error("InitDBData GetMemeRoomByIdDesc err:", zap.Error(err))
+	//}
 	period := "1"
-	if record.ID >= 0 {
-		period = helper.Itoa(helper.Atoi(record.Period) + 1)
-	}
+	//if record.ID >= 0 {
+	//	period = helper.Itoa(helper.Atoi(record.Period) + 1)
+	//}
 
 	animalPartyRoom := table.NewAnimalPartyRoom("1", "1", uuid.New().String(), config.AnimalPartyGlobal, "第"+period+"期", period, table.TavernRoomOpen, table.RoomTypeMatch, 0, 0, 0, 0)
-	err = table.CreateMemeRoom(animalPartyRoom)
+	err := table.CreateMemeRoom(animalPartyRoom)
 	if err != nil {
 		global.GVA_LOG.Error("NewAnimalPartyRoom:{%v},roomInfo:%v", zap.Error(err), zap.Any("NewAnimalPartyRoom", animalPartyRoom.RoomNo))
 		return

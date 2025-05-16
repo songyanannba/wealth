@@ -8,7 +8,7 @@ app:
   httpUrl: 127.0.0.1:8000
   webSocketUrl: 127.0.0.1:8081
   natsUrl: nats://127.0.0.1:4222
-  svName : gateway_wealth
+  svName : slot_wealth
   environment : dev
 jwt:
   signing-key: xxxx
