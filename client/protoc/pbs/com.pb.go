@@ -355,11 +355,11 @@ type NetMessage struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ReqHead   *ReqHead `protobuf:"bytes,1,opt,name=req_head,json=reqHead,proto3" json:"req_head,omitempty"`       // 返回统一协议
-	AckHead   *AckHead `protobuf:"bytes,2,opt,name=ack_head,json=ackHead,proto3" json:"ack_head,omitempty"`       // 返回统一协议
-	ServiceId string   `protobuf:"bytes,3,opt,name=Service_id,json=ServiceId,proto3" json:"Service_id,omitempty"` //服务号
-	MsgId     int32    `protobuf:"varint,4,opt,name=msg_id,json=msgId,proto3" json:"msg_id,omitempty"`            //协议号
-	Content   []byte   `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                      //协议内容
+	ReqHead *ReqHead `protobuf:"bytes,1,opt,name=req_head,json=reqHead,proto3" json:"req_head,omitempty"` // 返回统一协议
+	AckHead *AckHead `protobuf:"bytes,2,opt,name=ack_head,json=ackHead,proto3" json:"ack_head,omitempty"` // 返回统一协议
+	ServiceId string `protobuf:"bytes,3,opt,name=Service_id,json=ServiceId,proto3" json:"Service_id,omitempty"` //服务号
+	MsgId     int32  `protobuf:"varint,4,opt,name=msg_id,json=msgId,proto3" json:"msg_id,omitempty"`            //协议号
+	Content   []byte `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                      //协议内容
 }
 
 func (x *NetMessage) Reset() {

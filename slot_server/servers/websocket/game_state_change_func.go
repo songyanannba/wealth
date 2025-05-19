@@ -20,9 +20,67 @@ import (
 
 func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 	global.GVA_LOG.Infof("AnimalPartyCalculateExecFunc 房间 {%v}", trs.RoomInfo.RoomNo)
-	//告诉最外轮在的所在位置
-	//helper.SliceShuffle(trs.AnimalConfigs)
 
+	//实际外部排序
+	RecursionGetAnimalConfig(trs)
+
+	msgData := &pbs.AnimalSortMsg{
+		WinBetZoneConfig: make([]*pbs.WinBetZoneConfig, 0),
+	}
+
+	currAnimalWheelSort := trs.ComRoomSpace.CurrAnimalWheelSort
+	for _, animalWheelSort := range currAnimalWheelSort {
+		winBetZoneConfig := &pbs.WinBetZoneConfig{
+			WinSeat:      int32(animalWheelSort.WinSeat),
+			AnimalConfig: make([]*pbs.AnimalConfig, 0),
+			WinZoneConf:  make([]*pbs.WinZoneConf, 0),
+		}
+
+		for _, animalConf := range animalWheelSort.AnimalConfigs {
+			winBetZoneConfig.AnimalConfig = append(winBetZoneConfig.AnimalConfig, &pbs.AnimalConfig{
+				Seat:     int32(animalConf.Seat),
+				AnimalId: int32(animalConf.AnimalId),
+			})
+		}
+
+		//对应位置的颜色
+		colorConfigSeat := trs.GetColorConfigsBySeat(animalWheelSort.WinAnimalConfig.Seat)
+		//根据本局赢钱的位置的动物和颜色确定赔率
+		betZoneConfig := GetBetZoneConfigByAnimalIdAndColorId(animalWheelSort.WinAnimalConfig.AnimalId, colorConfigSeat.ColorId)
+		animalWheelSort.WinBetZoneConfig = betZoneConfig
+
+		for _, bzz := range betZoneConfig {
+			winBetZoneConfig.WinZoneConf = append(winBetZoneConfig.WinZoneConf, &pbs.WinZoneConf{
+				BetZoneId: int32(bzz.Seat),
+				BetRate:   float32(bzz.BetRate),
+			})
+		}
+		msgData.WinBetZoneConfig = append(msgData.WinBetZoneConfig, winBetZoneConfig)
+	}
+
+	//for _, newAllAnimalConfig := range newAllAnimalConfigs {
+	//	//对应位置的颜色
+	//	colorConfigSeat := trs.GetColorConfigsBySeat(newAllAnimalConfig.WinSeat)
+	//	//根据本局赢钱的位置的动物和颜色确定赔率
+	//	betZoneConfig := GetBetZoneConfigByAnimalIdAndColorId(newAllAnimalConfig.WinAnimalConfig.AnimalId, colorConfigSeat.ColorId)
+	//	global.GVA_LOG.Infof("中奖组合 betZoneConfig %v", betZoneConfig)
+	//	newAllAnimalConfig.WinBetZoneConfig = betZoneConfig
+	//}
+	//
+	//trs.ComRoomSpace.WinBetZoneConfig = betZoneConfig
+	//msgData.BetRate = float32(betZoneConfig.BetRate)
+
+	//获取房间人数
+	global.GVA_LOG.Infof("  押注停止后 主动下发最外圈的动物排序，第一个排在最上面 位置0开始: %v", msgData)
+	responseHeadByte, _ := proto.Marshal(msgData)
+
+	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_AnimalSortMsg), config.SlotServer)
+	netMessageResp.Content = responseHeadByte
+
+	NatsSendAimUserMsg(trs, netMessageResp, "")
+}
+
+func WheelAnimalSortCalculate(trs *RoomSpace) []*AnimalConfig {
 	//todo 优化
 	//要根据当前的押注 计算可以盈利的区间 然后指定到合适的位置
 	topSeat := helper.RandInt(len(trs.AnimalConfigs))
@@ -31,69 +89,135 @@ func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[topSeat:]...)
 	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[:topSeat]...)
 
-	//当前轮 世纪的动物排序
-	trs.ComRoomSpace.CurrAnimalConfigs = newAnimalConfigs
-	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_AnimalSortMsg), config.SlotServer)
+	//trs.ComRoomSpace.CurrAnimalWheelSort = append(trs.ComRoomSpace.CurrAnimalWheelSort, newAnimalConfigs)
+	return newAnimalConfigs
+}
+
+func RecursionGetAnimalConfig(trs *RoomSpace) {
+	animalWheelSort := make([]*AllAnimalWheelSort, 0)
+
+	firstAnimalConfigs := WheelAnimalSortCalculate(trs)
 
 	//现在是随机
-	winSeat := helper.RandInt(len(newAnimalConfigs))
-	trs.ComRoomSpace.WinSeat = winSeat
+	winSeat := helper.RandInt(len(firstAnimalConfigs))
+	//根据位置获取动物
+	animalConfig := trs.GetNewAnimalConfigsBySeat(winSeat, firstAnimalConfigs)
 
-	msgData := &pbs.AnimalSortMsg{
-		WinSeat:      int32(winSeat),
-		BetRate:      0,
-		AnimalConfig: make([]*pbs.AnimalConfig, 0),
+	newAnimalWheelSort1 := &AllAnimalWheelSort{
+		WinSeat:         winSeat,
+		AnimalConfigs:   firstAnimalConfigs,
+		WinAnimalConfig: animalConfig,
 	}
-	for _, v := range trs.AnimalConfigs {
-		msgData.AnimalConfig = append(msgData.AnimalConfig, &pbs.AnimalConfig{
-			Seat:     int32(v.Seat),
-			AnimalId: int32(v.AnimalId),
-		})
+	animalWheelSort = append(animalWheelSort, newAnimalWheelSort1)
+
+	//如果是 LUCKY
+	if animalConfig.AnimalId == 2 {
+		//先吧 第一次的 LUCKY， 放进结果集
+		counts := []int{2, 3, 4, 5, 6, 7}
+		//转几次
+		randCountInt := helper.RandInt(len(counts))
+		//todo
+		randCountInt = 2
+
+		for i := 0; i < randCountInt; i++ {
+			newAnimalConfigs := WheelAnimalSortCalculate(trs)
+			//现在是随机
+			winSeat = helper.RandInt(len(newAnimalConfigs))
+			//根据位置获取动物
+			animalConfig = trs.GetNewAnimalConfigsBySeat(winSeat, newAnimalConfigs)
+
+			//最多七次
+			if animalConfig.AnimalId == 2 {
+				winSeat += 1
+				animalConfig = trs.GetNewAnimalConfigsBySeat(winSeat, newAnimalConfigs)
+				newAnimalWheelSort := &AllAnimalWheelSort{
+					WinSeat:         winSeat,
+					WinAnimalConfig: animalConfig,
+					AnimalConfigs:   newAnimalConfigs,
+				}
+				animalWheelSort = append(animalWheelSort, newAnimalWheelSort)
+			} else {
+				newAnimalWheelSort := &AllAnimalWheelSort{
+					WinSeat:         winSeat,
+					WinAnimalConfig: animalConfig,
+					AnimalConfigs:   newAnimalConfigs,
+				}
+				animalWheelSort = append(animalWheelSort, newAnimalWheelSort)
+			}
+		}
 	}
 
-	animalConfig := trs.GetNewAnimalConfigsBySeat(winSeat, newAnimalConfigs)
-	colorConfig := trs.GetColorConfigsBySeat(winSeat)
-
-	//根据本局赢钱的位置的动物和颜色确定赔率
-	betZoneConfig := GetBetZoneConfigByAnimalIdAndColorId(animalConfig.AnimalId, colorConfig.ColorId)
-	global.GVA_LOG.Infof("中奖组合 betZoneConfig %v", betZoneConfig)
-
-	trs.ComRoomSpace.WinBetZoneConfig = betZoneConfig
-	msgData.BetRate = float32(betZoneConfig.BetRate)
-
-	//获取房间人数
-	global.GVA_LOG.Infof("  押注停止后 主动下发最外圈的动物排序，第一个排在最上面 位置0开始: %v", msgData)
-	responseHeadByte, _ := proto.Marshal(msgData)
-	netMessageResp.Content = responseHeadByte
-
-	NatsSendAimUserMsg(trs, netMessageResp, "")
+	//当前的排序
+	trs.ComRoomSpace.CurrAnimalWheelSort = animalWheelSort
 }
 
 func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
-	//获取所有的用户押注情况
-	winBetZoneConfig := trs.ComRoomSpace.WinBetZoneConfig
-
-	//先发中奖组合
-	winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(winBetZoneConfig.Seat)
-	global.GVA_LOG.Infof("WheelAnimalPartyCalculateExec 中奖用户 winUserArr: %v , loseUserAr %v", winUserArr, loseUserArr)
-
 	currPeriodUserWinMsg := &pbs.CurrPeriodUserWinMsg{
 		UserBetSettle: make([]*pbs.UserBetSettle, 0),
 	}
+	//用户｜金额
+	userWinLoseInfo := make(map[string]float32)
 
-	for _, uInfo := range winUserArr {
-		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
-			WinCoin: float32(helper.Sum(uInfo.UserProperty.Bet, winBetZoneConfig.BetRate)),
-			UserId:  uInfo.UserID,
-		})
+	//获取所有的用户押注情况
+	//winBetZoneConfig := trs.ComRoomSpace.WinBetZoneConfig
+	winBetZoneConfig := trs.ComRoomSpace.CurrAnimalWheelSort
+
+	for _, animalWheelSort := range winBetZoneConfig {
+		winBetZoneConf := animalWheelSort.WinBetZoneConfig
+
+		for _, winBetZone := range winBetZoneConf {
+			//先发中奖组合
+			winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(winBetZone.Seat)
+			global.GVA_LOG.Infof("WheelAnimalPartyCalculateExec 中奖用户 winUserArr: %v , loseUserAr %v", winUserArr, loseUserArr)
+
+			for _, uInfo := range winUserArr {
+				currVal, ok := userWinLoseInfo[uInfo.UserID]
+				if ok {
+					userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, winBetZone.BetRate)) + currVal
+				} else {
+					userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, winBetZone.BetRate))
+				}
+			}
+
+			for _, uInfo := range loseUserArr {
+				currVal, ok := userWinLoseInfo[uInfo.UserID]
+				if ok {
+					userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(-float32(uInfo.UserProperty.Bet), currVal))
+				} else {
+					userWinLoseInfo[uInfo.UserID] = -float32(uInfo.UserProperty.Bet)
+				}
+			}
+		}
 	}
 
-	for _, uInfo := range loseUserArr {
-		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
-			LoseCoin: float32(uInfo.UserProperty.Bet),
-			UserId:   uInfo.UserID,
-		})
+	for uid, coinNum := range userWinLoseInfo {
+		if coinNum > 0 {
+			currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+				WinCoin: coinNum,
+				UserId:  uid,
+			})
+		} else {
+			currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+				LoseCoin: coinNum,
+				UserId:   uid,
+			})
+		}
+
 	}
+
+	//for _, uInfo := range winUserArr {
+	//	currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+	//		WinCoin: float32(helper.Sum(uInfo.UserProperty.Bet, winBetZoneConfig.BetRate)),
+	//		UserId:  uInfo.UserID,
+	//	})
+	//}
+	//
+	//for _, uInfo := range loseUserArr {
+	//	currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+	//		LoseCoin: float32(uInfo.UserProperty.Bet),
+	//		UserId:   uInfo.UserID,
+	//	})
+	//}
 
 	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_CurrPeriodUserWinMsg), config.SlotServer)
 
@@ -102,6 +226,40 @@ func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 	NatsSendAimUserMsg(trs, netMessageResp, "")
 
 }
+
+//func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
+//	//获取所有的用户押注情况
+//	winBetZoneConfig := trs.ComRoomSpace.WinBetZoneConfig
+//
+//	//先发中奖组合
+//	winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(winBetZoneConfig.Seat)
+//	global.GVA_LOG.Infof("WheelAnimalPartyCalculateExec 中奖用户 winUserArr: %v , loseUserAr %v", winUserArr, loseUserArr)
+//
+//	currPeriodUserWinMsg := &pbs.CurrPeriodUserWinMsg{
+//		UserBetSettle: make([]*pbs.UserBetSettle, 0),
+//	}
+//
+//	for _, uInfo := range winUserArr {
+//		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+//			WinCoin: float32(helper.Sum(uInfo.UserProperty.Bet, winBetZoneConfig.BetRate)),
+//			UserId:  uInfo.UserID,
+//		})
+//	}
+//
+//	for _, uInfo := range loseUserArr {
+//		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+//			LoseCoin: float32(uInfo.UserProperty.Bet),
+//			UserId:   uInfo.UserID,
+//		})
+//	}
+//
+//	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_CurrPeriodUserWinMsg), config.SlotServer)
+//
+//	responseHeadByte, _ := proto.Marshal(currPeriodUserWinMsg)
+//	netMessageResp.Content = responseHeadByte
+//	NatsSendAimUserMsg(trs, netMessageResp, "")
+//
+//}
 
 func AnimalPartyCalculateExecFunc(trs *RoomSpace) {
 	global.GVA_LOG.Infof("AnimalPartyCalculateExecFunc 房间 {%v}", trs.RoomInfo.RoomNo)

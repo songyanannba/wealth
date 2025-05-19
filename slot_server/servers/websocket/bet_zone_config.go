@@ -23,7 +23,7 @@ func GetBetZoneFigure() []*BetZoneConfig {
 
 	// 1 大猩猩    1
 	// 2 LUCKY    1
-	// 3 皇冠      1
+	// 3 皇冠      1 //皇冠 代表  狮子 大象  犀牛  斑马
 	// 4 蛇        1
 	// 5 狮子      2
 	// 6 大象     3
@@ -89,7 +89,7 @@ func GetBetZoneFigure() []*BetZoneConfig {
 			betRate = 12
 			colorId = []int{1}
 		}
-		//
+		//粉色
 		if i == 8 {
 			size = 1
 			betRate = 2
@@ -110,6 +110,7 @@ func GetBetZoneFigure() []*BetZoneConfig {
 			colorId = []int{1}
 			betRate = 7
 		}
+		//紫色
 		if i == 12 {
 			size = 2
 			betRate = 2
@@ -142,16 +143,45 @@ func GetBetZoneFigure() []*BetZoneConfig {
 	return betZoneConfigs
 }
 
-func GetBetZoneConfigByAnimalIdAndColorId(animalId, colorId int) *BetZoneConfig {
-	res := &BetZoneConfig{}
+//func GetSpecialBetZoneFigure() []*BetZoneConfig {
+//	betZoneConfigs := make([]*BetZoneConfig, 16)
+//}
+
+func GetBetZoneConfigByAnimalIdAndColorId(animalId, colorId int) []*BetZoneConfig {
+	res := make([]*BetZoneConfig, 0)
+
+	// 2 LUCKY    1
+	if animalId == 2 {
+		return res
+	}
+
+	// 3 皇冠      1
+	//皇冠代表  狮子/大象/犀牛/斑马
+	if animalId == 3 {
+		//对应颜色的所有动物
+		res = GetBetZoneConfigByColorId(colorId)
+		return res
+	}
 
 	for _, betZoneFigure := range GetBetZoneFigure() {
 		if !helper.InArr(colorId, betZoneFigure.ColorId) {
 			continue
 		}
 		if betZoneFigure.AnimalId == animalId {
-			res = betZoneFigure
+			res = append(res, betZoneFigure)
 			break
+		}
+	}
+
+	return res
+}
+
+// GetBetZoneConfigByColorId 对应颜色的所有动物
+func GetBetZoneConfigByColorId(colorId int) []*BetZoneConfig {
+	res := make([]*BetZoneConfig, 0)
+	for _, betZoneFigure := range GetBetZoneFigure() {
+		if helper.InArr(colorId, betZoneFigure.ColorId) {
+			res = append(res, betZoneFigure)
 		}
 	}
 	return res

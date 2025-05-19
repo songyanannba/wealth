@@ -96,17 +96,40 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 			})
 		}
 
-		if len(roomSpaceInfo.ComRoomSpace.CurrAnimalConfigs) > 0 {
-			for _, animalConfig := range roomSpaceInfo.ComRoomSpace.CurrAnimalConfigs {
-				res.APRoomInfos.AnimalConfig = append(res.APRoomInfos.AnimalConfig, &pbs.AnimalConfig{
-					Seat:     int32(animalConfig.Seat),
-					AnimalId: int32(animalConfig.AnimalId),
-				})
+		//todo
+		if len(roomSpaceInfo.ComRoomSpace.CurrAnimalWheelSort) > 0 {
+			currAnimalWheelSort := roomSpaceInfo.ComRoomSpace.CurrAnimalWheelSort
+			for _, animalWheelSort := range currAnimalWheelSort {
+				winBetZoneConfig := &pbs.WinBetZoneConfig{
+					WinSeat:      int32(animalWheelSort.WinSeat),
+					AnimalConfig: make([]*pbs.AnimalConfig, 0),
+					WinZoneConf:  make([]*pbs.WinZoneConf, 0),
+				}
+
+				for _, animalConf := range animalWheelSort.AnimalConfigs {
+					winBetZoneConfig.AnimalConfig = append(winBetZoneConfig.AnimalConfig, &pbs.AnimalConfig{
+						Seat:     int32(animalConf.Seat),
+						AnimalId: int32(animalConf.AnimalId),
+					})
+				}
+
+				//对应位置的颜色
+				colorConfigSeat := roomSpaceInfo.GetColorConfigsBySeat(animalWheelSort.WinAnimalConfig.Seat)
+				//根据本局赢钱的位置的动物和颜色确定赔率
+				betZoneConfig := GetBetZoneConfigByAnimalIdAndColorId(animalWheelSort.WinAnimalConfig.AnimalId, colorConfigSeat.ColorId)
+				animalWheelSort.WinBetZoneConfig = betZoneConfig
+
+				for _, bzz := range betZoneConfig {
+					winBetZoneConfig.WinZoneConf = append(winBetZoneConfig.WinZoneConf, &pbs.WinZoneConf{
+						BetZoneId: int32(bzz.Seat),
+						BetRate:   float32(bzz.BetRate),
+					})
+				}
+				res.APRoomInfos.WinBetZoneConfig = append(res.APRoomInfos.WinBetZoneConfig, winBetZoneConfig)
 			}
 		}
 
 		ptAck, _ := proto.Marshal(res)
-
 		netMessageResp.Content = ptAck
 		NatsSendAimUserMsg(roomSpaceInfo, netMessageResp, request.UserId)
 	}
@@ -125,7 +148,6 @@ func UserBetReq(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data 
 	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_betAck), config.SlotServer)
 
 	//获取当前的对局
-
 	//是否是押注时间段
 
 	res := &pbs.UserBetAck{

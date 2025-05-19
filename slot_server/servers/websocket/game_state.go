@@ -271,6 +271,7 @@ func (trs *RoomSpace) InItTurnStateFunc() {
 
 	//发送动物排序
 	trs.RegisterTurnStateFunc(EnWheelAnimalPartyCalculateExec, WheelAnimalSortCalculateExec)
+
 	//计算
 	trs.RegisterTurnStateFunc(EnAnimalPartyCalculateExec, WheelAnimalPartyCalculateExec)
 }

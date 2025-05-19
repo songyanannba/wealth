@@ -16,7 +16,7 @@ func GetAnimalWheel() []*AnimalConfig {
 
 	// 1 大猩猩    1
 	// 2 LUCKY    1
-	// 3 皇冠      1
+	// 3 皇冠      1  //皇冠 代表  狮子 大象  犀牛  斑马
 	// 4 蛇       1
 	// 5 狮子     2
 	// 6 大象     3

@@ -51,6 +51,13 @@ type PeriodSpace struct {
 	IdDealCarding bool
 }
 
+type AllAnimalWheelSort struct {
+	WinSeat          int
+	WinAnimalConfig  *AnimalConfig    //赢钱的动物位置
+	AnimalConfigs    []*AnimalConfig  //当前排序
+	WinBetZoneConfig []*BetZoneConfig //赢钱区域
+}
+
 type ComRoomSpace struct {
 	//是否被保护
 	IsProtection bool
@@ -63,11 +70,8 @@ type ComRoomSpace struct {
 	//key是用户ID 用户信息 {用户押注/获取房间的时候添加 }
 	UserInfos map[string]*models.UserInfo
 
-	CurrAnimalConfigs []*AnimalConfig
-
-	WinSeat int
-
-	WinBetZoneConfig *BetZoneConfig
+	//全部的情况  如果是 LUCKY 有多个
+	CurrAnimalWheelSort []*AllAnimalWheelSort
 
 	//接收消息处理
 	ReceiveMsg chan []byte
@@ -215,19 +219,18 @@ func (rs *ComRoomSpace) UpdateTurnMateInfo(turn int, countdownTime int64, matchU
 // GetComRoomSpace ss
 func GetComRoomSpace() *ComRoomSpace {
 	return &ComRoomSpace{
-		UserOwner:         &models.UserInfo{},
-		IsProtection:      false,
-		UserInfos:         make(map[string]*models.UserInfo),
-		Broadcast:         make(chan []byte),
-		ReceiveMsg:        make(chan []byte, 10000),
-		Close:             make(chan bool),
-		CurrentOpTime:     time.Now().Unix(), //内存中房间协程创建时间
-		IsStopGame:        false,
-		IsStartGame:       false,
-		CurrAnimalConfigs: []*AnimalConfig{},
-		WinBetZoneConfig:  &BetZoneConfig{},
-		Sync:              new(sync.Mutex),
-		UserSync:          new(sync.RWMutex),
+		UserOwner:           &models.UserInfo{},
+		IsProtection:        false,
+		UserInfos:           make(map[string]*models.UserInfo),
+		Broadcast:           make(chan []byte),
+		ReceiveMsg:          make(chan []byte, 10000),
+		Close:               make(chan bool),
+		CurrentOpTime:       time.Now().Unix(), //内存中房间协程创建时间
+		IsStopGame:          false,
+		IsStartGame:         false,
+		CurrAnimalWheelSort: make([]*AllAnimalWheelSort, 0),
+		Sync:                new(sync.Mutex),
+		UserSync:            new(sync.RWMutex),
 		TurnMateInfo: TurnMateInfo{
 			TurnSync:           new(sync.RWMutex),
 			BetZoneUserInfoMap: make(map[int]map[string]*models.UserInfo),

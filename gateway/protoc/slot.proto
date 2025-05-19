@@ -60,9 +60,18 @@ message  UserBetSettle {
 
 //最外圈动物排序
 message  animalSortMsg {
-  int32 win_seat = 1 ; //赢钱位置
-  float bet_rate = 2;  //赢钱倍率
-  repeated animalConfig animal_config = 3 ; //动物配置 （0 位置默认最上面）
+  repeated winBetZoneConfig win_bet_zone_config = 1 ; //
+}
+
+message winBetZoneConfig {
+  int32  win_seat = 1 ; //赢钱位置
+  repeated animalConfig animal_config = 2 ; //动物配置 （0 位置默认最上面）
+  repeated winZoneConf win_zone_conf = 3 ; // 赢钱的动物位置
+}
+
+message winZoneConf {
+  int32 bet_zone_id = 1; //押注的位置
+  float bet_rate = 2;
 }
 
 message  colorSortMsg {
@@ -96,7 +105,7 @@ message currAPInfoAck {
 message aPRoomInfos {
   repeated userBetInfos user_bet_infos = 1 ; //房间当前押注信息
   repeated colorConfig  color_config = 2 ; //颜色配置
-  repeated animalConfig animal_config = 3 ; //动物配置
+  repeated winBetZoneConfig win_bet_zone_config = 3 ; //
 }
 
 
