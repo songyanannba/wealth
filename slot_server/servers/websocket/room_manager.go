@@ -392,12 +392,6 @@ func (trMgr *roomManager) MatchRoomArithmetic() {
 	//单排
 	trMgr.DealMatchIng1User()
 
-	//双排
-	//trMgr.DealMatchIng2User()
-
-	//双排 + 单排
-	//trMgr.DealMatchIngUser()
-
 	//补充机器人逻辑
 	trMgr.DealMatchIngUserAddRobot()
 }

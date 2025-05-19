@@ -20,19 +20,23 @@ import (
 
 func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 	global.GVA_LOG.Infof("AnimalPartyCalculateExecFunc 房间 {%v}", trs.RoomInfo.RoomNo)
-
 	//告诉最外轮在的所在位置
-
-	helper.SliceShuffle(trs.AnimalConfigs)
+	//helper.SliceShuffle(trs.AnimalConfigs)
 
 	//todo 优化
 	//要根据当前的押注 计算可以盈利的区间 然后指定到合适的位置
+	topSeat := helper.RandInt(len(trs.AnimalConfigs))
 
-	trs.ComRoomSpace.CurrAnimalConfigs = trs.AnimalConfigs
+	newAnimalConfigs := make([]*AnimalConfig, 0)
+	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[topSeat:]...)
+	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[:topSeat]...)
+
+	//当前轮 世纪的动物排序
+	trs.ComRoomSpace.CurrAnimalConfigs = newAnimalConfigs
 	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_AnimalSortMsg), config.SlotServer)
 
 	//现在是随机
-	winSeat := helper.RandInt(len(trs.AnimalConfigs))
+	winSeat := helper.RandInt(len(newAnimalConfigs))
 	trs.ComRoomSpace.WinSeat = winSeat
 
 	msgData := &pbs.AnimalSortMsg{
@@ -47,8 +51,10 @@ func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 		})
 	}
 
-	animalConfig := trs.GetAnimalConfigsBySeat(winSeat)
+	animalConfig := trs.GetNewAnimalConfigsBySeat(winSeat, newAnimalConfigs)
 	colorConfig := trs.GetColorConfigsBySeat(winSeat)
+
+	//根据本局赢钱的位置的动物和颜色确定赔率
 	betZoneConfig := GetBetZoneConfigByAnimalIdAndColorId(animalConfig.AnimalId, colorConfig.ColorId)
 	global.GVA_LOG.Infof("中奖组合 betZoneConfig %v", betZoneConfig)
 

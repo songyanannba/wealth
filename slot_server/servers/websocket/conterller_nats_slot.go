@@ -21,11 +21,7 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 
 	netMessageResp := helper.NewNetMessage(request.UserId, request.UserId, int32(pbs.ProtocNum_CurrAPInfoAck), config.SlotServer)
 
-	aPRoomInfos := &pbs.APRoomInfos{
-		//UserBetInfos: make([]*pbs.UserBetInfos, 0),
-		//ColorConfig:  make([]*pbs.ColorConfig, 0),
-		//AnimalConfig: make([]*pbs.AnimalConfig, 0),
-	}
+	aPRoomInfos := &pbs.APRoomInfos{}
 
 	res := &pbs.CurrAPInfoAck{
 		RoomNo:        "",
@@ -33,7 +29,7 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 		GameStartTime: 0,
 		GameTurnState: 0,
 		APRoomInfos:   aPRoomInfos,
-		//BetZoneConf:   make([]*pbs.BetZoneConfig, 0),
+		GameStates:    0,
 	}
 	getBetZoneFigure := GetBetZoneFigure()
 
@@ -75,6 +71,15 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 		res.RoomNo = roomSpaceInfo.RoomInfo.RoomNo
 		res.CurrPeriod = roomSpaceInfo.RoomInfo.Period
 		res.GameStartTime = roomSpaceInfo.ComRoomSpace.GetGameStartTime()
+		getGameState := roomSpaceInfo.ComRoomSpace.GetGameState()
+
+		//if getGameState == BetIng && helper.LocalTime().Unix()-res.GameStartTime <= BetIngPeriod {
+		//	res.GameStates = 1
+		//}
+		res.GameStates = 2
+		if getGameState == BetIng {
+			res.GameStates = 1
+		}
 
 		for uid, uInfo := range roomSpaceInfo.ComRoomSpace.UserInfos {
 			res.APRoomInfos.UserBetInfos = append(res.APRoomInfos.UserBetInfos, &pbs.UserBetInfos{

@@ -284,11 +284,22 @@ func (trs *RoomSpace) GameTurnStateCheck1() {
 	trs.OutTimePlayHand()
 }
 
-func (trs *RoomSpace) GetAnimalConfigsBySeat(seat int) *AnimalConfig {
+//func (trs *RoomSpace) GetAnimalConfigsBySeat(seat int) *AnimalConfig {
+//	res := &AnimalConfig{}
+//	for _, animalConfigs := range trs.AnimalConfigs {
+//		if animalConfigs.Seat == seat {
+//			res = animalConfigs
+//			break
+//		}
+//	}
+//	return res
+//}
+
+func (trs *RoomSpace) GetNewAnimalConfigsBySeat(seat int, animalConfigs []*AnimalConfig) *AnimalConfig {
 	res := &AnimalConfig{}
-	for _, animalConfigs := range trs.AnimalConfigs {
-		if animalConfigs.Seat == seat {
-			res = animalConfigs
+	for _, animalConfig := range animalConfigs {
+		if animalConfig.Seat == seat {
+			res = animalConfig
 			break
 		}
 	}

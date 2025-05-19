@@ -146,11 +146,9 @@ func GetBetZoneConfigByAnimalIdAndColorId(animalId, colorId int) *BetZoneConfig 
 	res := &BetZoneConfig{}
 
 	for _, betZoneFigure := range GetBetZoneFigure() {
-
 		if !helper.InArr(colorId, betZoneFigure.ColorId) {
 			continue
 		}
-
 		if betZoneFigure.AnimalId == animalId {
 			res = betZoneFigure
 			break

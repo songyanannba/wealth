@@ -90,6 +90,7 @@ message currAPInfoAck {
   int32   game_turn_state = 4; //游戏的状态 ； 1=可以押注 ；2=计算阶段不可以押注
   aPRoomInfos  aP_room_infos = 5;   //房间信息
   repeated betZoneConfig bet_zone_conf = 6;  //赔率配置
+  int32   game_states = 7; //当前的游戏状态 0未知 1=押注 ; 2=结算期间
 }
 
 message aPRoomInfos {
