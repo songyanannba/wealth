@@ -92,7 +92,6 @@ func (n *natsManager) slotServiceSubConsumer() {
 			//time.Sleep(5 * time.Second)
 			continue
 		}
-
 		global.GVA_LOG.Infof("Processing slotServiceSubConsumer:")
 
 		// 处理消息
@@ -108,7 +107,6 @@ func (n *natsManager) slotServiceSubConsumer() {
 			}
 
 			global.GVA_LOG.Infof("Processing memeBattleServiceSubConsumer: req: %v ,Content:%v", req, string(req.Content))
-
 			if req.MsgId <= 0 {
 				global.GVA_LOG.Infof("memeBattleServiceSubConsumer Skipping message because msgId is zero,%v", req)
 				continue
@@ -120,7 +118,6 @@ func (n *natsManager) slotServiceSubConsumer() {
 			} else {
 				global.GVA_LOG.Infof("Acknowledged: %s", string(msgData.Data))
 			}
-
 			if req.MsgId == 399 {
 				global.GVA_LOG.Infof("协议消息心跳返回 不通知客户端")
 				continue

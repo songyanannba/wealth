@@ -47,60 +47,6 @@ func LoginController(client *Client, seq string, message []byte) (code uint32, m
 		global.GVA_LOG.Error("LoginController 用户登录 解析数据失败", zap.Any("", seq), zap.Error(err))
 		return
 	}
-	global.GVA_LOG.Infof("LoginController, {%v} seq:%v", *request, seq)
-
-	//environment := global.GVA_VP.GetString("app.environment")
-	//if environment != "dev" {
-	//	userInfo, err := logic.GetUserInfo(request.Token)
-	//	if err != nil || userInfo.Data.Id <= 0 {
-	//		code = common.Unauthorized
-	//		global.GVA_LOG.Error("LoginController GetUserInfo %v", zap.Any("userInfo", userInfo))
-	//		global.GVA_LOG.Infof("LoginController GetUserInfo %v", zap.Any("userInfo", userInfo))
-	//		return
-	//	}
-	//
-	//	global.GVA_LOG.Infof("LoginController GetUserInfo %v", userInfo)
-	//	request.UserID = strconv.Itoa(userInfo.Data.Id)
-	//	request.Nickname = userInfo.Data.Nickname
-	//	if request.UserID == "" || len(request.UserID) >= 20 {
-	//		code = common.UnauthorizedUserID
-	//		global.GVA_LOG.Infof("LoginController 用户登录 非法的用户 %v , {%v}", seq, request.UserID)
-	//		return
-	//	}
-	//
-	//	if userInfo.Data.IsAuthentication != 1 {
-	//		global.GVA_LOG.Infof("LoginController 用户登录 非法的用户 未实名 %v , {%v}", seq, request.UserID)
-	//		code = common.NotAuthentication
-	//		return
-	//	}
-	//} else {
-	//	if len(request.UserID) == 0 {
-	//		userInfo, err := logic.GetUserInfo(request.Token)
-	//		if err != nil || userInfo.Data.Id <= 0 {
-	//			code = common.Unauthorized
-	//			global.GVA_LOG.Error("LoginController GetUserInfo %v", zap.Any("userInfo", userInfo))
-	//			global.GVA_LOG.Infof("LoginController GetUserInfo %v", zap.Any("userInfo", userInfo))
-	//			return
-	//		}
-	//
-	//		global.GVA_LOG.Infof("LoginController GetUserInfo %v", userInfo)
-	//		request.UserID = strconv.Itoa(userInfo.Data.Id)
-	//		request.Nickname = userInfo.Data.Nickname
-	//		if request.UserID == "" || len(request.UserID) >= 20 {
-	//			code = common.UnauthorizedUserID
-	//			global.GVA_LOG.Infof("LoginController 用户登录 非法的用户 %v , {%v}", seq, request.UserID)
-	//			return
-	//		}
-	//
-	//		if userInfo.Data.IsAuthentication != 1 {
-	//			global.GVA_LOG.Infof("LoginController 用户登录 非法的用户 未实名 %v , {%v}", seq, request.UserID)
-	//			code = common.NotAuthentication
-	//			return
-	//		}
-	//	}
-	//}
-
-	global.GVA_LOG.Infof("LoginController 用户登录成功 请求业务:%v", *client)
 
 	//默认是1
 	if request.AppID == 0 {
@@ -178,17 +124,6 @@ func LoginController(client *Client, seq string, message []byte) (code uint32, m
 		Client: client,
 	}
 	clientManager.Login <- login
-
-	//骗子酒馆
-	//if request.AppID == common.AppId3 {
-	//	dao.InitTavernUsersRoom(request.UserID)
-	//	logic.InitTavernUserCharacter(request.UserID)
-	//}
-	//
-	////幽影魔塔
-	//if request.AppID == common.AppId4 {
-	//	logic.MTInitGameInfo(request.UserID, request.Nickname)
-	//}
 
 	global.GVA_LOG.Infof("LoginController 用户登录成功 login:%v", *login)
 	data = models.LogicRespAck{
