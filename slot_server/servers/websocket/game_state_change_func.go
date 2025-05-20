@@ -184,7 +184,24 @@ func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 
 		//用户｜金额
 		userWinLoseInfo = make(map[string]float32)
+
+		//全部用户的押注情况 (每个用户的多个区域)
+		allUserBetInfo = make(map[string]float32)
+
+		//todo
+		//每个区域的情况
 	)
+
+	for _, mapUInfo := range trs.ComRoomSpace.TurnMateInfo.BetZoneUserInfoMap {
+		for _, uInfo := range mapUInfo {
+			currVal, ok := allUserBetInfo[uInfo.UserID]
+			if ok {
+				allUserBetInfo[uInfo.UserID] = float32(uInfo.UserProperty.Bet) + currVal
+			} else {
+				allUserBetInfo[uInfo.UserID] = float32(uInfo.UserProperty.Bet)
+			}
+		}
+	}
 
 	//获取所有的用户押注情况
 	winBetZoneConfig := trs.ComRoomSpace.CurrAnimalWheelSort
@@ -195,47 +212,47 @@ func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 			// 1=大（粉色） 2=小（紫色）
 			if animalWheelSort.WinBigOrSmallConfig.BigOrSmall == 1 {
 				//8
-				winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(8)
+				winUserArr, _ := trs.ComRoomSpace.GetBetZoneUserInfos(8)
 				//押注大小的赢钱区域
 				for _, uInfo := range winUserArr {
 					currVal, ok := userWinLoseInfo[uInfo.UserID]
 					if ok {
-						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, 2)) + currVal
+						userWinLoseInfo[uInfo.UserID] = float32(helper.Mul(uInfo.UserProperty.Bet, 2)) + currVal
 					} else {
-						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, 2))
+						userWinLoseInfo[uInfo.UserID] = float32(helper.Mul(uInfo.UserProperty.Bet, 2))
 					}
 				}
 
-				for _, uInfo := range loseUserArr {
-					currVal, ok := userWinLoseInfo[uInfo.UserID]
-					if ok {
-						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(-float32(uInfo.UserProperty.Bet), currVal))
-					} else {
-						userWinLoseInfo[uInfo.UserID] = -float32(uInfo.UserProperty.Bet)
-					}
-				}
+				//for _, uInfo := range loseUserArr {
+				//	currVal, ok := userWinLoseInfo[uInfo.UserID]
+				//	if ok {
+				//		userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(-float32(uInfo.UserProperty.Bet), currVal))
+				//	} else {
+				//		userWinLoseInfo[uInfo.UserID] = -float32(uInfo.UserProperty.Bet)
+				//	}
+				//}
 			}
 			if animalWheelSort.WinBigOrSmallConfig.BigOrSmall == 2 {
 				//12
-				winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(12)
+				winUserArr, _ := trs.ComRoomSpace.GetBetZoneUserInfos(12)
 				//押注大小的赢钱区域
 				for _, uInfo := range winUserArr {
 					currVal, ok := userWinLoseInfo[uInfo.UserID]
 					if ok {
-						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, 2)) + currVal
+						userWinLoseInfo[uInfo.UserID] = float32(helper.Mul(uInfo.UserProperty.Bet, 2)) + currVal
 					} else {
-						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, 2))
+						userWinLoseInfo[uInfo.UserID] = float32(helper.Mul(uInfo.UserProperty.Bet, 2))
 					}
 				}
 
-				for _, uInfo := range loseUserArr {
-					currVal, ok := userWinLoseInfo[uInfo.UserID]
-					if ok {
-						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(-float32(uInfo.UserProperty.Bet), currVal))
-					} else {
-						userWinLoseInfo[uInfo.UserID] = -float32(uInfo.UserProperty.Bet)
-					}
-				}
+				//for _, uInfo := range loseUserArr {
+				//	currVal, ok := userWinLoseInfo[uInfo.UserID]
+				//	if ok {
+				//		userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(-float32(uInfo.UserProperty.Bet), currVal))
+				//	} else {
+				//		userWinLoseInfo[uInfo.UserID] = -float32(uInfo.UserProperty.Bet)
+				//	}
+				//}
 
 			}
 
@@ -249,43 +266,65 @@ func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 		winBetZoneConf := animalWheelSort.WinBetZoneConfig
 		for _, winBetZone := range winBetZoneConf {
 			//先发中奖组合
-			winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(winBetZone.Seat)
-			global.GVA_LOG.Infof("WheelAnimalPartyCalculateExec 中奖用户 winUserArr: %v , loseUserAr %v", winUserArr, loseUserArr)
+			winUserArr, _ := trs.ComRoomSpace.GetBetZoneUserInfos(winBetZone.Seat)
+			//global.GVA_LOG.Infof("WheelAnimalPartyCalculateExec 中奖用户 winUserArr: %v , loseUserAr %v", winUserArr, loseUserArr)
 
 			for _, uInfo := range winUserArr {
 				currVal, ok := userWinLoseInfo[uInfo.UserID]
 				if ok {
-					userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, winBetZone.BetRate)) + currVal
+					userWinLoseInfo[uInfo.UserID] = float32(helper.Mul(uInfo.UserProperty.Bet, winBetZone.BetRate)) + currVal
 				} else {
-					userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, winBetZone.BetRate))
+					userWinLoseInfo[uInfo.UserID] = float32(helper.Mul(uInfo.UserProperty.Bet, winBetZone.BetRate))
 				}
 			}
 
-			for _, uInfo := range loseUserArr {
-				currVal, ok := userWinLoseInfo[uInfo.UserID]
-				if ok {
-					userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(-float32(uInfo.UserProperty.Bet), currVal))
-				} else {
-					userWinLoseInfo[uInfo.UserID] = -float32(uInfo.UserProperty.Bet)
-				}
-			}
+			//for _, uInfo := range loseUserArr {
+			//	currVal, ok := userWinLoseInfo[uInfo.UserID]
+			//	if ok {
+			//		userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(-float32(uInfo.UserProperty.Bet), currVal))
+			//	} else {
+			//		userWinLoseInfo[uInfo.UserID] = -float32(uInfo.UserProperty.Bet)
+			//	}
+			//}
 		}
 	}
 
-	for uid, coinNum := range userWinLoseInfo {
-		if coinNum >= 0 {
-			currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
-				WinCoin: coinNum,
-				UserId:  uid,
-			})
+	for uId, betAll := range allUserBetInfo {
+		winVal, ok := allUserBetInfo[uId]
+		if ok {
+			if winVal > betAll {
+				currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+					WinCoin: winVal - betAll,
+					UserId:  uId,
+				})
+			} else {
+				currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+					LoseCoin: winVal - betAll,
+					UserId:   uId,
+				})
+			}
 		} else {
 			currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
-				LoseCoin: coinNum,
-				UserId:   uid,
+				LoseCoin: -betAll,
+				UserId:   uId,
 			})
 		}
 
 	}
+
+	//for uid, coinNum := range userWinLoseInfo {
+	//	if coinNum >= 0 {
+	//		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+	//			WinCoin: coinNum,
+	//			UserId:  uid,
+	//		})
+	//	} else {
+	//		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+	//			LoseCoin: coinNum,
+	//			UserId:   uid,
+	//		})
+	//	}
+	//}
 
 	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_CurrPeriodUserWinMsg), config.SlotServer)
 	responseHeadByte, _ := proto.Marshal(currPeriodUserWinMsg)
