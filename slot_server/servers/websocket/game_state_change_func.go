@@ -25,7 +25,9 @@ func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 	//实际外部排序
 	RecursionGetAnimalConfig(trs)
 
+	//当前最外圈 动物的排序情况
 	currAnimalWheelSort := trs.ComRoomSpace.CurrAnimalWheelSort
+
 	for _, animalWheelSort := range currAnimalWheelSort {
 		winBetZoneConfig := &pbs.WinBetZoneConfig{
 			WinSeat:      int32(animalWheelSort.WinSeat),
@@ -62,7 +64,6 @@ func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 
 	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_AnimalSortMsg), config.SlotServer)
 	netMessageResp.Content = responseHeadByte
-
 	NatsSendAimUserMsg(trs, netMessageResp, "")
 }
 
@@ -75,28 +76,36 @@ func WheelAnimalSortCalculate(trs *RoomSpace) []*AnimalConfig {
 	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[topSeat:]...)
 	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[:topSeat]...)
 
+	for k, _ := range newAnimalConfigs {
+		newAnimalConfigs[k].Seat = k
+	}
+
 	//trs.ComRoomSpace.CurrAnimalWheelSort = append(trs.ComRoomSpace.CurrAnimalWheelSort, newAnimalConfigs)
 	return newAnimalConfigs
 }
 
 func RecursionGetAnimalConfig(trs *RoomSpace) {
+	//最外圈的动物排序
 	animalWheelSort := make([]*AllAnimalWheelSort, 0)
+	//第一次获取最外圈的排序。0位置为顶点位置
 	firstAnimalConfigs := WheelAnimalSortCalculate(trs)
 
+	//todo
 	//现在是随机
+	//这个要根据押注情况，分析一个可以赢钱的位置
 	winSeat := helper.RandInt(len(firstAnimalConfigs))
-	//根据位置获取动物
-	animalConfig := trs.GetNewAnimalConfigsBySeat(winSeat, firstAnimalConfigs)
+	//根据位置获取赢钱的动物
+	winAnimalConfig := trs.GetNewAnimalConfigsBySeat(winSeat, firstAnimalConfigs)
 
 	newAnimalWheelSort1 := &AllAnimalWheelSort{
 		WinSeat:         winSeat,
 		AnimalConfigs:   firstAnimalConfigs,
-		WinAnimalConfig: animalConfig,
+		WinAnimalConfig: winAnimalConfig,
 	}
 	animalWheelSort = append(animalWheelSort, newAnimalWheelSort1)
 
 	//如果是 LUCKY
-	if animalConfig.AnimalId == 2 {
+	if winAnimalConfig.AnimalId == 2 {
 		//先吧 第一次的 LUCKY， 放进结果集
 		counts := []int{2, 3, 4, 5, 6, 7}
 		//转几次
@@ -105,26 +114,27 @@ func RecursionGetAnimalConfig(trs *RoomSpace) {
 		randCountInt = 2
 
 		for i := 0; i < randCountInt; i++ {
+			//新的动物排序
 			newAnimalConfigs := WheelAnimalSortCalculate(trs)
 			//现在是随机
 			winSeat = helper.RandInt(len(newAnimalConfigs))
 			//根据位置获取动物
-			animalConfig = trs.GetNewAnimalConfigsBySeat(winSeat, newAnimalConfigs)
+			winAnimalConfig = trs.GetNewAnimalConfigsBySeat(winSeat, newAnimalConfigs)
 
-			//最多七次
-			if animalConfig.AnimalId == 2 {
+			//如果是 幸运的动物 位置+1
+			if winAnimalConfig.AnimalId == 2 {
 				winSeat += 1
-				animalConfig = trs.GetNewAnimalConfigsBySeat(winSeat, newAnimalConfigs)
+				winAnimalConfig = trs.GetNewAnimalConfigsBySeat(winSeat, newAnimalConfigs)
 				newAnimalWheelSort := &AllAnimalWheelSort{
 					WinSeat:         winSeat,
-					WinAnimalConfig: animalConfig,
+					WinAnimalConfig: winAnimalConfig,
 					AnimalConfigs:   newAnimalConfigs,
 				}
 				animalWheelSort = append(animalWheelSort, newAnimalWheelSort)
 			} else {
 				newAnimalWheelSort := &AllAnimalWheelSort{
 					WinSeat:         winSeat,
-					WinAnimalConfig: animalConfig,
+					WinAnimalConfig: winAnimalConfig,
 					AnimalConfigs:   newAnimalConfigs,
 				}
 				animalWheelSort = append(animalWheelSort, newAnimalWheelSort)
@@ -137,17 +147,23 @@ func RecursionGetAnimalConfig(trs *RoomSpace) {
 }
 
 func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
-	currPeriodUserWinMsg := &pbs.CurrPeriodUserWinMsg{
-		UserBetSettle: make([]*pbs.UserBetSettle, 0),
-	}
-	//用户｜金额
-	userWinLoseInfo := make(map[string]float32)
+	var (
+		//赢钱的用户的 ｜ 输钱的用户
+		//放在一起返回
+		currPeriodUserWinMsg = &pbs.CurrPeriodUserWinMsg{UserBetSettle: make([]*pbs.UserBetSettle, 0)}
+
+		//用户｜金额
+		userWinLoseInfo = make(map[string]float32)
+	)
 
 	//获取所有的用户押注情况
-	//winBetZoneConfig := trs.ComRoomSpace.WinBetZoneConfig
 	winBetZoneConfig := trs.ComRoomSpace.CurrAnimalWheelSort
 
 	for _, animalWheelSort := range winBetZoneConfig {
+		if animalWheelSort.WinAnimalConfig.AnimalId == 2 {
+			//幸运动物
+			continue
+		}
 		winBetZoneConf := animalWheelSort.WinBetZoneConfig
 
 		for _, winBetZone := range winBetZoneConf {
@@ -176,7 +192,7 @@ func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 	}
 
 	for uid, coinNum := range userWinLoseInfo {
-		if coinNum > 0 {
+		if coinNum >= 0 {
 			currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
 				WinCoin: coinNum,
 				UserId:  uid,
@@ -190,22 +206,7 @@ func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 
 	}
 
-	//for _, uInfo := range winUserArr {
-	//	currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
-	//		WinCoin: float32(helper.Sum(uInfo.UserProperty.Bet, winBetZoneConfig.BetRate)),
-	//		UserId:  uInfo.UserID,
-	//	})
-	//}
-	//
-	//for _, uInfo := range loseUserArr {
-	//	currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
-	//		LoseCoin: float32(uInfo.UserProperty.Bet),
-	//		UserId:   uInfo.UserID,
-	//	})
-	//}
-
 	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_CurrPeriodUserWinMsg), config.SlotServer)
-
 	responseHeadByte, _ := proto.Marshal(currPeriodUserWinMsg)
 	netMessageResp.Content = responseHeadByte
 	NatsSendAimUserMsg(trs, netMessageResp, "")

@@ -11,28 +11,27 @@ type SizeConfig struct {
 //1 星星+三色 180
 
 type BetZoneConfig struct {
-	Seat     int
+	Seat     int //区域ID
 	AnimalId int
 	ColorId  []int
 	Size     int //1大(粉色) 2小（紫色）
 	BetRate  float64
 }
 
+// GetBetZoneFigure  押注区配置
+// 1 大猩猩    1
+// 2 LUCKY    1
+// 3 皇冠      1 //皇冠 代表  狮子 大象  犀牛  斑马
+// 4 蛇        1
+// 5 狮子      2
+// 6 大象     3
+// 7 犀牛     4
+// 8 斑马     5
+// 1 黄
+// 2 绿
+// 3 红
 func GetBetZoneFigure() []*BetZoneConfig {
 	betZoneConfigs := make([]*BetZoneConfig, 16)
-
-	// 1 大猩猩    1
-	// 2 LUCKY    1
-	// 3 皇冠      1 //皇冠 代表  狮子 大象  犀牛  斑马
-	// 4 蛇        1
-	// 5 狮子      2
-	// 6 大象     3
-	// 7 犀牛     4
-	// 8 斑马     5
-
-	// 1 黄
-	// 2 绿
-	// 3 红
 
 	for i := 0; i < 16; i++ {
 		var (

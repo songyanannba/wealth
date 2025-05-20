@@ -3,6 +3,8 @@ package websocket
 // 5斑马 4犀牛  3大象 2狮子  1蛇  1皇冠   1 LUCKY  1 大猩猩
 
 type AnimalConfig struct {
+	//TopSeat  int
+	//WinSeat  int
 	Seat     int
 	AnimalId int
 }
@@ -22,12 +24,17 @@ func GetAnimalWheel() []*AnimalConfig {
 	)
 
 	//animalId := []int{1, 2, 3, 4, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8}
+
 	//根据微信发的手动排序
 	animalId := []int{8, 6, 7, 1, 8, 2, 7, 8, 6, 5, 7, 8, 4, 6, 8, 7, 3, 5}
 
 	for i, v := range animalId {
-		animalConfigs[i] = &AnimalConfig{Seat: i, AnimalId: v}
+		animalConfigs[i] = &AnimalConfig{
+			//TopSeat:  i,
+			//WinSeat:  i,
+			Seat:     i,
+			AnimalId: v,
+		}
 	}
-	//helper.SliceShuffle(animalConfigs)
 	return animalConfigs
 }

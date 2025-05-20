@@ -136,6 +136,7 @@ message colorConfig {
 // 6 大象     3
 // 7 犀牛     4
 // 8 斑马     5
+//动物默认排序 {8, 6, 7, 1, 8, 2, 7, 8, 6, 5, 7, 8, 4, 6, 8, 7, 3, 5}
 message animalConfig {
   int32 seat  = 1 ;
   int32 animal_id  = 2 ;
