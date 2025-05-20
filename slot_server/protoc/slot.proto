@@ -72,6 +72,7 @@ message winBetZoneConfig {
   int32  win_seat = 1 ; //赢钱位置
   repeated animalConfig animal_config = 2 ; //动物配置 （0 位置默认最上面）
   repeated winZoneConf win_zone_conf = 3 ; // 赢钱的动物位置
+  repeated bigOrSmallConfig big_small_config = 4 ; //大小的颜色配置 （0 位置默认最上面）
 }
 
 message winZoneConf {
@@ -110,6 +111,7 @@ message aPRoomInfos {
   repeated userBetInfos user_bet_infos = 1 ; //房间当前押注信息
   repeated colorConfig  color_config = 2 ; //颜色配置
   repeated winBetZoneConfig win_bet_zone_config = 3 ; //
+  repeated bigOrSmallConfig big_small_config = 4 ; //
 }
 
 
@@ -145,4 +147,9 @@ message animalConfig {
 //消息中间件使用
 message natsCurrAPInfo {
   string  user_id = 1;
+}
+
+message bigOrSmallConfig {
+  int32 seat  = 1 ;
+  int32 big_small_id  = 2 ; //  1=大（粉色） 2=小（紫色）
 }

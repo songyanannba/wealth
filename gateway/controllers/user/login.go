@@ -93,7 +93,6 @@ func Login(c *gin.Context) {
 
 	//24小时
 	token, _ := helper.GenerateJWT(info.Uuid, "", 24)
-
 	//存储用户的登陆信息到redis
 	err = cache.SetGateWayUserWeb(info.Uuid, &models.UserWeb{
 		UserID:    info.Uuid,
@@ -116,7 +115,6 @@ func Login(c *gin.Context) {
 
 func GUserInfo(c *gin.Context) {
 	data := make(map[string]interface{})
-
 	userUUid, err := helper.GetUserID(c)
 	if err != nil {
 		controllers.Response(c, common.UnauthorizedUserID, "", data)

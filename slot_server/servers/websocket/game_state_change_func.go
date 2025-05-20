@@ -32,11 +32,18 @@ func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 		winBetZoneConfig := &pbs.WinBetZoneConfig{
 			WinSeat: int32(animalWheelSort.WinSeat),
 		}
-
 		for _, animalConf := range animalWheelSort.AnimalConfigs {
 			winBetZoneConfig.AnimalConfig = append(winBetZoneConfig.AnimalConfig, &pbs.AnimalConfig{
 				Seat:     int32(animalConf.Seat),
 				AnimalId: int32(animalConf.AnimalId),
+			})
+		}
+
+		//押注大小
+		for _, bigOrSmallConfig := range animalWheelSort.BigOrSmallConfigs {
+			winBetZoneConfig.BigSmallConfig = append(winBetZoneConfig.BigSmallConfig, &pbs.BigOrSmallConfig{
+				Seat:       int32(bigOrSmallConfig.Seat),
+				BigSmallId: int32(bigOrSmallConfig.BigOrSmall),
 			})
 		}
 
@@ -59,28 +66,9 @@ func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 	//获取房间人数
 	global.GVA_LOG.Infof("  押注停止后 主动下发最外圈的动物排序，第一个排在最上面 位置0开始: %v", msgData)
 	responseHeadByte, _ := proto.Marshal(msgData)
-
 	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_AnimalSortMsg), config.SlotServer)
 	netMessageResp.Content = responseHeadByte
 	NatsSendAimUserMsg(trs, netMessageResp, "")
-}
-
-func WheelAnimalSortCalculate(trs *RoomSpace) []*AnimalConfig {
-	//todo 优化
-	//要根据当前的押注 计算可以盈利的区间 然后指定到合适的位置
-	animalConfigsLen := len(trs.AnimalConfigs)
-	topSeat := helper.RandInt(animalConfigsLen)
-
-	newAnimalConfigs := make([]*AnimalConfig, 0)
-	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[topSeat:]...)
-	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[:topSeat]...)
-
-	for k, _ := range newAnimalConfigs {
-		newAnimalConfigs[k].Seat = k
-	}
-
-	//trs.ComRoomSpace.CurrAnimalWheelSort = append(trs.ComRoomSpace.CurrAnimalWheelSort, newAnimalConfigs)
-	return newAnimalConfigs
 }
 
 func RecursionGetAnimalConfig(trs *RoomSpace) {
@@ -97,10 +85,16 @@ func RecursionGetAnimalConfig(trs *RoomSpace) {
 	//根据位置获取赢钱的动物
 	winAnimalConfig := trs.GetNewAnimalConfigsBySeat(winSeat, firstAnimalConfigs)
 
+	//大小只出现一次
+	bigOrSmallConfigs := WheelBigOrSmallCalculate(trs)
+	winBigOrSmallConfig := trs.GetBigOrSmallConfigsBySeat(winSeat, bigOrSmallConfigs)
+
 	newAnimalWheelSort1 := &AllAnimalWheelSort{
-		WinSeat:         winSeat,
-		AnimalConfigs:   firstAnimalConfigs,
-		WinAnimalConfig: winAnimalConfig,
+		WinSeat:             winSeat,
+		AnimalConfigs:       firstAnimalConfigs,
+		WinAnimalConfig:     winAnimalConfig,
+		BigOrSmallConfigs:   bigOrSmallConfigs,
+		WinBigOrSmallConfig: winBigOrSmallConfig,
 	}
 	animalWheelSort = append(animalWheelSort, newAnimalWheelSort1)
 
@@ -146,6 +140,42 @@ func RecursionGetAnimalConfig(trs *RoomSpace) {
 	trs.ComRoomSpace.CurrAnimalWheelSort = animalWheelSort
 }
 
+func WheelAnimalSortCalculate(trs *RoomSpace) []*AnimalConfig {
+	//todo 优化
+	//要根据当前的押注 计算可以盈利的区间 然后指定到合适的位置
+	animalConfigsLen := len(trs.AnimalConfigs)
+	topSeat := helper.RandInt(animalConfigsLen)
+
+	newAnimalConfigs := make([]*AnimalConfig, 0)
+	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[topSeat:]...)
+	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[:topSeat]...)
+
+	for k, _ := range newAnimalConfigs {
+		newAnimalConfigs[k].Seat = k
+	}
+
+	//trs.ComRoomSpace.CurrAnimalWheelSort = append(trs.ComRoomSpace.CurrAnimalWheelSort, newAnimalConfigs)
+	return newAnimalConfigs
+}
+
+func WheelBigOrSmallCalculate(trs *RoomSpace) []*BigOrSmallConfig {
+
+	//要根据当前的押注 计算可以盈利的区间 然后指定到合适的位置
+	bigOrSmallConfigLen := len(trs.BigOrSmallConfig)
+	topSeat := helper.RandInt(bigOrSmallConfigLen)
+
+	newBigOrSmallConfigs := make([]*BigOrSmallConfig, 0)
+	newBigOrSmallConfigs = append(newBigOrSmallConfigs, trs.BigOrSmallConfig[topSeat:]...)
+	newBigOrSmallConfigs = append(newBigOrSmallConfigs, trs.BigOrSmallConfig[:topSeat]...)
+
+	for k, _ := range newBigOrSmallConfigs {
+		newBigOrSmallConfigs[k].Seat = k
+	}
+
+	//trs.ComRoomSpace.CurrAnimalWheelSort = append(trs.ComRoomSpace.CurrAnimalWheelSort, newAnimalConfigs)
+	return newBigOrSmallConfigs
+}
+
 func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 	var (
 		//赢钱的用户的 ｜ 输钱的用户
@@ -159,13 +189,64 @@ func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 	//获取所有的用户押注情况
 	winBetZoneConfig := trs.ComRoomSpace.CurrAnimalWheelSort
 
-	for _, animalWheelSort := range winBetZoneConfig {
+	//动物赢钱的区域
+	for k, animalWheelSort := range winBetZoneConfig {
+		if k == 0 {
+			// 1=大（粉色） 2=小（紫色）
+			if animalWheelSort.WinBigOrSmallConfig.BigOrSmall == 1 {
+				//8
+				winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(8)
+				//押注大小的赢钱区域
+				for _, uInfo := range winUserArr {
+					currVal, ok := userWinLoseInfo[uInfo.UserID]
+					if ok {
+						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, 2)) + currVal
+					} else {
+						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, 2))
+					}
+				}
+
+				for _, uInfo := range loseUserArr {
+					currVal, ok := userWinLoseInfo[uInfo.UserID]
+					if ok {
+						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(-float32(uInfo.UserProperty.Bet), currVal))
+					} else {
+						userWinLoseInfo[uInfo.UserID] = -float32(uInfo.UserProperty.Bet)
+					}
+				}
+			}
+			if animalWheelSort.WinBigOrSmallConfig.BigOrSmall == 2 {
+				//12
+				winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(12)
+				//押注大小的赢钱区域
+				for _, uInfo := range winUserArr {
+					currVal, ok := userWinLoseInfo[uInfo.UserID]
+					if ok {
+						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, 2)) + currVal
+					} else {
+						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(uInfo.UserProperty.Bet, 2))
+					}
+				}
+
+				for _, uInfo := range loseUserArr {
+					currVal, ok := userWinLoseInfo[uInfo.UserID]
+					if ok {
+						userWinLoseInfo[uInfo.UserID] = float32(helper.Sum(-float32(uInfo.UserProperty.Bet), currVal))
+					} else {
+						userWinLoseInfo[uInfo.UserID] = -float32(uInfo.UserProperty.Bet)
+					}
+				}
+
+			}
+
+		}
+
 		if animalWheelSort.WinAnimalConfig.AnimalId == 2 {
 			//幸运动物
 			continue
 		}
+		//常规动物的赢钱
 		winBetZoneConf := animalWheelSort.WinBetZoneConfig
-
 		for _, winBetZone := range winBetZoneConf {
 			//先发中奖组合
 			winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(winBetZone.Seat)

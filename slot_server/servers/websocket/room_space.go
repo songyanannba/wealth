@@ -29,11 +29,14 @@ type RoomSpace struct {
 	//房间信息
 	RoomInfo *table.AnimalPartyRoom
 
-	//最外圈的动物排序
+	//最外圈的动物排序 这里是固定的 需要旋转特殊处理
 	AnimalConfigs []*AnimalConfig
 
-	//颜色排序
+	//颜色排序 每轮开始前变化
 	ColorConfigs []*ColorConfig
+
+	//押大小配置
+	BigOrSmallConfig []*BigOrSmallConfig
 
 	//房间配置
 	MemeRoomConfig *table.MemeRoomConfig
@@ -291,6 +294,17 @@ func (trs *RoomSpace) GetNewAnimalConfigsBySeat(seat int, animalConfigs []*Anima
 	for _, animalConfig := range animalConfigs {
 		if animalConfig.Seat == seat {
 			res = animalConfig
+			break
+		}
+	}
+	return res
+}
+
+func (trs *RoomSpace) GetBigOrSmallConfigsBySeat(seat int, bigOrSmallConfigs []*BigOrSmallConfig) *BigOrSmallConfig {
+	res := &BigOrSmallConfig{}
+	for _, bigOrSmallConfig := range bigOrSmallConfigs {
+		if bigOrSmallConfig.Seat == seat {
+			res = bigOrSmallConfig
 			break
 		}
 	}

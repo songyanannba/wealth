@@ -242,7 +242,7 @@ func (ws *wsClientService) TestBetReq() {
 	req1 := &pbs.UserBetReq{
 		Bet:       1,
 		GameId:    1,
-		BetZoneId: 1,
+		BetZoneId: 2,
 	}
 	req1M, _ := proto.Marshal(req1)
 	reqq := &pbs.NetMessage{

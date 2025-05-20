@@ -26,6 +26,7 @@ func (trs *RoomSpace) InItFunc() {
 
 	//动物配置
 	trs.AnimalConfigs = GetAnimalWheel()
+	trs.BigOrSmallConfig = GetBigOrSmallConfigSort()
 
 	//初始房间卡牌
 	//if len(trs.RoomBaseCard) == 0 {

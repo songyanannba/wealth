@@ -113,6 +113,13 @@ func CurrAPInfos(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data
 					})
 				}
 
+				for _, bigOrSmallConfig := range animalWheelSort.BigOrSmallConfigs {
+					winBetZoneConfig.BigSmallConfig = append(winBetZoneConfig.BigSmallConfig, &pbs.BigOrSmallConfig{
+						Seat:       int32(bigOrSmallConfig.Seat),
+						BigSmallId: int32(bigOrSmallConfig.BigOrSmall),
+					})
+				}
+
 				//对应位置的颜色
 				colorConfigSeat := roomSpaceInfo.GetColorConfigsBySeat(animalWheelSort.WinAnimalConfig.Seat)
 				//根据本局赢钱的位置的动物和颜色确定赔率

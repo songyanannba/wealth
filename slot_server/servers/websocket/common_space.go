@@ -53,10 +53,12 @@ type PeriodSpace struct {
 
 // AllAnimalWheelSort 最外圈动物怕排序
 type AllAnimalWheelSort struct {
-	WinSeat          int
-	WinAnimalConfig  *AnimalConfig    //赢钱的动物位置
-	AnimalConfigs    []*AnimalConfig  //当前排序
-	WinBetZoneConfig []*BetZoneConfig //赢钱区域
+	WinSeat             int
+	WinAnimalConfig     *AnimalConfig       //赢钱的动物位置
+	AnimalConfigs       []*AnimalConfig     //当前动物排序
+	WinBetZoneConfig    []*BetZoneConfig    //赢钱区域
+	WinBigOrSmallConfig *BigOrSmallConfig   //赢钱的大小位置
+	BigOrSmallConfigs   []*BigOrSmallConfig //当前大小排序
 }
 
 type ComRoomSpace struct {
