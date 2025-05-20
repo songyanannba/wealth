@@ -247,7 +247,7 @@ func (trs *RoomSpace) GameTurnStateCheck() {
 
 }
 
-// GameTurnStateCheck 每3秒检查一下状态变化
+// GameTurnStateCheck1 每3秒检查一下状态变化
 func (trs *RoomSpace) GameTurnStateCheck1() {
 	trs.ComRoomSpace.Sync.Lock()
 	defer trs.ComRoomSpace.Sync.Unlock()

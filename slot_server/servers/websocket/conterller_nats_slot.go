@@ -144,12 +144,10 @@ func UserBetReq(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data 
 		return
 	}
 	global.GVA_LOG.Infof("UserBetReq %v", request)
-
 	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_betAck), config.SlotServer)
 
 	//获取当前的对局
 	//是否是押注时间段
-
 	res := &pbs.UserBetAck{
 		Bet:       request.Bet,
 		GameId:    request.GameId,

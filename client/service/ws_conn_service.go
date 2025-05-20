@@ -37,7 +37,7 @@ var WsClientService = wsClientService{
 
 func (ws *wsClientService) Start() {
 
-	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc0NzA5ODUsInN1YiI6IiIsInVzZXJfaWQiOiI0NjVhNTE2ZC00OWQ2LTQxNDMtODNkZS0wY2M4NjU1MjNlMGIifQ.61qTYeBjDIeVn9z0uKyfMRyz4QBBEuFFCIGaDWPiYls"
+	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc4MTE2OTQsInN1YiI6IiIsInVzZXJfaWQiOiJiZDNmZmQ1Mi1kMjc3LTQ1NTAtODZjNy1hN2I1MDIxZWJmNTAifQ.Xuna51z5Aa7DTNqVTNmbyvwPPIH2zZWhCU5cOm65cDs"
 
 	header := http.Header{}
 	header.Add("userId", "syn")
@@ -69,10 +69,10 @@ func (ws *wsClientService) Start() {
 	//time.Sleep(2 * time.Second)
 
 	//获取在线列表
-	ws.TestOnLineUser()
+	//ws.TestOnLineUser()
 
 	//获取当局信息
-	ws.TestCurrAPInfo()
+	//ws.TestCurrAPInfo()
 
 	//ws.TestGame()
 

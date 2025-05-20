@@ -30,9 +30,7 @@ func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 
 	for _, animalWheelSort := range currAnimalWheelSort {
 		winBetZoneConfig := &pbs.WinBetZoneConfig{
-			WinSeat:      int32(animalWheelSort.WinSeat),
-			AnimalConfig: make([]*pbs.AnimalConfig, 0),
-			WinZoneConf:  make([]*pbs.WinZoneConf, 0),
+			WinSeat: int32(animalWheelSort.WinSeat),
 		}
 
 		for _, animalConf := range animalWheelSort.AnimalConfigs {
@@ -70,7 +68,8 @@ func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 func WheelAnimalSortCalculate(trs *RoomSpace) []*AnimalConfig {
 	//todo 优化
 	//要根据当前的押注 计算可以盈利的区间 然后指定到合适的位置
-	topSeat := helper.RandInt(len(trs.AnimalConfigs))
+	animalConfigsLen := len(trs.AnimalConfigs)
+	topSeat := helper.RandInt(animalConfigsLen)
 
 	newAnimalConfigs := make([]*AnimalConfig, 0)
 	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[topSeat:]...)
@@ -93,7 +92,8 @@ func RecursionGetAnimalConfig(trs *RoomSpace) {
 	//todo
 	//现在是随机
 	//这个要根据押注情况，分析一个可以赢钱的位置
-	winSeat := helper.RandInt(len(firstAnimalConfigs))
+	firstAnimalConfigsLen := len(firstAnimalConfigs)
+	winSeat := helper.RandInt(firstAnimalConfigsLen)
 	//根据位置获取赢钱的动物
 	winAnimalConfig := trs.GetNewAnimalConfigsBySeat(winSeat, firstAnimalConfigs)
 
