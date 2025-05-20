@@ -322,20 +322,30 @@ func (trs *RoomSpace) ClassStrategyLikedAction(userInfo *models.UserInfo, strate
 	}
 }
 
-//func (trs *RoomSpace) Class3LikedAction(userInfo *models.UserInfo, notRobotUserIdArr []string) {
-//	//优先跟票制，根据第一个点赞的场上玩家的点赞卡牌，在1-3秒内对其点赞进行跟票。（如果场上玩家都没有投票，则随机一张卡牌进行投票。）
-//	if len(notRobotUserIdArr) <= 0 {
-//		return
-//	}
 //
-//	//判断有没有点赞 如果有人点赞就跟
+//func (trs *RoomSpace) Class1ReMakeAction(userInfo *models.UserInfo) {
+//	//不执行任何操作。
+//}
+//
+//func (trs *RoomSpace) Class2ReMakeAction(userInfo *models.UserInfo) {
+//	//随机进行1-2次重随。
+//
+//}
+//
+//func (trs *RoomSpace) Class3ReMakeAction(userInfo *models.UserInfo) {
+//	//随机执行2-3次重随
+//}
+
+//func (trs *RoomSpace) Class1LikedAction(userInfo *models.UserInfo) {
+//	//优先自动点赞场上品质最高的卡牌。如果场上出现相同品质的卡牌，则随机投一张卡牌。
+//
 //	userId := userInfo.UserID
 //	likeUserId := ""
 //	likeCard := models.LikeCard{}
+//	outCards := make([]*models.Card, 0)
 //	likeCards := make([]*models.Card, 0)
-//	outLikeCards := make([]*models.LikeCard, 0)
 //
-//	//用户是否点赞
+//	//那个用户没点赞
 //	likeUserInfo := trs.ComRoomSpace.GetLikeUserInfo(userInfo.UserID)
 //	if len(likeUserInfo) > 0 {
 //		//该用户已经给别人点过赞
@@ -343,115 +353,43 @@ func (trs *RoomSpace) ClassStrategyLikedAction(userInfo *models.UserInfo, strate
 //		return
 //	}
 //
-//	//机器人跟风对象
-//	followLikeUserId := ""
-//	for _, notRobotUserId := range notRobotUserIdArr {
-//		robotLikeUserInfo := trs.ComRoomSpace.GetLikeUserInfo(notRobotUserId)
-//		if len(robotLikeUserInfo) > 0 {
-//			followLikeUserId = notRobotUserId
-//			outLikeCards = robotLikeUserInfo
-//			break
-//		}
-//	}
-//	if len(followLikeUserId) <= 0 {
+//	//每个人出一个牌 取第一个就行
+//	outCards = trs.ComRoomSpace.GetUserOutEdCardExcludeUser(userInfo.UserID)
+//	if len(outCards) <= 0 {
 //		return
 //	}
 //
-//	isLikeCard := false
-//	for _, outLikeCard := range outLikeCards {
-//		if isLikeCard == true {
+//	// 使用 sort.Slice 实现倒序排序
+//	sort.Slice(outCards, func(i, j int) bool {
+//		return outCards[i].Level > outCards[j].Level
+//	})
+//
+//	//找到牌等级最高的一张 点赞
+//	//每轮每次只出一张牌
+//	isOutCard := false
+//	for _, outCard := range outCards {
+//		if isOutCard == true {
 //			break
 //		}
-//		if outLikeCard.LikeUserId == userId {
-//			continue
-//		}
+//		//if outCard.UserID == userId {
+//		//	continue
+//		//}
 //		likeCard = models.LikeCard{
-//			CardId:     outLikeCard.CardId,
-//			LikeUserId: outLikeCard.LikeUserId,
-//			Level:      outLikeCard.Level,
-//			AddRate:    outLikeCard.AddRate,
+//			CardId:     outCard.CardId,
+//			LikeUserId: outCard.UserID,
+//			Level:      outCard.Level,
+//			AddRate:    outCard.AddRate,
 //		}
-//		isLikeCard = true
-//		likeUserId = outLikeCard.LikeUserId
-//		likeCards = trs.ComRoomSpace.GetUserOutEdCards(outLikeCard.LikeUserId)
+//		isOutCard = true
+//		likeUserId = outCard.UserID
+//		likeCards = append(likeCards, outCard)
 //	}
-//	if !isLikeCard {
+//
+//	if !isOutCard {
 //		return
 //	}
-//
-//	time.Sleep(1 * time.Second)
-//
-//	//global.GVA_LOG.Infof("outLikeCards%v likeCards:%v", outLikeCards, likeCards)
 //	trs.DoLikeCard(userId, likeUserId, likeCard, likeCards)
 //}
-
-func (trs *RoomSpace) Class1ReMakeAction(userInfo *models.UserInfo) {
-	//不执行任何操作。
-}
-
-func (trs *RoomSpace) Class2ReMakeAction(userInfo *models.UserInfo) {
-	//随机进行1-2次重随。
-
-}
-
-func (trs *RoomSpace) Class3ReMakeAction(userInfo *models.UserInfo) {
-	//随机执行2-3次重随
-}
-
-func (trs *RoomSpace) Class1LikedAction(userInfo *models.UserInfo) {
-	//优先自动点赞场上品质最高的卡牌。如果场上出现相同品质的卡牌，则随机投一张卡牌。
-
-	userId := userInfo.UserID
-	likeUserId := ""
-	likeCard := models.LikeCard{}
-	outCards := make([]*models.Card, 0)
-	likeCards := make([]*models.Card, 0)
-
-	//那个用户没点赞
-	likeUserInfo := trs.ComRoomSpace.GetLikeUserInfo(userInfo.UserID)
-	if len(likeUserInfo) > 0 {
-		//该用户已经给别人点过赞
-		global.GVA_LOG.Infof("Class1LikedAction 该用户已经给别人点过赞 userID %v", userInfo.UserID)
-		return
-	}
-
-	//每个人出一个牌 取第一个就行
-	outCards = trs.ComRoomSpace.GetUserOutEdCardExcludeUser(userInfo.UserID)
-	if len(outCards) <= 0 {
-		return
-	}
-
-	// 使用 sort.Slice 实现倒序排序
-	sort.Slice(outCards, func(i, j int) bool {
-		return outCards[i].Level > outCards[j].Level
-	})
-
-	//找到牌等级最高的一张 点赞
-	//每轮每次只出一张牌
-	isOutCard := false
-	for _, outCard := range outCards {
-		if isOutCard == true {
-			break
-		}
-		//if outCard.UserID == userId {
-		//	continue
-		//}
-		likeCard = models.LikeCard{
-			CardId:     outCard.CardId,
-			LikeUserId: outCard.UserID,
-			Level:      outCard.Level,
-			AddRate:    outCard.AddRate,
-		}
-		isOutCard = true
-		likeUserId = outCard.UserID
-		likeCards = append(likeCards, outCard)
-	}
-
-	if !isOutCard {
-		return
-	}
-	trs.DoLikeCard(userId, likeUserId, likeCard, likeCards)
-}
 
 //func (trs *RoomSpace) Class2LikedAction(userInfo *models.UserInfo) {
 //	//完全随机点赞。点赞时间控制在2-7s随机分布。
@@ -529,4 +467,67 @@ func (trs *RoomSpace) Class1LikedAction(userInfo *models.UserInfo) {
 //	//uInfo.SetOutCardCountDown(models.GetOutCardCountDownTimeInt(CommTimeOutDouble))
 //	////设置重随牌状态
 //	//uInfo.SetGameStatus(int(RemakeCardIng))
+//}
+
+//func (trs *RoomSpace) Class3LikedAction(userInfo *models.UserInfo, notRobotUserIdArr []string) {
+//	//优先跟票制，根据第一个点赞的场上玩家的点赞卡牌，在1-3秒内对其点赞进行跟票。（如果场上玩家都没有投票，则随机一张卡牌进行投票。）
+//	if len(notRobotUserIdArr) <= 0 {
+//		return
+//	}
+//
+//	//判断有没有点赞 如果有人点赞就跟
+//	userId := userInfo.UserID
+//	likeUserId := ""
+//	likeCard := models.LikeCard{}
+//	likeCards := make([]*models.Card, 0)
+//	outLikeCards := make([]*models.LikeCard, 0)
+//
+//	//用户是否点赞
+//	likeUserInfo := trs.ComRoomSpace.GetLikeUserInfo(userInfo.UserID)
+//	if len(likeUserInfo) > 0 {
+//		//该用户已经给别人点过赞
+//		global.GVA_LOG.Infof("Class1LikedAction 该用户已经给别人点过赞 userID %v", userInfo.UserID)
+//		return
+//	}
+//
+//	//机器人跟风对象
+//	followLikeUserId := ""
+//	for _, notRobotUserId := range notRobotUserIdArr {
+//		robotLikeUserInfo := trs.ComRoomSpace.GetLikeUserInfo(notRobotUserId)
+//		if len(robotLikeUserInfo) > 0 {
+//			followLikeUserId = notRobotUserId
+//			outLikeCards = robotLikeUserInfo
+//			break
+//		}
+//	}
+//	if len(followLikeUserId) <= 0 {
+//		return
+//	}
+//
+//	isLikeCard := false
+//	for _, outLikeCard := range outLikeCards {
+//		if isLikeCard == true {
+//			break
+//		}
+//		if outLikeCard.LikeUserId == userId {
+//			continue
+//		}
+//		likeCard = models.LikeCard{
+//			CardId:     outLikeCard.CardId,
+//			LikeUserId: outLikeCard.LikeUserId,
+//			Level:      outLikeCard.Level,
+//			AddRate:    outLikeCard.AddRate,
+//		}
+//		isLikeCard = true
+//		likeUserId = outLikeCard.LikeUserId
+//		likeCards = trs.ComRoomSpace.GetUserOutEdCards(outLikeCard.LikeUserId)
+//	}
+//	if !isLikeCard {
+//		return
+//	}
+//
+//	time.Sleep(1 * time.Second)
+//
+//	//global.GVA_LOG.Infof("outLikeCards%v likeCards:%v", outLikeCards, likeCards)
+//	trs.DoLikeCard(userId, likeUserId, likeCard, likeCards)
 //}

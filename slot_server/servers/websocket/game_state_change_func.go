@@ -9,9 +9,7 @@ import (
 	"slot_server/lib/global"
 	"slot_server/lib/helper"
 	"slot_server/lib/models"
-	"slot_server/lib/models/table"
 	"slot_server/lib/src/dao"
-	"slot_server/lib/src/logic"
 	"slot_server/protoc/pbs"
 	"sort"
 	"strconv"
@@ -19,14 +17,13 @@ import (
 )
 
 func WheelAnimalSortCalculateExec(trs *RoomSpace) {
-	global.GVA_LOG.Infof("AnimalPartyCalculateExecFunc 房间 {%v}", trs.RoomInfo.RoomNo)
+	global.GVA_LOG.Infof("WheelAnimalSortCalculateExec 房间 {%v}", trs.RoomInfo.RoomNo)
+	var (
+		msgData = &pbs.AnimalSortMsg{WinBetZoneConfig: make([]*pbs.WinBetZoneConfig, 0)}
+	)
 
 	//实际外部排序
 	RecursionGetAnimalConfig(trs)
-
-	msgData := &pbs.AnimalSortMsg{
-		WinBetZoneConfig: make([]*pbs.WinBetZoneConfig, 0),
-	}
 
 	currAnimalWheelSort := trs.ComRoomSpace.CurrAnimalWheelSort
 	for _, animalWheelSort := range currAnimalWheelSort {
@@ -45,6 +42,7 @@ func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 
 		//对应位置的颜色
 		colorConfigSeat := trs.GetColorConfigsBySeat(animalWheelSort.WinAnimalConfig.Seat)
+
 		//根据本局赢钱的位置的动物和颜色确定赔率
 		betZoneConfig := GetBetZoneConfigByAnimalIdAndColorId(animalWheelSort.WinAnimalConfig.AnimalId, colorConfigSeat.ColorId)
 		animalWheelSort.WinBetZoneConfig = betZoneConfig
@@ -57,18 +55,6 @@ func WheelAnimalSortCalculateExec(trs *RoomSpace) {
 		}
 		msgData.WinBetZoneConfig = append(msgData.WinBetZoneConfig, winBetZoneConfig)
 	}
-
-	//for _, newAllAnimalConfig := range newAllAnimalConfigs {
-	//	//对应位置的颜色
-	//	colorConfigSeat := trs.GetColorConfigsBySeat(newAllAnimalConfig.WinSeat)
-	//	//根据本局赢钱的位置的动物和颜色确定赔率
-	//	betZoneConfig := GetBetZoneConfigByAnimalIdAndColorId(newAllAnimalConfig.WinAnimalConfig.AnimalId, colorConfigSeat.ColorId)
-	//	global.GVA_LOG.Infof("中奖组合 betZoneConfig %v", betZoneConfig)
-	//	newAllAnimalConfig.WinBetZoneConfig = betZoneConfig
-	//}
-	//
-	//trs.ComRoomSpace.WinBetZoneConfig = betZoneConfig
-	//msgData.BetRate = float32(betZoneConfig.BetRate)
 
 	//获取房间人数
 	global.GVA_LOG.Infof("  押注停止后 主动下发最外圈的动物排序，第一个排在最上面 位置0开始: %v", msgData)
@@ -95,7 +81,6 @@ func WheelAnimalSortCalculate(trs *RoomSpace) []*AnimalConfig {
 
 func RecursionGetAnimalConfig(trs *RoomSpace) {
 	animalWheelSort := make([]*AllAnimalWheelSort, 0)
-
 	firstAnimalConfigs := WheelAnimalSortCalculate(trs)
 
 	//现在是随机
@@ -225,322 +210,6 @@ func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 	netMessageResp.Content = responseHeadByte
 	NatsSendAimUserMsg(trs, netMessageResp, "")
 
-}
-
-//func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
-//	//获取所有的用户押注情况
-//	winBetZoneConfig := trs.ComRoomSpace.WinBetZoneConfig
-//
-//	//先发中奖组合
-//	winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(winBetZoneConfig.Seat)
-//	global.GVA_LOG.Infof("WheelAnimalPartyCalculateExec 中奖用户 winUserArr: %v , loseUserAr %v", winUserArr, loseUserArr)
-//
-//	currPeriodUserWinMsg := &pbs.CurrPeriodUserWinMsg{
-//		UserBetSettle: make([]*pbs.UserBetSettle, 0),
-//	}
-//
-//	for _, uInfo := range winUserArr {
-//		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
-//			WinCoin: float32(helper.Sum(uInfo.UserProperty.Bet, winBetZoneConfig.BetRate)),
-//			UserId:  uInfo.UserID,
-//		})
-//	}
-//
-//	for _, uInfo := range loseUserArr {
-//		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
-//			LoseCoin: float32(uInfo.UserProperty.Bet),
-//			UserId:   uInfo.UserID,
-//		})
-//	}
-//
-//	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_CurrPeriodUserWinMsg), config.SlotServer)
-//
-//	responseHeadByte, _ := proto.Marshal(currPeriodUserWinMsg)
-//	netMessageResp.Content = responseHeadByte
-//	NatsSendAimUserMsg(trs, netMessageResp, "")
-//
-//}
-
-func AnimalPartyCalculateExecFunc(trs *RoomSpace) {
-	global.GVA_LOG.Infof("AnimalPartyCalculateExecFunc 房间 {%v}", trs.RoomInfo.RoomNo)
-
-	//计算逻辑
-
-	//当前指针所在方向
-
-	//当前所有用户的押注分布
-
-	//哪些用户赢钱
-
-	//保存数据库
-
-	//推送消息
-}
-
-// CalculateExecFunc  计算 并结束
-func CalculateExecFunc(trs *RoomSpace) {
-	global.GVA_LOG.Infof("CalculateExecFunc 房间 {%v} 第{%v} 轮 都点过赞了", trs.RoomInfo.RoomNo, trs.ComRoomSpace.GetTurn())
-
-	//已经是最后一轮就是结束
-	trs.CalculateAndEnd()
-
-	//最近一轮的点赞结束 触发游戏结束
-	if trs.RoomInfo.RoomTurnNum == trs.ComRoomSpace.GetTurn() {
-		trs.CloseRoom(trs.RoomInfo.RoomNo, table.RoomStatusStop)
-	}
-
-}
-
-// NextTurnExecFunc 进入下一轮
-func NextTurnExecFunc(trs *RoomSpace) {
-	global.GVA_LOG.Infof("NextTurnExecFunc 房间 {%v} 第{%v} 轮 都点过赞了", trs.RoomInfo.RoomNo, trs.ComRoomSpace.GetTurn())
-	//如果还没到达最后一轮 就是进入下一轮
-	//trs.NextTurn()
-
-	//房间轮增加
-	trs.ComRoomSpace.AddTurn()
-	trs.ComRoomSpace.SetCountdownTime(helper.LocalTime().Unix()) //进入下一轮
-	trs.ComRoomSpace.SetLikeCountdownTime(0)
-
-	//做2件事情
-	//1 发送问题
-	//2 发牌
-	trs.ExecSendIssueAndSendCards() //进入下一轮
-
-}
-
-func SendGameStartBroadcast(trs *RoomSpace) {
-	var (
-		userInfos         = trs.ComRoomSpace.UserInfos
-		memeRoomUserLists []models.MemeRoomUser
-		index             int
-	)
-
-	err := table.SaveMemeRoom(trs.RoomInfo)
-	if err != nil {
-		global.GVA_LOG.Error("StartPlay SaveTavernRoom ", zap.Error(err))
-	}
-
-	//先获取房间全部的用户
-	for k, _ := range userInfos {
-		userItem := userInfos[k]
-		userItem.UserProperty.Turn = trs.ComRoomSpace.GetTurn()
-		tavernRoomUser := models.MemeRoomUser{
-			UserID:       userItem.UserID,
-			Nickname:     userItem.Nickname,
-			Turn:         userItem.UserProperty.Turn,
-			IsLeave:      userItem.UserProperty.IsLeave,
-			IsOwner:      userItem.UserProperty.IsOwner,
-			IsReady:      userItem.UserProperty.IsReady,
-			Seat:         userItem.UserProperty.Seat,
-			UserLimitNum: userItem.UserProperty.UserLimitNum,
-			WinPrice:     userItem.UserProperty.WinPrice,
-			Bet:          userItem.UserProperty.Bet,
-		}
-		memeRoomUserLists = append(memeRoomUserLists, tavernRoomUser)
-		index++
-	}
-
-	//发送广播
-	msgData := models.StartPlayMsg{
-		ProtoNum:         strconv.Itoa(int(pbs.Meb_startPlay)),
-		RoomNo:           trs.RoomInfo.RoomNo,
-		Timestamp:        time.Now().Unix(),
-		MemeRoomUserList: memeRoomUserLists,
-	}
-
-	//给用户消息
-	global.GVA_LOG.Infof("StartPlay 开始游戏的广播: %v", msgData)
-	responseHeadByte, _ := json.Marshal(msgData)
-	NatsSendAllUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_startPlay), config.SlotServer, responseHeadByte))
-
-	trs.ComRoomSpace.SetGameStartTime(helper.LocalTime().Unix()) //游戏开始时间
-}
-
-func SendEnLoadBroadcast(trs *RoomSpace) {
-	//如果都加载完成 需要通知客户端 并发送问题
-	//trs.AllUserLoad()
-	trs.ComRoomSpace.SetCountdownTime(helper.LocalTime().Unix()) //加载完成
-
-	//做2件事情
-	//1 发送问题
-	//2 发牌
-	trs.ExecSendIssueAndSendCards() //加载完成
-}
-
-func (trs *RoomSpace) ExecSendIssueAndSendCards() {
-	var (
-		roomNo = trs.RoomInfo.RoomNo
-		turn   = trs.ComRoomSpace.GetTurn()
-	)
-
-	trs.SaveAndSendIssue()
-
-	trs.InitUserSelfCards()
-
-	netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_dealCardsMsg), config.SlotServer)
-	//发送广播
-	for _, uInfo := range trs.ComRoomSpace.UserInfos {
-		//获取当前轮 用户 没有被随的牌
-		cards, err := trs.ComRoomSpace.GetNotExtractCard(uInfo.UserID)
-		if err != nil {
-			global.GVA_LOG.Infof("DealCards %v", err.Error())
-			continue
-		}
-		if cards != nil && len(cards) <= 0 {
-			continue
-		}
-
-		//所有牌随机打乱
-		helper.SliceShuffle(cards)
-		var (
-			newCards = make([]*table.MbCardConfig, 0) //未被选的牌
-			outCards = make([]*table.MbCardConfig, 0) //给用户要发的牌
-			perCards = make([]*models.Card, 0)        //每个人获取4张牌
-		)
-
-		for _, val := range cards {
-			if len(perCards) < 4 {
-				v := &models.Card{
-					CardId:  val.ID,
-					Name:    val.Name,
-					Suffix:  val.SuffixName,
-					Level:   val.Level,
-					AddRate: val.AddRate,
-					UserID:  uInfo.UserID,
-				}
-				perCards = append(perCards, v)
-				outCards = append(outCards, val)
-			} else {
-				newCards = append(newCards, val)
-			}
-		}
-
-		err = trs.ComRoomSpace.AddCurrCard(uInfo.UserID, perCards)
-		if err != nil {
-			global.GVA_LOG.Error("dealCards  AddCurrCard", zap.Error(err))
-		}
-
-		//重置 未抽过的牌
-		trs.ComRoomSpace.ReMakeExtractCard(uInfo.UserID, newCards)
-
-		//保留抽过的牌
-		trs.ComRoomSpace.SaveExtractCard(uInfo.UserID, outCards)
-
-		//发牌:给每一个用户发对应的牌
-		msgData := models.DealCardsMsg{
-			ProtoNum:  strconv.Itoa(int(pbs.Meb_dealCardsMsg)),
-			Timestamp: time.Now().Unix(),
-			UserId:    uInfo.UserID,
-			RoomNo:    roomNo,
-			Turn:      turn,
-			Cards:     perCards,
-		}
-
-		global.GVA_LOG.Infof("发牌的广播: %v", msgData)
-		userStateRespMarshal, _ := json.Marshal(msgData)
-		netMessageResp.Content = userStateRespMarshal
-		NatsSendAimUserMsg(trs, netMessageResp, uInfo.UserID)
-
-		//发完牌纪录一下具体数据 mysql （暂时先不纪录）
-		//perCardsMarshal, _ := json.Marshal(perCards)
-		//dao.AddTurnDetails(roomNo, uInfo.UserID, uInfo.Nickname, turn, string(perCardsMarshal), "{}")
-		//trs.ByRobotClassSetAction(uInfo)
-	}
-}
-
-func (trs *RoomSpace) SaveAndSendIssue() {
-	//问题
-	issue, err := trs.ComRoomSpace.GetSelectIssue()
-	if err != nil {
-		global.GVA_LOG.Infof("SelectIssue  GetSelectIssue %v", zap.Error(err))
-	} else {
-		//返回已经存在的骗子牌
-		global.GVA_LOG.Error("SelectIssue 洗牌提前 GetFraudCard", zap.Error(err))
-		return
-	}
-
-	randInt := helper.RandInt(len(trs.RoomIssueConfig))
-	issueConfig := trs.RoomIssueConfig[randInt]
-	issue = &models.Issue{
-		IssueId: issueConfig.ID,
-		Level:   issueConfig.Level,
-		Class:   issueConfig.Class,
-		Desc:    issueConfig.Desc,
-	}
-
-	//保存问题
-	trs.ComRoomSpace.AddSelectIssue(issue)
-
-	msgData := models.IssueMsg{
-		ProtoNum:  strconv.Itoa(int(pbs.Meb_issueMsg)),
-		Timestamp: time.Now().Unix(),
-		Issue:     issue,
-	}
-	global.GVA_LOG.Infof("SelectIssue 本轮问题的的广播: %v ", msgData)
-	responseHeadByte, _ := json.Marshal(msgData)
-	NatsSendAllUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_issueMsg), config.SlotServer, responseHeadByte)) //SelectIssue
-}
-
-// InitUserSelfCards 每轮开始前 初始化自己的牌
-func (trs *RoomSpace) InitUserSelfCards() {
-	for _, uInfo := range trs.ComRoomSpace.UserInfos {
-		//先把基础牌放到未随机里面
-		notExtractCards := make([]*table.MbCardConfig, 0)
-		//基础牌 去掉了
-		//notExtractCards = append(notExtractCards, trs.RoomBaseCard...)
-
-		if uInfo.UserIsRobot() {
-			//获取当前的版本
-			for _, vCards := range trs.RoomVersionCard {
-				notExtractCards = append(notExtractCards, vCards...)
-			}
-		} else {
-			userCards := trs.ComRoomSpace.GetUserOwnCards(uInfo.UserID)
-			if len(userCards) == 0 {
-				//查找自己的牌并赋值
-				cardConfigByIds := logic.GetUserOwnCards(uInfo.UserID)
-				trs.ComRoomSpace.AddUserOwnCards(uInfo.UserID, cardConfigByIds)
-				userCards = cardConfigByIds
-			}
-			//自己的牌
-			notExtractCards = append(notExtractCards, userCards...)
-		}
-
-		err := trs.ComRoomSpace.CurrTurnFirstNotExtractCard(uInfo.UserID, notExtractCards)
-		if err != nil {
-			global.GVA_LOG.Infof("DealCards %v", err.Error())
-			continue
-		}
-	}
-}
-
-// EntryLikePage 是否该发送进入点赞页面的广播
-func EntryLikePage(trs *RoomSpace) {
-	global.GVA_LOG.Infof("EnLikePage 房间 {%v} 第{%v} 轮 都出过牌了 现在发送广播 进入点赞页面", trs.RoomInfo.RoomNo, trs.ComRoomSpace.GetTurn())
-
-	//获取本轮房间所有用户的牌，发送给房间所有人
-	allOutCard := trs.ComRoomSpace.GetAllUserOutEdCards()
-
-	//发送广播
-	msgData := models.EntryLikePageMsg{
-		ProtoNum:  strconv.Itoa(int(pbs.Meb_entryLikePage)),
-		RoomNo:    trs.RoomInfo.RoomNo,
-		Timestamp: time.Now().Unix(),
-		OutCards:  allOutCard,
-	}
-	//给用户消息
-	global.GVA_LOG.Infof("StartPlay 开始游戏的广播: %v", msgData)
-	responseHeadByte, _ := json.Marshal(msgData)
-	NatsSendAllUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_entryLikePage), config.SlotServer, responseHeadByte))
-
-	//点赞倒计时
-	trs.ComRoomSpace.SetLikeCountdownTime(helper.LocalTime().Unix())
-
-	//通知完成
-	//trs.ComRoomSpace.GameStateTransition(EnLikePage, DisLikePage)
-	////并进入点赞中
-	//trs.ComRoomSpace.GameStateTransition(DisLikePage, EnLikeCardIng)
 }
 
 func (trs *RoomSpace) CalculateAndEnd() {
@@ -901,4 +570,320 @@ func longestTrue(slice []bool) int {
 //	}
 //
 //	global.GVA_LOG.Infof("NextTurn %v", zap.Any("issue", &issue))
+//}
+
+//func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
+//	//获取所有的用户押注情况
+//	winBetZoneConfig := trs.ComRoomSpace.WinBetZoneConfig
+//
+//	//先发中奖组合
+//	winUserArr, loseUserArr := trs.ComRoomSpace.GetBetZoneUserInfos(winBetZoneConfig.Seat)
+//	global.GVA_LOG.Infof("WheelAnimalPartyCalculateExec 中奖用户 winUserArr: %v , loseUserAr %v", winUserArr, loseUserArr)
+//
+//	currPeriodUserWinMsg := &pbs.CurrPeriodUserWinMsg{
+//		UserBetSettle: make([]*pbs.UserBetSettle, 0),
+//	}
+//
+//	for _, uInfo := range winUserArr {
+//		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+//			WinCoin: float32(helper.Sum(uInfo.UserProperty.Bet, winBetZoneConfig.BetRate)),
+//			UserId:  uInfo.UserID,
+//		})
+//	}
+//
+//	for _, uInfo := range loseUserArr {
+//		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
+//			LoseCoin: float32(uInfo.UserProperty.Bet),
+//			UserId:   uInfo.UserID,
+//		})
+//	}
+//
+//	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_CurrPeriodUserWinMsg), config.SlotServer)
+//
+//	responseHeadByte, _ := proto.Marshal(currPeriodUserWinMsg)
+//	netMessageResp.Content = responseHeadByte
+//	NatsSendAimUserMsg(trs, netMessageResp, "")
+//
+//}
+
+//func AnimalPartyCalculateExecFunc(trs *RoomSpace) {
+//	global.GVA_LOG.Infof("AnimalPartyCalculateExecFunc 房间 {%v}", trs.RoomInfo.RoomNo)
+//
+//	//计算逻辑
+//
+//	//当前指针所在方向
+//
+//	//当前所有用户的押注分布
+//
+//	//哪些用户赢钱
+//
+//	//保存数据库
+//
+//	//推送消息
+//}
+
+// CalculateExecFunc  计算 并结束
+//func CalculateExecFunc(trs *RoomSpace) {
+//	global.GVA_LOG.Infof("CalculateExecFunc 房间 {%v} 第{%v} 轮 都点过赞了", trs.RoomInfo.RoomNo, trs.ComRoomSpace.GetTurn())
+//
+//	//已经是最后一轮就是结束
+//	trs.CalculateAndEnd()
+//
+//	//最近一轮的点赞结束 触发游戏结束
+//	if trs.RoomInfo.RoomTurnNum == trs.ComRoomSpace.GetTurn() {
+//		trs.CloseRoom(trs.RoomInfo.RoomNo, table.RoomStatusStop)
+//	}
+//
+//}
+
+// NextTurnExecFunc 进入下一轮
+//func NextTurnExecFunc(trs *RoomSpace) {
+//	global.GVA_LOG.Infof("NextTurnExecFunc 房间 {%v} 第{%v} 轮 都点过赞了", trs.RoomInfo.RoomNo, trs.ComRoomSpace.GetTurn())
+//	//如果还没到达最后一轮 就是进入下一轮
+//	//trs.NextTurn()
+//
+//	//房间轮增加
+//	trs.ComRoomSpace.AddTurn()
+//	trs.ComRoomSpace.SetCountdownTime(helper.LocalTime().Unix()) //进入下一轮
+//	trs.ComRoomSpace.SetLikeCountdownTime(0)
+//
+//	//做2件事情
+//	//1 发送问题
+//	//2 发牌
+//	trs.ExecSendIssueAndSendCards() //进入下一轮
+//
+//}
+
+//func SendGameStartBroadcast(trs *RoomSpace) {
+//	var (
+//		userInfos         = trs.ComRoomSpace.UserInfos
+//		memeRoomUserLists []models.MemeRoomUser
+//		index             int
+//	)
+//
+//	err := table.SaveMemeRoom(trs.RoomInfo)
+//	if err != nil {
+//		global.GVA_LOG.Error("StartPlay SaveTavernRoom ", zap.Error(err))
+//	}
+//
+//	//先获取房间全部的用户
+//	for k, _ := range userInfos {
+//		userItem := userInfos[k]
+//		userItem.UserProperty.Turn = trs.ComRoomSpace.GetTurn()
+//		tavernRoomUser := models.MemeRoomUser{
+//			UserID:       userItem.UserID,
+//			Nickname:     userItem.Nickname,
+//			Turn:         userItem.UserProperty.Turn,
+//			IsLeave:      userItem.UserProperty.IsLeave,
+//			IsOwner:      userItem.UserProperty.IsOwner,
+//			IsReady:      userItem.UserProperty.IsReady,
+//			Seat:         userItem.UserProperty.Seat,
+//			UserLimitNum: userItem.UserProperty.UserLimitNum,
+//			WinPrice:     userItem.UserProperty.WinPrice,
+//			Bet:          userItem.UserProperty.Bet,
+//		}
+//		memeRoomUserLists = append(memeRoomUserLists, tavernRoomUser)
+//		index++
+//	}
+//
+//	//发送广播
+//	msgData := models.StartPlayMsg{
+//		ProtoNum:         strconv.Itoa(int(pbs.Meb_startPlay)),
+//		RoomNo:           trs.RoomInfo.RoomNo,
+//		Timestamp:        time.Now().Unix(),
+//		MemeRoomUserList: memeRoomUserLists,
+//	}
+//
+//	//给用户消息
+//	global.GVA_LOG.Infof("StartPlay 开始游戏的广播: %v", msgData)
+//	responseHeadByte, _ := json.Marshal(msgData)
+//	NatsSendAllUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_startPlay), config.SlotServer, responseHeadByte))
+//
+//	trs.ComRoomSpace.SetGameStartTime(helper.LocalTime().Unix()) //游戏开始时间
+//}
+
+//func SendEnLoadBroadcast(trs *RoomSpace) {
+//	//如果都加载完成 需要通知客户端 并发送问题
+//	//trs.AllUserLoad()
+//	trs.ComRoomSpace.SetCountdownTime(helper.LocalTime().Unix()) //加载完成
+//
+//	//做2件事情
+//	//1 发送问题
+//	//2 发牌
+//	//trs.ExecSendIssueAndSendCards() //加载完成
+//}
+
+//func (trs *RoomSpace) ExecSendIssueAndSendCards() {
+//	var (
+//		roomNo = trs.RoomInfo.RoomNo
+//		turn   = trs.ComRoomSpace.GetTurn()
+//	)
+//
+//	//trs.SaveAndSendIssue()
+//	//
+//	//trs.InitUserSelfCards()
+//
+//	netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_dealCardsMsg), config.SlotServer)
+//	//发送广播
+//	for _, uInfo := range trs.ComRoomSpace.UserInfos {
+//		//获取当前轮 用户 没有被随的牌
+//		cards, err := trs.ComRoomSpace.GetNotExtractCard(uInfo.UserID)
+//		if err != nil {
+//			global.GVA_LOG.Infof("DealCards %v", err.Error())
+//			continue
+//		}
+//		if cards != nil && len(cards) <= 0 {
+//			continue
+//		}
+//
+//		//所有牌随机打乱
+//		helper.SliceShuffle(cards)
+//		var (
+//			newCards = make([]*table.MbCardConfig, 0) //未被选的牌
+//			outCards = make([]*table.MbCardConfig, 0) //给用户要发的牌
+//			perCards = make([]*models.Card, 0)        //每个人获取4张牌
+//		)
+//
+//		for _, val := range cards {
+//			if len(perCards) < 4 {
+//				v := &models.Card{
+//					CardId:  val.ID,
+//					Name:    val.Name,
+//					Suffix:  val.SuffixName,
+//					Level:   val.Level,
+//					AddRate: val.AddRate,
+//					UserID:  uInfo.UserID,
+//				}
+//				perCards = append(perCards, v)
+//				outCards = append(outCards, val)
+//			} else {
+//				newCards = append(newCards, val)
+//			}
+//		}
+//
+//		err = trs.ComRoomSpace.AddCurrCard(uInfo.UserID, perCards)
+//		if err != nil {
+//			global.GVA_LOG.Error("dealCards  AddCurrCard", zap.Error(err))
+//		}
+//
+//		//重置 未抽过的牌
+//		trs.ComRoomSpace.ReMakeExtractCard(uInfo.UserID, newCards)
+//
+//		//保留抽过的牌
+//		trs.ComRoomSpace.SaveExtractCard(uInfo.UserID, outCards)
+//
+//		//发牌:给每一个用户发对应的牌
+//		msgData := models.DealCardsMsg{
+//			ProtoNum:  strconv.Itoa(int(pbs.Meb_dealCardsMsg)),
+//			Timestamp: time.Now().Unix(),
+//			UserId:    uInfo.UserID,
+//			RoomNo:    roomNo,
+//			Turn:      turn,
+//			Cards:     perCards,
+//		}
+//
+//		global.GVA_LOG.Infof("发牌的广播: %v", msgData)
+//		userStateRespMarshal, _ := json.Marshal(msgData)
+//		netMessageResp.Content = userStateRespMarshal
+//		NatsSendAimUserMsg(trs, netMessageResp, uInfo.UserID)
+//
+//		//发完牌纪录一下具体数据 mysql （暂时先不纪录）
+//		//perCardsMarshal, _ := json.Marshal(perCards)
+//		//dao.AddTurnDetails(roomNo, uInfo.UserID, uInfo.Nickname, turn, string(perCardsMarshal), "{}")
+//		//trs.ByRobotClassSetAction(uInfo)
+//	}
+//}
+
+//func (trs *RoomSpace) SaveAndSendIssue() {
+//	//问题
+//	issue, err := trs.ComRoomSpace.GetSelectIssue()
+//	if err != nil {
+//		global.GVA_LOG.Infof("SelectIssue  GetSelectIssue %v", zap.Error(err))
+//	} else {
+//		//返回已经存在的骗子牌
+//		global.GVA_LOG.Error("SelectIssue 洗牌提前 GetFraudCard", zap.Error(err))
+//		return
+//	}
+//
+//	randInt := helper.RandInt(len(trs.RoomIssueConfig))
+//	issueConfig := trs.RoomIssueConfig[randInt]
+//	issue = &models.Issue{
+//		IssueId: issueConfig.ID,
+//		Level:   issueConfig.Level,
+//		Class:   issueConfig.Class,
+//		Desc:    issueConfig.Desc,
+//	}
+//
+//	//保存问题
+//	trs.ComRoomSpace.AddSelectIssue(issue)
+//
+//	msgData := models.IssueMsg{
+//		ProtoNum:  strconv.Itoa(int(pbs.Meb_issueMsg)),
+//		Timestamp: time.Now().Unix(),
+//		Issue:     issue,
+//	}
+//	global.GVA_LOG.Infof("SelectIssue 本轮问题的的广播: %v ", msgData)
+//	responseHeadByte, _ := json.Marshal(msgData)
+//	NatsSendAllUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_issueMsg), config.SlotServer, responseHeadByte)) //SelectIssue
+//}
+
+// InitUserSelfCards 每轮开始前 初始化自己的牌
+//func (trs *RoomSpace) InitUserSelfCards() {
+//	for _, uInfo := range trs.ComRoomSpace.UserInfos {
+//		//先把基础牌放到未随机里面
+//		notExtractCards := make([]*table.MbCardConfig, 0)
+//		//基础牌 去掉了
+//		//notExtractCards = append(notExtractCards, trs.RoomBaseCard...)
+//
+//		if uInfo.UserIsRobot() {
+//			//获取当前的版本
+//			for _, vCards := range trs.RoomVersionCard {
+//				notExtractCards = append(notExtractCards, vCards...)
+//			}
+//		} else {
+//			userCards := trs.ComRoomSpace.GetUserOwnCards(uInfo.UserID)
+//			if len(userCards) == 0 {
+//				//查找自己的牌并赋值
+//				cardConfigByIds := logic.GetUserOwnCards(uInfo.UserID)
+//				trs.ComRoomSpace.AddUserOwnCards(uInfo.UserID, cardConfigByIds)
+//				userCards = cardConfigByIds
+//			}
+//			//自己的牌
+//			notExtractCards = append(notExtractCards, userCards...)
+//		}
+//
+//		err := trs.ComRoomSpace.CurrTurnFirstNotExtractCard(uInfo.UserID, notExtractCards)
+//		if err != nil {
+//			global.GVA_LOG.Infof("DealCards %v", err.Error())
+//			continue
+//		}
+//	}
+//}
+
+// EntryLikePage 是否该发送进入点赞页面的广播
+//func EntryLikePage(trs *RoomSpace) {
+//	global.GVA_LOG.Infof("EnLikePage 房间 {%v} 第{%v} 轮 都出过牌了 现在发送广播 进入点赞页面", trs.RoomInfo.RoomNo, trs.ComRoomSpace.GetTurn())
+//
+//	//获取本轮房间所有用户的牌，发送给房间所有人
+//	allOutCard := trs.ComRoomSpace.GetAllUserOutEdCards()
+//
+//	//发送广播
+//	msgData := models.EntryLikePageMsg{
+//		ProtoNum:  strconv.Itoa(int(pbs.Meb_entryLikePage)),
+//		RoomNo:    trs.RoomInfo.RoomNo,
+//		Timestamp: time.Now().Unix(),
+//		OutCards:  allOutCard,
+//	}
+//	//给用户消息
+//	global.GVA_LOG.Infof("StartPlay 开始游戏的广播: %v", msgData)
+//	responseHeadByte, _ := json.Marshal(msgData)
+//	NatsSendAllUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_entryLikePage), config.SlotServer, responseHeadByte))
+//
+//	//点赞倒计时
+//	trs.ComRoomSpace.SetLikeCountdownTime(helper.LocalTime().Unix())
+//
+//	//通知完成
+//	//trs.ComRoomSpace.GameStateTransition(EnLikePage, DisLikePage)
+//	////并进入点赞中
+//	//trs.ComRoomSpace.GameStateTransition(DisLikePage, EnLikeCardIng)
 //}

@@ -51,6 +51,7 @@ type PeriodSpace struct {
 	IdDealCarding bool
 }
 
+// AllAnimalWheelSort 最外圈动物怕排序
 type AllAnimalWheelSort struct {
 	WinSeat          int
 	WinAnimalConfig  *AnimalConfig    //赢钱的动物位置

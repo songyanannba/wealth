@@ -29,8 +29,10 @@ type RoomSpace struct {
 	//房间信息
 	RoomInfo *table.AnimalPartyRoom
 
+	//最外圈的动物排序
 	AnimalConfigs []*AnimalConfig
 
+	//颜色排序
 	ColorConfigs []*ColorConfig
 
 	//房间配置
@@ -39,17 +41,8 @@ type RoomSpace struct {
 	//通用字段
 	ComRoomSpace *ComRoomSpace
 
-	//基础问题
-	RoomIssueConfig []*table.MbIssueConfig
-
-	//当前的卡版本
-	CardVersion []int
-
 	//基础卡
 	RoomBaseCard []*table.MbCardConfig
-
-	//版本卡
-	RoomVersionCard map[int][]*table.MbCardConfig
 
 	//加载确认
 	LoadComps map[string]*models.UserInfo
@@ -77,14 +70,12 @@ func GetRoomSpace() *RoomSpace {
 		AnimalConfigs:         []*AnimalConfig{},
 		MemeRoomConfig:        &table.MemeRoomConfig{},
 		RoomBaseCard:          make([]*table.MbCardConfig, 0),
-		RoomVersionCard:       make(map[int][]*table.MbCardConfig),
 		FuncMap:               make(map[string]MemeDisposeFunc),
 		GameStateMap:          make(map[GameTurnState]GameStateFunc),
 		FuncMapMutex:          new(sync.RWMutex),
 		GameStateFuncMapMutex: new(sync.RWMutex),
 		LoadComps:             make(map[string]*models.UserInfo),
 		IsAllLoadComps:        false,
-		CardVersion:           make([]int, 0),
 	}
 	trSpace.ComRoomSpace = GetComRoomSpace()
 
