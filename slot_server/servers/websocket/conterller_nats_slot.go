@@ -216,12 +216,12 @@ func UserBetReq(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data 
 			roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(int(request.BetZoneId), request.Bet, userInfo.Copy())
 
 			//测试 多压几个 todo
-			{
-				roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(0, 1, userInfo.Copy())
-				roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(1, 2, userInfo.Copy())
-				roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(3, 3, userInfo.Copy())
-				roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(8, 4, userInfo.Copy())
-			}
+			//{
+			//	roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(0, 1, userInfo.Copy())
+			//	roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(1, 2, userInfo.Copy())
+			//	roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(3, 3, userInfo.Copy())
+			//	roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(8, 4, userInfo.Copy())
+			//}
 
 			ptAck, _ := proto.Marshal(res)
 			netMessageResp.Content = ptAck
