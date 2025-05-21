@@ -84,7 +84,6 @@ func (n *natsManager) slotServiceSubConsumer() {
 	}
 	for {
 		msgs, err := cons.Fetch(100, nats.MaxWait(5*time.Second))
-
 		if errors.Is(err, context.DeadlineExceeded) {
 			continue
 		} else if err != nil {

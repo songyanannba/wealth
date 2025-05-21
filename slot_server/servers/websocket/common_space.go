@@ -70,6 +70,9 @@ type ComRoomSpace struct {
 	//key是用户ID {是在获取房间/押注的时候填充的数据，所有的真实用户}
 	//UserClient map[string]*Client
 
+	//机器人押注次数 //todo
+	APRobotActionCount int
+
 	//key是用户ID 用户信息 {用户押注/获取房间的时候添加 }
 	UserInfos map[string]*models.UserInfo
 
@@ -229,6 +232,7 @@ func GetComRoomSpace() *ComRoomSpace {
 		ReceiveMsg:          make(chan []byte, 10000),
 		Close:               make(chan bool),
 		CurrentOpTime:       time.Now().Unix(), //内存中房间协程创建时间
+		APRobotActionCount:  0,
 		IsStopGame:          false,
 		IsStartGame:         false,
 		CurrAnimalWheelSort: make([]*AllAnimalWheelSort, 0),

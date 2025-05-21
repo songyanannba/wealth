@@ -49,6 +49,7 @@ message userBetAck {
   int32 game_id = 2; // 1=动物派对 2=火箭 3=赏金女王
   int32 bet_zone_id = 3; //押注的位置
   string  user_id = 4 ;
+  bool  is_robot = 5 ; //是否机器人 ture=机器人
 }
 
 //当前期是否赢钱的通知

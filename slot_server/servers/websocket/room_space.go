@@ -28,6 +28,8 @@ type GameStateFunc func(trs *RoomSpace)
 type RoomSpace struct {
 	//房间信息
 	RoomInfo *table.AnimalPartyRoom
+	//通用字段
+	ComRoomSpace *ComRoomSpace
 
 	//最外圈的动物排序 这里是固定的 需要旋转特殊处理
 	AnimalConfigs []*AnimalConfig
@@ -40,9 +42,6 @@ type RoomSpace struct {
 
 	//房间配置
 	MemeRoomConfig *table.MemeRoomConfig
-
-	//通用字段
-	ComRoomSpace *ComRoomSpace
 
 	//基础卡
 	RoomBaseCard []*table.MbCardConfig
@@ -208,7 +207,9 @@ func (trs *RoomSpace) GameTurnStateCheck() {
 	defer trs.ComRoomSpace.Sync.Unlock()
 
 	var (
-		currTime = helper.LocalTime().Unix()
+		currTime          = helper.LocalTime().Unix()
+		gState            = trs.ComRoomSpace.GetGameState()
+		currGameStartTime = trs.ComRoomSpace.GetGameStartTime()
 	)
 
 	//不同状态 触发不同方法
@@ -223,15 +224,16 @@ func (trs *RoomSpace) GameTurnStateCheck() {
 	//计算完 自动开始下一轮
 
 	//如果当前没有押注的用户 不往下执行
-	if len(trs.ComRoomSpace.UserInfos) <= 0 {
+	if len(trs.ComRoomSpace.UserInfos) < 1 {
 		global.GVA_LOG.Infof("没有人押注")
 		trs.ComRoomSpace.SetGameStartTime(helper.LocalTime().Unix()) //游戏开始时间
 		return
 	}
-
-	gState := trs.ComRoomSpace.GetGameState()
-	currGameStartTime := trs.ComRoomSpace.GetGameStartTime()
 	global.GVA_LOG.Infof("GameTurnStateCheck 执行,currTime:%v 房间编号:%v ,gState:%v ,currGameStartTime:%v", currTime, trs.RoomInfo.RoomNo, gState, currGameStartTime)
+
+	if gState == BetIng && trs.ComRoomSpace.APRobotActionCount < 1 {
+		trs.APRobotAction()
+	}
 
 	//押注期间
 	if gState == BetIng && currTime-currGameStartTime <= BetIngPeriod {

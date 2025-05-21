@@ -224,50 +224,50 @@ func (mu *MatchIngRoom) AddMatchIngRoomInfo(roomSpace *RoomSpace) {
 	global.GVA_LOG.Infof("AddMatchIngRoomInfo 单排房间多少个{%v} 双排房间多少个{%v}", len(mu.MatchIngRoom1User), len(mu.MatchIngRoom2User))
 }
 
-func (trMgr *roomManager) CancelMatchIngUser(roomNo string) {
-	trMgr.CommonRoomManager.MatchLock.Lock()
-	defer trMgr.CommonRoomManager.MatchLock.Unlock()
-
-	space := trMgr.Rooms[roomNo]
-	trMgr.MatchIngRoom.CancelMatchRoom(space)
-}
-
-func (mu *MatchIngRoom) CancelMatchRoom(roomSpace *RoomSpace) {
-	mu.Sync.Lock()
-	mu.Sync.Unlock()
-	//获取房间 信息
-	//房间号 和 房间人
-	roomNo := roomSpace.RoomInfo.RoomNo
-	userInfoMaps := roomSpace.ComRoomSpace.UserInfos
-
-	if len(userInfoMaps) == 1 {
-		//单排
-		newMatchIngRoom := []*MatchIngRoomInfo{}
-
-		for k, _ := range mu.MatchIngRoom1User {
-			matchIngRoom := mu.MatchIngRoom1User[k]
-			if matchIngRoom.RoomNo == roomNo {
-				continue
-			}
-			newMatchIngRoom = append(newMatchIngRoom, matchIngRoom)
-		}
-		mu.MatchIngRoom1User = newMatchIngRoom
-	} else if len(userInfoMaps) == 2 {
-		//双排
-		newMatchIngRoom := []*MatchIngRoomInfo{}
-
-		for k, _ := range mu.MatchIngRoom2User {
-			matchIngRoom := mu.MatchIngRoom2User[k]
-			if matchIngRoom.RoomNo == roomNo {
-				continue
-			}
-			newMatchIngRoom = append(newMatchIngRoom, matchIngRoom)
-		}
-		mu.MatchIngRoom2User = newMatchIngRoom
-	}
-
-	global.GVA_LOG.Infof("CancelMatchRoom 单排房间多少个{%v} 双排房间多少个{%v}", len(mu.MatchIngRoom1User), len(mu.MatchIngRoom2User))
-}
+//func (trMgr *roomManager) CancelMatchIngUser(roomNo string) {
+//	trMgr.CommonRoomManager.MatchLock.Lock()
+//	defer trMgr.CommonRoomManager.MatchLock.Unlock()
+//
+//	space := trMgr.Rooms[roomNo]
+//	trMgr.MatchIngRoom.CancelMatchRoom(space)
+//}
+//
+//func (mu *MatchIngRoom) CancelMatchRoom(roomSpace *RoomSpace) {
+//	mu.Sync.Lock()
+//	mu.Sync.Unlock()
+//	//获取房间 信息
+//	//房间号 和 房间人
+//	roomNo := roomSpace.RoomInfo.RoomNo
+//	userInfoMaps := roomSpace.ComRoomSpace.UserInfos
+//
+//	if len(userInfoMaps) == 1 {
+//		//单排
+//		newMatchIngRoom := []*MatchIngRoomInfo{}
+//
+//		for k, _ := range mu.MatchIngRoom1User {
+//			matchIngRoom := mu.MatchIngRoom1User[k]
+//			if matchIngRoom.RoomNo == roomNo {
+//				continue
+//			}
+//			newMatchIngRoom = append(newMatchIngRoom, matchIngRoom)
+//		}
+//		mu.MatchIngRoom1User = newMatchIngRoom
+//	} else if len(userInfoMaps) == 2 {
+//		//双排
+//		newMatchIngRoom := []*MatchIngRoomInfo{}
+//
+//		for k, _ := range mu.MatchIngRoom2User {
+//			matchIngRoom := mu.MatchIngRoom2User[k]
+//			if matchIngRoom.RoomNo == roomNo {
+//				continue
+//			}
+//			newMatchIngRoom = append(newMatchIngRoom, matchIngRoom)
+//		}
+//		mu.MatchIngRoom2User = newMatchIngRoom
+//	}
+//
+//	global.GVA_LOG.Infof("CancelMatchRoom 单排房间多少个{%v} 双排房间多少个{%v}", len(mu.MatchIngRoom1User), len(mu.MatchIngRoom2User))
+//}
 
 func (trMgr *roomManager) DelRoomByTime() {
 	trMgr.CommonRoomManager.Sync.Lock()

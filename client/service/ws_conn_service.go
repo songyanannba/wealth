@@ -37,7 +37,7 @@ var WsClientService = wsClientService{
 
 func (ws *wsClientService) Start() {
 
-	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc4MTE2OTQsInN1YiI6IiIsInVzZXJfaWQiOiJiZDNmZmQ1Mi1kMjc3LTQ1NTAtODZjNy1hN2I1MDIxZWJmNTAifQ.Xuna51z5Aa7DTNqVTNmbyvwPPIH2zZWhCU5cOm65cDs"
+	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc5MDA1OTQsInN1YiI6IiIsInVzZXJfaWQiOiJiZDNmZmQ1Mi1kMjc3LTQ1NTAtODZjNy1hN2I1MDIxZWJmNTAifQ.P4lFr2WpnwChFCr63tAF5BrkFbv5gSsoKMTCa7C4NmE"
 
 	header := http.Header{}
 	header.Add("userId", "syn")
