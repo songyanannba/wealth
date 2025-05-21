@@ -53,9 +53,6 @@ type RoomSpace struct {
 	//是否全部加载完成
 	IsAllLoadComps bool
 
-	//游戏状态
-	GameState GameState
-
 	//方法集合
 	FuncMapMutex *sync.RWMutex
 	FuncMap      map[string]MemeDisposeFunc

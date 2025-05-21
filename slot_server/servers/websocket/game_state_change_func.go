@@ -75,7 +75,7 @@ func RecursionGetAnimalConfig(trs *RoomSpace) {
 	firstAnimalConfigsLen := len(firstAnimalConfigs)
 	winSeat := helper.RandInt(firstAnimalConfigsLen)
 
-	winSeat = 5 //todo 测试
+	//winSeat = 5 //todo 测试
 
 	//根据位置获取赢钱的动物
 	winAnimalConfig := trs.GetNewAnimalConfigsBySeat(winSeat, firstAnimalConfigs)
@@ -141,7 +141,7 @@ func WheelAnimalSortCalculate(trs *RoomSpace) []*AnimalConfig {
 	animalConfigsLen := len(trs.AnimalConfigs)
 	topSeat := helper.RandInt(animalConfigsLen)
 
-	topSeat = 0 //todo 测试
+	//topSeat = 0 //todo 测试
 
 	newAnimalConfigs := make([]*AnimalConfig, 0)
 	newAnimalConfigs = append(newAnimalConfigs, trs.AnimalConfigs[topSeat:]...)

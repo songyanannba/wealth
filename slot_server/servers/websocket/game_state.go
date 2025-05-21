@@ -252,16 +252,6 @@ func (trs *RoomSpace) ExecProcessTurnStateFunc(key GameTurnState) {
 }
 
 func (trs *RoomSpace) InItTurnStateFunc() {
-	//房主开始游戏的执行逻辑
-	//trs.RegisterTurnStateFunc(EnGameStartExec, SendGameStartBroadcast)
-	////记载完成的执行逻辑
-	//trs.RegisterTurnStateFunc(EnLoadExec, SendEnLoadBroadcast)
-	////都出过牌的时候 发送进入点赞页面的广播
-	//trs.RegisterTurnStateFunc(EnLikePageExec, EntryLikePage)
-	////点赞结束 进入下一轮
-	//trs.RegisterTurnStateFunc(EnNextTurnExec, NextTurnExecFunc)
-	//点赞结束 计算
-	//trs.RegisterTurnStateFunc(EnCalculateExec, CalculateExecFunc)
 
 	//发送动物排序
 	trs.RegisterTurnStateFunc(EnWheelAnimalPartyCalculateExec, WheelAnimalSortCalculateExec)
@@ -271,23 +261,6 @@ func (trs *RoomSpace) InItTurnStateFunc() {
 }
 
 func (trs *RoomSpace) ExecAutoNextTurnState(key GameTurnState) {
-	//if key == EnGameStartExec {
-	//	//游戏的开始状态 只能进入游戏开始结束状态
-	//	//DisGameStart 功能是发送广播
-	//	trs.ComRoomSpace.GameStateTransition(EnGameStartExec, EnGameStartIng)
-	//} else if key == EnLoadExec {
-	//	//
-	//	trs.ComRoomSpace.GameStateTransition(EnLoadExec, RemakeCardIng)
-	//} else if key == EnLikePageExec {
-	//	//
-	//	trs.ComRoomSpace.GameStateTransition(EnLikePageExec, EnLikeCardIng)
-	//} else if key == EnNextTurnExec {
-	//	//
-	//	trs.ComRoomSpace.GameStateTransition(EnNextTurnExec, RemakeCardIng)
-	//} else if key == EnCalculateExec {
-	//	//最后一轮进入结算状态
-	//trs.ComRoomSpace.GameStateTransition(EnCalculateExec, GameOver)
-	//}
 
 	if key == EnWheelAnimalPartyCalculateExec {
 		trs.ComRoomSpace.GameStateTransition(EnWheelAnimalPartyCalculateExec, EnAnimalPartyCalculateExec)
@@ -323,30 +296,3 @@ func (rs *ComRoomSpace) GetGameState() GameTurnState {
 func (rs *ComRoomSpace) SetGameState(status GameTurnState) {
 	rs.TurnMateInfo.GameTurnStatus = status
 }
-
-type GameState int
-
-//
-//const (
-//	GameStateDef GameState = iota
-//	//AllUserLoad 优化
-//	AllUserLoad     //全部用户加载完成的时候
-//	AllUserLoadOver //广播 全部用户加载完成的时候
-//)
-
-// ExecFuncByGameState 根据当前状态 判断要执行的方法
-//func (trs *RoomSpace) ExecFuncByGameState() {
-//
-//	switch gState {
-//	case DisLoad:
-//	case EnLikePage: //进入点赞
-//		//如果是全部用户已经出牌 就是进入点赞页面
-//		trs.EntryLikePage()
-//	case EnLikeCard: //进入下一轮/游戏结束
-//		//点赞阶段 全部用户完成点赞的时候 ｜ 本轮是否都已点赞 如果是，进入下一轮或者游戏结束
-//		trs.NextTurnOrCalculateAndEnd()
-//	default:
-//		global.GVA_LOG.Infof("ExecFuncByGameState gState 游戏状态 default")
-//	}
-//
-//}
