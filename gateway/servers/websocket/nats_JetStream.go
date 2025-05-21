@@ -73,13 +73,13 @@ func (n *natsManager) slotServiceSubConsumer() {
 	time.Sleep(2 * time.Second)
 	js, err := n.GetNatsJs(AnimalParty)
 	if err != nil {
-		global.GVA_LOG.Infof("memeBattleServiceSubConsumer %v", zap.Error(err))
+		global.GVA_LOG.Infof("slotServiceSubConsumer %v", zap.Error(err))
 		return
 	}
 
-	cons, err := js.PullSubscribe(AnimalPartyTopicResp, "AnimalPartyTopicResp_Consumer", nats.MaxRequestExpires(10*time.Second))
+	cons, err := js.PullSubscribe(AnimalPartyTopicResp, "slotServiceSubConsumer", nats.MaxRequestExpires(10*time.Second))
 	if err != nil {
-		global.GVA_LOG.Error("memeBattleServiceSubConsumer 创建消费者失败: ", zap.Error(err))
+		global.GVA_LOG.Error("slotServiceSubConsumer 创建消费者失败: ", zap.Error(err))
 		return
 	}
 	for {
@@ -87,7 +87,7 @@ func (n *natsManager) slotServiceSubConsumer() {
 		if errors.Is(err, context.DeadlineExceeded) {
 			continue
 		} else if err != nil {
-			global.GVA_LOG.Infof("拉取失败: %v", zap.Error(err))
+			global.GVA_LOG.Infof("slotServiceSubConsumer 拉取失败: %v", zap.Error(err))
 			//time.Sleep(5 * time.Second)
 			continue
 		}
@@ -95,30 +95,30 @@ func (n *natsManager) slotServiceSubConsumer() {
 
 		// 处理消息
 		for _, msgData := range msgs {
-			global.GVA_LOG.Infof("Processing message: %s", string(msgData.Data))
+			global.GVA_LOG.Infof(" slotServiceSubConsumer Processing message: %s", string(msgData.Data))
 
 			// 发送处理结果给生产者
 			req := &pbs.NetMessage{}
 			err := proto.Unmarshal(msgData.Data, req)
 			if err != nil {
-				global.GVA_LOG.Error("Error unmarshalling message: %v", zap.Error(err))
+				global.GVA_LOG.Error("slotServiceSubConsumer Error unmarshalling message: %v", zap.Error(err))
 				continue
 			}
 
-			global.GVA_LOG.Infof("Processing memeBattleServiceSubConsumer: req: %v ,Content:%v", req, string(req.Content))
+			global.GVA_LOG.Infof("Processing slotServiceSubConsumer: req: %v ,Content:%v", req, string(req.Content))
 			if req.MsgId <= 0 {
-				global.GVA_LOG.Infof("memeBattleServiceSubConsumer Skipping message because msgId is zero,%v", req)
+				global.GVA_LOG.Infof("slotServiceSubConsumer Skipping message because msgId is zero,%v", req)
 				continue
 			}
 
 			// 确认收到消息
 			if err := msgData.Ack(); err != nil {
-				global.GVA_LOG.Infof("Failed to acknowledge message: %v", err)
+				global.GVA_LOG.Infof("slotServiceSubConsumer Failed to acknowledge message: %v", err)
 			} else {
-				global.GVA_LOG.Infof("Acknowledged: %s", string(msgData.Data))
+				global.GVA_LOG.Infof("slotServiceSubConsumer Acknowledged: %s", string(msgData.Data))
 			}
 			if req.MsgId == 399 {
-				global.GVA_LOG.Infof("协议消息心跳返回 不通知客户端")
+				global.GVA_LOG.Infof("slotServiceSubConsumer 协议消息心跳返回 不通知客户端")
 				continue
 			}
 
@@ -139,7 +139,7 @@ func (n *natsManager) slotServiceSubConsumer() {
 				uidStr := req.AckHead.Uid
 				clientInfo := GetUserClient(common.AppId10, uidStr)
 				if clientInfo == nil {
-					global.GVA_LOG.Infof(" memeBattleServiceSubConsumer 用户没有客户端,用户可能没登陆 UserID:%v ", req)
+					global.GVA_LOG.Infof(" slotServiceSubConsumer 用户没有客户端,用户可能没登陆 UserID:%v ", req)
 					continue
 				}
 
