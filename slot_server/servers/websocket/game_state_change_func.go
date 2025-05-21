@@ -290,7 +290,7 @@ func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 	}
 
 	for uId, betAll := range allUserBetInfo {
-		winVal, ok := allUserBetInfo[uId]
+		winVal, ok := userWinLoseInfo[uId]
 		if ok {
 			if winVal > betAll {
 				currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
@@ -311,20 +311,6 @@ func WheelAnimalPartyCalculateExec(trs *RoomSpace) {
 		}
 
 	}
-
-	//for uid, coinNum := range userWinLoseInfo {
-	//	if coinNum >= 0 {
-	//		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
-	//			WinCoin: coinNum,
-	//			UserId:  uid,
-	//		})
-	//	} else {
-	//		currPeriodUserWinMsg.UserBetSettle = append(currPeriodUserWinMsg.UserBetSettle, &pbs.UserBetSettle{
-	//			LoseCoin: coinNum,
-	//			UserId:   uid,
-	//		})
-	//	}
-	//}
 
 	netMessageResp := helper.NewNetMessage("", "", int32(pbs.ProtocNum_CurrPeriodUserWinMsg), config.SlotServer)
 	responseHeadByte, _ := proto.Marshal(currPeriodUserWinMsg)

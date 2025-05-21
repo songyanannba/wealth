@@ -201,7 +201,6 @@ func UserBetReq(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data 
 				})
 				userInfo = &user
 				global.GVA_LOG.Infof("UserBetReq 押注 :%v", userInfo)
-
 				roomSpaceInfo.ComRoomSpace.AddUserInfos(netMessage.ReqHead.Uid, userInfo) //JoinRoom
 			}
 
@@ -213,9 +212,21 @@ func UserBetReq(netMessage *pbs.NetMessage) (respMsgId int32, code uint32, data 
 
 			//保留押注
 			roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(int(request.BetZoneId), request.Bet, userInfo)
+
+			//测试 多压几个 todo
+			{
+				userInfo.UserProperty.Bet = 1
+				roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(0, 2, userInfo)
+				userInfo.UserProperty.Bet = 2
+				roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(1, 2, userInfo)
+				userInfo.UserProperty.Bet = 3
+				roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(3, 2, userInfo)
+				userInfo.UserProperty.Bet = 4
+				roomSpaceInfo.ComRoomSpace.AddBetZoneUserInfoMap(8, 2, userInfo)
+			}
+
 			ptAck, _ := proto.Marshal(res)
 			netMessageResp.Content = ptAck
-
 			NatsSendAimUserMsg(roomSpaceInfo, netMessageResp, "")
 		}
 	}
