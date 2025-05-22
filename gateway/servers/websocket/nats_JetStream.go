@@ -77,7 +77,7 @@ func (n *natsManager) slotServiceSubConsumer() {
 		return
 	}
 
-	cons, err := js.PullSubscribe(AnimalPartyTopicResp, "slotServiceSubConsumer", nats.MaxRequestExpires(10*time.Second))
+	cons, err := js.PullSubscribe(AnimalPartyTopicResp, "AnimalPartyTopicResp_Consumer", nats.MaxRequestExpires(10*time.Second))
 	if err != nil {
 		global.GVA_LOG.Error("slotServiceSubConsumer 创建消费者失败: ", zap.Error(err))
 		return

@@ -179,7 +179,7 @@ func GetBetZoneConfigByAnimalIdAndColorId(animalId, colorId int) []*BetZoneConfi
 func GetBetZoneConfigByColorId(colorId int) []*BetZoneConfig {
 	res := make([]*BetZoneConfig, 0)
 	for _, betZoneFigure := range GetBetZoneFigure() {
-		if helper.InArr(colorId, betZoneFigure.ColorId) {
+		if helper.InArr(colorId, betZoneFigure.ColorId) && !helper.InArr(betZoneFigure.AnimalId, []int{1, 4}) {
 			res = append(res, betZoneFigure)
 		}
 	}
