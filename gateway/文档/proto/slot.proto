@@ -6,12 +6,20 @@ import "com.proto";
 enum slot {
   s0 =0;
 
+
+  //心跳
+//  HeartReq =398;
+//  HeartAck =399;
+//  Heart =400;
+
+
 }
 
 service slotService {
 //  rpc mtTest(mTStatusReq) returns (common.netMessage);
   //rpc comEntranceFunc(common.netMessage) returns (common.netMessage);
 }
+
 
 //在线用户列表请求
 message onLineUserListReq {
@@ -31,9 +39,9 @@ message onlineUser {
 
 //押注
 message userBetReq {
-    float bet = 1;
-    int32 game_id = 2; // 1=动物派对 2=火箭 3=赏金女王
-    int32 bet_zone_id = 3; //押注的位置
+  float bet = 1;
+  int32 game_id = 2; // 1=动物派对 2=火箭 3=赏金女王
+  int32 bet_zone_id = 3; //押注的位置
 }
 
 message userBetAck {
@@ -41,8 +49,8 @@ message userBetAck {
   int32 game_id = 2; // 1=动物派对 2=火箭 3=赏金女王
   int32 bet_zone_id = 3; //押注的位置
   string  user_id = 4 ;
+  bool  is_robot = 5 ; //是否机器人 ture=机器人
 }
-
 
 //当前期是否赢钱的通知
 message  currPeriodUserWinMsg {
@@ -51,35 +59,42 @@ message  currPeriodUserWinMsg {
 
 //用户押注结果
 message  UserBetSettle {
-  float win_coin = 1 ; //赢钱金额
-  float lose_coin = 2 ; //输钱金额
+  float   win_coin = 1 ; //赢钱金额  //金额大于0就是赢钱
+  float   lose_coin = 2 ; //输钱金额 //金额小于0 就是输
   string  user_id = 3 ;
 }
 
-
-
 //最外圈动物排序
 message  animalSortMsg {
-  int32 win_seat = 1 ; //赢钱位置
-  float bet_rate = 2;  //赢钱倍率
-  repeated animalConfig animal_config = 3 ; //动物配置
+  repeated winBetZoneConfig win_bet_zone_config = 1 ; //
+}
+
+message winBetZoneConfig {
+  int32  win_seat = 1 ; //赢钱位置
+  repeated animalConfig animal_config = 2 ; //动物配置 （0 位置默认最上面）
+  repeated winZoneConf win_zone_conf = 3 ; // 赢钱的动物位置
+  repeated bigOrSmallConfig big_small_config = 4 ; //大小的颜色配置 （0 位置默认最上面）
+}
+
+message winZoneConf {
+  int32 bet_zone_id = 1; //押注的位置
+  float bet_rate = 2;
 }
 
 message  colorSortMsg {
   repeated colorConfig  color_config = 1 ; //颜色配置
 }
 
+
 message betZoneConfig {
   int32 seat  = 1 ; //位置
   int32 animal_id = 2;
   repeated int32 color_id = 3;
-  int32 size = 4;    //1大(粉色) 2小（紫色）
+  int32 size = 4; //1大(粉色) 2小（紫色）
   float bet_rate = 5;
 }
 
-//动物派对当前局信息
 message currAPInfoReq {
-
 }
 
 
@@ -90,12 +105,14 @@ message currAPInfoAck {
   int32   game_turn_state = 4; //游戏的状态 ； 1=可以押注 ；2=计算阶段不可以押注
   aPRoomInfos  aP_room_infos = 5;   //房间信息
   repeated betZoneConfig bet_zone_conf = 6;  //赔率配置
+  int32   game_states = 7; //当前的游戏状态 0未知 1=押注 ; 2=结算期间
 }
 
 message aPRoomInfos {
   repeated userBetInfos user_bet_infos = 1 ; //房间当前押注信息
   repeated colorConfig  color_config = 2 ; //颜色配置
-  repeated animalConfig animal_config = 3 ; //动物配置
+  repeated winBetZoneConfig win_bet_zone_config = 3 ; //
+  repeated bigOrSmallConfig big_small_config = 4 ; //
 }
 
 
@@ -122,6 +139,7 @@ message colorConfig {
 // 6 大象     3
 // 7 犀牛     4
 // 8 斑马     5
+//动物默认排序 {8, 6, 7, 1, 8, 2, 7, 8, 6, 5, 7, 8, 4, 6, 8, 7, 3, 5}
 message animalConfig {
   int32 seat  = 1 ;
   int32 animal_id  = 2 ;
@@ -130,4 +148,9 @@ message animalConfig {
 //消息中间件使用
 message natsCurrAPInfo {
   string  user_id = 1;
+}
+
+message bigOrSmallConfig {
+  int32 seat  = 1 ;
+  int32 big_small_id  = 2 ; //  1=大（粉色） 2=小（紫色）
 }
