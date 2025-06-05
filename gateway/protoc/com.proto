@@ -119,6 +119,7 @@ message test2Ack {
 //登录
 message login {
    int32 app_id = 1 ; //平台（先默认填1）
+   string token = 2;
 }
 
 message loginAck {

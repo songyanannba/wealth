@@ -109,14 +109,6 @@ func LoginController(client *Client, seq string, message []byte) (code uint32, m
 		return
 	}
 
-	//保存用户信息
-	//err = dao.SaveGameUser(&table.GameUser{
-	//	UserId:   request.UserID,
-	//	Nickname: request.Nickname,
-	//	KingCoin: KingCoin,
-	//	Token:    "",
-	//})
-
 	// 用户登录
 	login := &login{
 		AppID:  request.AppID,

@@ -37,6 +37,8 @@ func Login(client *Client, msgId int32, message []byte) (respMsgId int32, code u
 	//	global.GVA_LOG.Infof("LoginController %v", *gameServiceConf)
 	//	return
 	//}
+
+	client.Token = reqData.Token
 	global.GVA_LOG.Infof("Login 用户登录成功 请求业务:%v", *client)
 
 	//jwt 验证

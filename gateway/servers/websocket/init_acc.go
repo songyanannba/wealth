@@ -110,9 +110,9 @@ func wsPage(w http.ResponseWriter, req *http.Request) {
 	//	protocType = 1
 	//}
 	protocType = 1
-	gwToken := req.Header.Get("gw-token")
+	//gwToken := req.Header.Get("gw-token")
 	currentTime := uint64(time.Now().Unix())
-	client := NewClient(conn.RemoteAddr().String(), gwToken, conn, currentTime, protocType)
+	client := NewClient(conn.RemoteAddr().String(), "", conn, currentTime, protocType)
 
 	go client.read()
 	go client.write()
