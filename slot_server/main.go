@@ -1,17 +1,13 @@
 package main
 
 import (
-	"google.golang.org/grpc"
 	"log"
-	"net"
 	"os"
 	"os/signal"
 	"slot_server/lib/core"
 	"slot_server/lib/global"
 	"slot_server/lib/utils/queue"
-	"slot_server/protoc/pbs"
 	"slot_server/router"
-	"slot_server/servers/grpcserver"
 	"slot_server/servers/task"
 	"slot_server/servers/websocket"
 	"syscall"
@@ -46,22 +42,6 @@ func main() {
 
 	go websocket.SlotRoomManager.Start() //房间服务
 
-	grpcServer := grpc.NewServer()
-	pbs.RegisterMemeBattleServiceServer(grpcServer, &grpcserver.MemeBattleService{})
-	router.InitRouters()
-
-	addr := global.GVA_VP.GetString("app.mebRpcUrl")
-	listener, err := net.Listen("tcp", addr)
-	if err != nil {
-		global.GVA_LOG.Fatalf("failed to listen: %v", err)
-	}
-	go func() {
-		if err := grpcServer.Serve(listener); err != nil {
-			global.GVA_LOG.Fatalf("failed to serve: %v", err)
-		}
-	}()
-
-	global.GVA_LOG.Infof("meme_battle 服务启动成功...")
 	// 等待终止信号
 	sigs := make(chan os.Signal, 1)
 	//SIGINT	2	Term	用户发送INTR字符(Ctrl+C)触发
@@ -72,7 +52,6 @@ func main() {
 		select {
 		case <-sigs:
 			//关闭 gRPC 服务器
-			grpcServer.GracefulStop()
 			log.Println("Server stopped. Shutting down server...")
 			global.GVA_LOG.Infof("Shutting down server...")
 			return

@@ -7,7 +7,7 @@ import (
 func Test_GetUserInfo(t *testing.T) {
 
 	//初始化
-	core.BaseInit()
-	defer core.CloseDB()
+	//core.BaseInit()
+	//defer core.CloseDB()
 
 }
