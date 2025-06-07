@@ -186,86 +186,6 @@ func (trMgr *roomManager) DealMatchIng2User() {
 	global.GVA_LOG.Infof("DealMatchIng2User 双排  {%v}人场匹配 结束...", match4)
 }
 
-func (trMgr *roomManager) DealMatchIngUser() {
-	match4 := 4
-
-	//取一个双排 和 2个单排 去组合
-	matchIngRoom2User := trMgr.MatchIngRoom.MatchIngRoom2User
-
-	if len(matchIngRoom2User) < 1 {
-		return
-	}
-	matchIngRoom1User := trMgr.MatchIngRoom.MatchIngRoom1User
-	if len(matchIngRoom1User) < 2 {
-		return
-	}
-
-	//和快速匹配会竞争锁
-	global.GVA_LOG.Infof("DealMatchIngUser 双排 + 单排 {%v}人场匹配期...", match4)
-
-	matchIngRoom211UserGroup := make([]*MatchIngRoomInfo, 0)
-
-	matchIngRoom2UserGroup := matchIngRoom2User[0:1]
-	trMgr.MatchIngRoom.MatchIngRoom2User = matchIngRoom2User[1:]
-	matchIngRoom211UserGroup = append(matchIngRoom211UserGroup, matchIngRoom2UserGroup...)
-
-	matchIngRoom1UserGroup := matchIngRoom1User[0:2]
-	trMgr.MatchIngRoom.MatchIngRoom1User = matchIngRoom1User[2:]
-	matchIngRoom211UserGroup = append(matchIngRoom211UserGroup, matchIngRoom1UserGroup...)
-
-	// 用户匹配成功
-	matchUser := &MatchGroupRoomInfo{}
-
-	//匹配成功 多少对
-	matchRoomUserArr := make([]*MatchGroupRoomInfo, 0)
-
-	for _, matchRoomInfo := range matchIngRoom211UserGroup {
-		if len(matchRoomInfo.UserInfoArr) < 0 {
-			//没有足够的匹配用户
-			global.GVA_LOG.Infof("DealMatchIngUser 双排 + 单排  RoomNo:%v, UserInfoMapLen:%v", matchRoomInfo.RoomNo, len(matchRoomInfo.UserInfoArr))
-			continue
-		}
-
-		matchUser.DelRoomNo = append(matchUser.DelRoomNo, matchRoomInfo.RoomNo)
-
-		//匹配用户 顺便过滤已经退出的用户
-		for k, _ := range matchRoomInfo.UserInfoArr {
-			uInfo := matchRoomInfo.UserInfoArr[k]
-			//检查一下用户维度的数据
-
-			//tavernUserStatus, err := table.GetUsersRoomByUid(uInfo.LikeUserId)
-			//if err != nil {
-			//	global.GVA_LOG.Error("DealMatchIng4User GetUsersRoomByUid: %v %v", zap.Error(err))
-			//	continue
-			//}
-
-			//if tavernUserStatus.RoomNo !=  matchRoomInfo.RoomNo {
-			//	global.GVA_LOG.Infof("DealMatchIng2User 用户{%v}在房间中 ", uInfo.LikeUserId)
-			//	continue
-			//}
-
-			if len(matchUser.UserInfoArr) < match4 {
-				matchUser.UserInfoArr = append(matchUser.UserInfoArr, uInfo)
-			}
-
-			if len(matchUser.UserInfoArr) == match4 {
-				newMatchUser := MatchGroupRoomInfo{
-					RoomNo:      "",
-					DelRoomNo:   matchUser.DelRoomNo,
-					UserInfoArr: matchUser.UserInfoArr,
-				}
-				matchRoomUserArr = append(matchRoomUserArr, &newMatchUser)
-				//重置
-				matchUser = &MatchGroupRoomInfo{}
-			}
-
-		}
-	}
-
-	trMgr.MatchGroupStart(matchRoomUserArr) //双排 + 单排
-	global.GVA_LOG.Infof("DealMatchIngUser 双排 + 单排   {%v}人场匹配 结束...", match4)
-}
-
 // MatchGroupStart 匹配组开始游戏
 func (trMgr *roomManager) MatchGroupStart(matchUserArr []*MatchGroupRoomInfo) {
 	matchUserLimit := 4 //匹配人数限制
@@ -289,7 +209,6 @@ func (trMgr *roomManager) MatchGroupStart(matchUserArr []*MatchGroupRoomInfo) {
 
 		for k, _ := range userInfoArr {
 			userInfo := userInfoArr[k]
-			userInfo.UserProperty.Bet = roomSpaceInfo.MemeRoomConfig.Bet
 			userInfo.UserExt.RoomNo = ""
 			roomSpaceInfo.ComRoomSpace.AddUserInfos(userInfo.UserID, userInfo)
 

@@ -160,46 +160,6 @@ func SaveMemeRoom(record *AnimalPartyRoom) error {
 	return nil
 }
 
-func GetMemeRoomById(id int) (record *AnimalPartyRoom, err error) {
-	err = global.GVA_SLOT_SERVER_DB.
-		Model(AnimalPartyRoom{}).
-		Where("id = ?", id).
-		First(&record).
-		Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		global.GVA_LOG.Error(err.Error())
-		return
-	}
-	return record, nil
-}
-
-func GetMemeRoomByIdDesc() (record *AnimalPartyRoom, err error) {
-	err = global.GVA_SLOT_SERVER_DB.
-		Model(AnimalPartyRoom{}).
-		Order("id desc").
-		First(&record).
-		Limit(1).
-		Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		global.GVA_LOG.Error(err.Error())
-		return
-	}
-	return record, nil
-}
-
-func SlotRoomByRoomNo(roomNo string) (record *AnimalPartyRoom, err error) {
-	err = global.GVA_SLOT_SERVER_DB.
-		Model(AnimalPartyRoom{}).
-		Where("room_no = ?", roomNo).
-		First(&record).
-		Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		global.GVA_LOG.Error(err.Error())
-		return record, err
-	}
-	return record, nil
-}
-
 // GetMemeRoomByUid 返回用户没有结束的房间
 func GetMemeRoomByUid(userID string) (record *AnimalPartyRoom, err error) {
 	err = global.GVA_SLOT_SERVER_DB.

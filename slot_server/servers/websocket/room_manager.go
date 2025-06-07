@@ -30,17 +30,6 @@ type roomManager struct {
 
 	//房间配置 key 版本 0 基础版本
 	RoomConfigMap map[int]*table.MemeRoomConfig
-
-	//基础卡
-	RoomBaseCard []*table.MbCardConfig
-
-	//版本卡
-	RoomVersionCard map[int][]*table.MbCardConfig
-
-	//基础问题
-	RoomIssueConfig []*table.MbIssueConfig
-
-	RobotAiUser []*table.RobotAiUser
 }
 
 var SlotRoomManager = roomManager{
@@ -48,16 +37,10 @@ var SlotRoomManager = roomManager{
 	CommonRoomManager: GetCommonRoomManager(),
 	MatchIngRoom:      NewMatchIngRoom(),
 	RoomConfigMap:     make(map[int]*table.MemeRoomConfig),
-	RoomBaseCard:      make([]*table.MbCardConfig, 0),
-	RoomVersionCard:   make(map[int][]*table.MbCardConfig),
 }
 
 func (trMgr *roomManager) Start() {
 	trMgr.InitDBData()
-
-	// 创建一个计时器
-	serviceTimer := time.NewTicker(time.Second * 30)
-	defer serviceTimer.Stop() //定时器不用了需要关闭
 
 	serviceRoomTimer := time.NewTicker(time.Second * 300) //todo
 	defer serviceRoomTimer.Stop()                         //定时器不用了需要关闭
@@ -79,10 +62,6 @@ func (trMgr *roomManager) Start() {
 
 	for {
 		select {
-		case <-serviceTimer.C:
-			//打印一些调试信息
-			global.GVA_LOG.Infof("房间管理器:计时器触发,房间长度:%d", len(trMgr.Rooms))
-
 		case <-serviceRoomTimer.C:
 			global.GVA_LOG.Infof("房间管理器处理一些问题 %d", len(trMgr.Rooms))
 			//1 如果房间长时间没有操作
@@ -224,51 +203,6 @@ func (mu *MatchIngRoom) AddMatchIngRoomInfo(roomSpace *RoomSpace) {
 	global.GVA_LOG.Infof("AddMatchIngRoomInfo 单排房间多少个{%v} 双排房间多少个{%v}", len(mu.MatchIngRoom1User), len(mu.MatchIngRoom2User))
 }
 
-//func (trMgr *roomManager) CancelMatchIngUser(roomNo string) {
-//	trMgr.CommonRoomManager.MatchLock.Lock()
-//	defer trMgr.CommonRoomManager.MatchLock.Unlock()
-//
-//	space := trMgr.Rooms[roomNo]
-//	trMgr.MatchIngRoom.CancelMatchRoom(space)
-//}
-//
-//func (mu *MatchIngRoom) CancelMatchRoom(roomSpace *RoomSpace) {
-//	mu.Sync.Lock()
-//	mu.Sync.Unlock()
-//	//获取房间 信息
-//	//房间号 和 房间人
-//	roomNo := roomSpace.RoomInfo.RoomNo
-//	userInfoMaps := roomSpace.ComRoomSpace.UserInfos
-//
-//	if len(userInfoMaps) == 1 {
-//		//单排
-//		newMatchIngRoom := []*MatchIngRoomInfo{}
-//
-//		for k, _ := range mu.MatchIngRoom1User {
-//			matchIngRoom := mu.MatchIngRoom1User[k]
-//			if matchIngRoom.RoomNo == roomNo {
-//				continue
-//			}
-//			newMatchIngRoom = append(newMatchIngRoom, matchIngRoom)
-//		}
-//		mu.MatchIngRoom1User = newMatchIngRoom
-//	} else if len(userInfoMaps) == 2 {
-//		//双排
-//		newMatchIngRoom := []*MatchIngRoomInfo{}
-//
-//		for k, _ := range mu.MatchIngRoom2User {
-//			matchIngRoom := mu.MatchIngRoom2User[k]
-//			if matchIngRoom.RoomNo == roomNo {
-//				continue
-//			}
-//			newMatchIngRoom = append(newMatchIngRoom, matchIngRoom)
-//		}
-//		mu.MatchIngRoom2User = newMatchIngRoom
-//	}
-//
-//	global.GVA_LOG.Infof("CancelMatchRoom 单排房间多少个{%v} 双排房间多少个{%v}", len(mu.MatchIngRoom1User), len(mu.MatchIngRoom2User))
-//}
-
 func (trMgr *roomManager) DelRoomByTime() {
 	trMgr.CommonRoomManager.Sync.Lock()
 	defer trMgr.CommonRoomManager.Sync.Unlock()
@@ -357,12 +291,6 @@ func (trMgr *roomManager) SendMsgToRoomSpace(roomNo string, message []byte) erro
 	return nil
 }
 
-//func (trMgr *roomManager) DelRoomSpace(roomId string) {
-//	trMgr.CommonRoomManager.Sync.Lock()
-//	defer trMgr.CommonRoomManager.Sync.Unlock()
-//	delete(trMgr.Rooms, roomId)
-//}
-
 func (trMgr *roomManager) DelRoom(roomNo string) {
 	trMgr.CommonRoomManager.Sync.Lock()
 	defer trMgr.CommonRoomManager.Sync.Unlock()
@@ -382,37 +310,12 @@ func (trMgr *roomManager) SendCloseRoomMsg(closeInfo *models.CloseRoom) {
 	roomSpaceInfo.ComRoomSpace.Close <- true
 }
 
-// MatchRoomArithmetic 匹配房间的算法
-func (trMgr *roomManager) MatchRoomArithmetic() {
-	trMgr.CommonRoomManager.MatchLock.Lock()
-	defer trMgr.CommonRoomManager.MatchLock.Unlock()
-
-	//寻找匹配中的用户
-
-	//单排
-	trMgr.DealMatchIng1User()
-
-	//补充机器人逻辑
-	trMgr.DealMatchIngUserAddRobot()
-}
-
 func (trMgr *roomManager) InitDBData() {
-
 	//初始化全局动物派对房间
-
 	//1 先创建对局空间
 	roomSpaceInfo := GetRoomSpace()
 	//添加对局用户
-
-	//record, err := table.GetMemeRoomByIdDesc()
-	//if err != nil {
-	//	global.GVA_LOG.Error("InitDBData GetMemeRoomByIdDesc err:", zap.Error(err))
-	//}
 	period := "1"
-	//if record.ID >= 0 {
-	//	period = helper.Itoa(helper.Atoi(record.Period) + 1)
-	//}
-
 	animalPartyRoom := table.NewAnimalPartyRoom("1", "1", uuid.New().String(), config.AnimalPartyGlobal, "第"+period+"期", period, table.TavernRoomOpen, table.RoomTypeMatch, 0, 0, 0, 0)
 	err := table.CreateMemeRoom(animalPartyRoom)
 	if err != nil {

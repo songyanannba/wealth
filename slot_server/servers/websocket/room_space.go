@@ -14,9 +14,7 @@ import (
 	"slot_server/lib/models"
 	"slot_server/lib/models/table"
 	"slot_server/lib/src/dao"
-	"slot_server/lib/src/logic"
 	"slot_server/protoc/pbs"
-	"sort"
 	"strconv"
 	"sync"
 	"time"
@@ -40,12 +38,6 @@ type RoomSpace struct {
 	//押大小配置
 	BigOrSmallConfig []*BigOrSmallConfig
 
-	//房间配置
-	MemeRoomConfig *table.MemeRoomConfig
-
-	//基础卡
-	RoomBaseCard []*table.MbCardConfig
-
 	//加载确认
 	LoadComps map[string]*models.UserInfo
 
@@ -67,8 +59,6 @@ func GetRoomSpace() *RoomSpace {
 	trSpace := &RoomSpace{
 		RoomInfo:              &table.AnimalPartyRoom{},
 		AnimalConfigs:         []*AnimalConfig{},
-		MemeRoomConfig:        &table.MemeRoomConfig{},
-		RoomBaseCard:          make([]*table.MbCardConfig, 0),
 		FuncMap:               make(map[string]MemeDisposeFunc),
 		GameStateMap:          make(map[GameTurnState]GameStateFunc),
 		FuncMapMutex:          new(sync.RWMutex),
@@ -212,17 +202,6 @@ func (trs *RoomSpace) GameTurnStateCheck() {
 		currGameStartTime = trs.ComRoomSpace.GetGameStartTime()
 	)
 
-	//不同状态 触发不同方法
-
-	//gState := trs.ComRoomSpace.GetGameState()
-	//global.GVA_LOG.Infof("GameTurnStateCheck 游戏状态%v", gState)
-
-	//1 -30 押注期间
-	//30-60 理论上的计算期间
-	//计算期间不让押注
-	//计算完 推送计算结果
-	//计算完 自动开始下一轮
-
 	//如果当前没有押注的用户 不往下执行
 	if len(trs.ComRoomSpace.UserInfos) < 1 {
 		global.GVA_LOG.Infof("没有人押注")
@@ -267,26 +246,7 @@ func (trs *RoomSpace) GameTurnStateCheck1() {
 	//自动判断执行逻辑
 	trs.ExecProcessTurnStateFunc(gState)
 
-	//自动判断 进入下一个状态
-	//trs.ExecAutoNextTurnState(gState)
-
-	//机器人用户行为
-	trs.RobotAction()
-
-	//超时自动出牌
-	trs.OutTimePlayHand()
 }
-
-//func (trs *RoomSpace) GetAnimalConfigsBySeat(seat int) *AnimalConfig {
-//	res := &AnimalConfig{}
-//	for _, animalConfigs := range trs.AnimalConfigs {
-//		if animalConfigs.Seat == seat {
-//			res = animalConfigs
-//			break
-//		}
-//	}
-//	return res
-//}
 
 func (trs *RoomSpace) GetNewAnimalConfigsBySeat(seat int, animalConfigs []*AnimalConfig) *AnimalConfig {
 	res := &AnimalConfig{}
@@ -319,126 +279,6 @@ func (trs *RoomSpace) GetColorConfigsBySeat(seat int) *ColorConfig {
 		}
 	}
 	return res
-}
-
-// OutTimePlayHand 超时出牌（托管）
-func (trs *RoomSpace) OutTimePlayHand() {
-	//用户掉线后 后台进程进行托管 帮用户出牌
-	if !trs.IsAllLoadComps {
-		//超时load
-		gameStartTime := trs.ComRoomSpace.GetGameStartTime()
-		if gameStartTime > 0 && gameStartTime-helper.LocalTime().Unix() < 0 {
-			//系统加载
-			for _, userInfo := range trs.ComRoomSpace.UserInfos {
-				trs.AddLoadComps(userInfo.UserID, userInfo)
-			}
-
-			//第一次全部加载完成
-			if len(trs.LoadComps) == trs.RoomInfo.UserNumLimit {
-				trs.IsAllLoadComps = true
-				global.GVA_LOG.Infof("LoadCompleted 房间{%v},全部加载完成，开始发牌", trs.RoomInfo.RoomNo)
-				//全部加载改变状态 应该是 游戏中 -> 加载中；过度
-				trs.ComRoomSpace.GameStateTransition(EnGameStartIng, EnLoadExec)
-			}
-		}
-		return
-	}
-
-	//1 获取当前的游戏状态 如果大于某个阶段的的执行时间 执行委托操作
-	//委托阶段有哪些
-	// 1 出牌
-	// 2 点赞
-
-	//是否托管 系统帮忙执行
-	var isSysExec bool
-	//0=游戏阶段
-	var gameStatus int
-
-	gameStatus, isSysExec = trs.ServerSimplifyGetStateAndTime()
-
-	if !isSysExec {
-		return
-	}
-
-	//1 遍历用户，获取出牌用户出牌倒计时 如果大于40秒没出牌
-	for _, userInfo := range trs.ComRoomSpace.UserInfos {
-
-		//  随牌阶段 + 出牌阶段 托管
-		if gameStatus == int(CliOutCard) {
-			//是否出牌
-			cards := trs.ComRoomSpace.GetUserOutEdCards(userInfo.UserID)
-			if len(cards) > 0 {
-				//过滤已经出过牌的用户
-				continue
-			}
-
-			currCards, err := trs.ComRoomSpace.GetCurrCard(userInfo.UserID)
-			if err != nil {
-				global.GVA_LOG.Error("超时出牌（托管） 获取前一个用户当前的牌 错误", zap.Error(err))
-			}
-			if len(currCards) <= 0 {
-				global.GVA_LOG.Error("超时出牌（托管）用户手里没牌", zap.Error(err))
-				continue
-			}
-
-			var reqCards []*models.Card
-			reqCards = append(reqCards, currCards[0])
-			global.GVA_LOG.Infof("超时出牌 出牌 reqCards %v ,currCards  %v ,userInfo.UserID  %v", reqCards, currCards, userInfo.UserID)
-			trs.OutCart(reqCards, currCards, userInfo.UserID) //托管出牌
-			global.GVA_LOG.Infof("超时出牌（托管）结束,用户:%v", userInfo.UserID)
-		}
-
-		//点赞托管
-		if gameStatus == int(CliLikePage) {
-			userId := userInfo.UserID
-			likeUserId := ""
-			likeCard := models.LikeCard{}
-			outCards := make([]*models.Card, 0)
-			likeCards := make([]*models.Card, 0)
-
-			//那个用户没点赞
-			likeUserInfo := trs.ComRoomSpace.GetLikeUserInfo(userInfo.UserID)
-			if len(likeUserInfo) > 0 {
-				//该用户已经给别人点过赞
-				global.GVA_LOG.Infof("超时点赞 托管 该用户已经给别人点过赞 userID %v", userInfo.UserID)
-				continue
-			}
-
-			//每个人出一个牌 取第一个就行
-			outCards = trs.ComRoomSpace.GetUserOutEdCardExcludeUser(userInfo.UserID)
-			sort.Slice(outCards, func(i, j int) bool {
-				return outCards[i].Level > outCards[j].Level
-			})
-
-			if len(outCards) <= 0 {
-				continue
-			}
-
-			//找到牌等级最高的一张 点赞
-			//每轮每次只出一张牌
-			isOutCard := false
-			for k, outCard := range outCards {
-				if k == 1 {
-					//只取第0个
-					break
-				}
-				likeCard = models.LikeCard{
-					CardId:     outCard.CardId,
-					LikeUserId: outCard.UserID,
-					Level:      outCard.Level,
-					AddRate:    outCard.AddRate,
-				}
-				isOutCard = true
-				likeUserId = outCard.UserID
-				likeCards = append(likeCards, outCard)
-			}
-
-			if !isOutCard {
-				continue
-			}
-			trs.DoLikeCard(userId, likeUserId, likeCard, likeCards)
-		}
-	}
 }
 
 func (trs *RoomSpace) AnalyzeFinalIncome() {
@@ -610,7 +450,7 @@ func (trs *RoomSpace) MatchSuccUserList() ([]models.MemeRoomUser, error) {
 			isOwner = 1
 		}
 
-		tavernRoomUsers := table.NewRoomUsers(userInfo.UserID, trs.RoomInfo.RoomNo, userInfo.Nickname, index+1, 1, isOwner, trs.MemeRoomConfig.Bet, 1)
+		tavernRoomUsers := table.NewRoomUsers(userInfo.UserID, trs.RoomInfo.RoomNo, userInfo.Nickname, index+1, 1, isOwner, 1, 1)
 		err := table.CreateRoomUsers(tavernRoomUsers)
 		if err != nil {
 			global.GVA_LOG.Error("MatchSuccUserList CreateRoomUsers", zap.Error(err), zap.Any(".RoomNo,", trs.RoomInfo.RoomNo))
@@ -644,33 +484,13 @@ func (trs *RoomSpace) MatchSuccUserList() ([]models.MemeRoomUser, error) {
 			Seat:         tavernRoomUsers.Seat,
 			UserLimitNum: userInfo.UserProperty.UserLimitNum,
 			UserCards:    models.UserCartState{},
-			Bet:          trs.MemeRoomConfig.Bet,
+			Bet:          0,
 			IsRobot:      userInfo.UserProperty.IsRobot,
 		}
 
 		roomUserLists = append(roomUserLists, roomUser)
 		index++
-
-		//提前扣减积分
-		//err = logic.AddUserScore(userInfo.UserID, trs.RoomInfo.RoomNo, 0, payPrice, models.TavernStoryQuickMatch, "快速匹配-扣减积分")
-		//if err != nil {
-		//	payFailUser = append(payFailUser, userInfo)
-		//	global.GVA_LOG.Error("MatchSuccUserList AddUserScore 快速匹配扣减积分", zap.Error(err), zap.Any(".RoomNo,", trs.RoomInfo.RoomNo))
-		//} else {
-		//	havePayUser = append(havePayUser, userInfo)
-		//}
 	}
-
-	//说明存在扣减积分失败的情况
-	//if len(payFailUser) > 0 {
-	//	for _, userInfo := range havePayUser {
-	//		logic.ReturnUserCoin(userInfo.UserID, trs.RoomInfo.RoomNo, payPrice, "快速匹配返还积分")
-	//	}
-	//	//用户回归匹配池子 todo
-	//	//这里先不做处理
-	//	//SlotRoomManager.MatchIngUser.MatchIng2UsersMap[roomType][roomLevel] = newMatchIng2Users
-	//	return errors.New("MatchSuccUserList 存在扣减积分失败情况 不能开始游戏")
-	//}
 
 	return roomUserLists, nil
 }
@@ -691,9 +511,6 @@ func (trs *RoomSpace) LeaveRoomNotStartGame(userInfo *models.UserInfo) uint32 {
 			global.GVA_LOG.Error("LeaveRoom SaveMemeRoom CreateRoomUsers", zap.Error(err))
 			return common.ModelDeleteError
 		}
-
-		//payPrice, _ := strconv.ParseFloat(fmt.Sprintf("%.2f", trs.MemeRoomConfig.Bet+trs.MemeRoomConfig.AdmissionPrice), 64)
-		//logic.ReturnUserCoin(userInfo.UserID, trs.RoomInfo.RoomNo, payPrice, "非房主离开房间")
 
 		//更新老房主用户状态
 		updateMap := dao.MakeUpdateData("room_no", "")
@@ -883,284 +700,6 @@ func (trs *RoomSpace) OwnerLeaveRoomNotStartGame(userInfo *models.UserInfo) uint
 	}
 
 	return common.OK
-}
-
-// ReLoadCompleted 断线重连加载
-func (trs *RoomSpace) ReLoadCompleted(userId string, currIssue *models.Issue) {
-	rs := trs.ComRoomSpace
-	roomUserLists := make([]models.MemeRoomUser, 0)
-
-	//知道每个用户的牌情况
-	allUserCardState := make([]models.UserCartState, 0)
-
-	//游戏阶段 阶段倒计时 秒
-	gameStatus, timeDown := trs.CurrGameTurnStateAndDownTime()
-	global.GVA_LOG.Infof("CurrGameTurnStateAndDownTime 断线重连加载 OperateCards gameStatus %v, turnTime %v", gameStatus, timeDown)
-	for _, userItem := range rs.UserInfos {
-		//用户当前牌
-		cards := rs.GetTurnCards(userItem.UserID)
-		userCards := models.UserCartState{
-			UserID:     userItem.UserID,
-			OutCardNum: 4 - len(cards),
-			CardNum:    len(cards),
-		}
-
-		if userId != userItem.UserID {
-			allUserCardState = append(allUserCardState, userCards)
-		}
-
-		userCards.Card = cards
-		memeRoomUser := models.MemeRoomUser{
-			UserID:       userItem.UserID,
-			Nickname:     userItem.Nickname,
-			Turn:         userItem.UserProperty.Turn,
-			IsLeave:      userItem.UserProperty.IsLeave,
-			IsOwner:      userItem.UserProperty.IsOwner,
-			IsReady:      userItem.UserProperty.IsReady,
-			Seat:         userItem.UserProperty.Seat,
-			UserLimitNum: userItem.UserProperty.UserLimitNum,
-			WinPrice:     userItem.UserProperty.WinPrice,
-			Bet:          userItem.UserProperty.Bet,
-			IsRobot:      userItem.UserProperty.IsRobot,
-		}
-
-		if userId == userItem.UserID {
-			memeRoomUser.UserCards = userCards
-			//断线重连 需要重置托管时间 todo
-			//userItem.SetOutCardCountDown(models.GetOutCardCountDownTimeInt(OutCardCountDownTimeInt))
-		}
-		roomUserLists = append(roomUserLists, memeRoomUser)
-	}
-
-	//点赞页面的卡
-	likeCards := rs.GetCurrTurnLikeCards()
-
-	//获取本轮房间所有用户的牌，发送给房间所有人
-	allOutCard := trs.ComRoomSpace.GetAllUserOutEdCards()
-
-	//发送广播
-	msgData := models.LoadMsg{
-		ProtoNum:  strconv.Itoa(int(pbs.Meb_loadCompleted)),
-		Timestamp: time.Now().Unix(),
-		RoomCom: models.RoomCom{
-			Turn:         trs.ComRoomSpace.GetTurn(),
-			RoomNo:       trs.RoomInfo.RoomNo,
-			UserId:       trs.RoomInfo.Owner,
-			RoomName:     trs.RoomInfo.Name,
-			Status:       trs.RoomInfo.IsOpen, //游戏状态
-			UserNumLimit: trs.RoomInfo.UserNumLimit,
-			RoomType:     int(trs.RoomInfo.RoomType),
-			RoomLevel:    int(trs.RoomInfo.RoomLevel),
-			CurrIssue:    currIssue,
-			GameStatus:   gameStatus,
-			TimeDown:     timeDown,
-		},
-		RoomUserList:   roomUserLists,
-		OtherUserCards: allUserCardState,
-		LikeCards:      likeCards,
-		OutCards:       allOutCard,
-	}
-	//给用户消息
-	responseHeadByte, _ := json.Marshal(msgData)
-	NatsSendAimUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_loadCompleted), config.SlotServer, responseHeadByte), userId)
-}
-
-func (trs *RoomSpace) LoadCompletedFirst(userId string, currIssue *models.Issue) {
-	roomUserLists, _ := trs.ComRoomSpace.UserInfoToRoomUser()
-	//发送广播
-	msgData := models.LoadMsg{
-		ProtoNum:  strconv.Itoa(int(pbs.Meb_loadCompleted)),
-		Timestamp: time.Now().Unix(),
-		RoomCom: models.RoomCom{
-			Turn:         trs.ComRoomSpace.GetTurn(),
-			RoomNo:       trs.RoomInfo.RoomNo,
-			UserId:       trs.RoomInfo.Owner,
-			RoomName:     trs.RoomInfo.Name,
-			Status:       trs.RoomInfo.IsOpen,
-			UserNumLimit: trs.RoomInfo.UserNumLimit,
-			RoomType:     int(trs.RoomInfo.RoomType),
-			RoomLevel:    int(trs.RoomInfo.RoomLevel),
-			CurrIssue:    currIssue,
-		},
-		RoomUserList: roomUserLists,
-	}
-	//给用户消息
-	global.GVA_LOG.Infof("LoadCompletedFirst 加载广播: %v", msgData)
-	responseHeadByte, _ := json.Marshal(msgData)
-	NatsSendAimUserMsg(trs, helper.GetNetMessage("", "", int32(pbs.Meb_loadCompleted), config.SlotServer, responseHeadByte), userId)
-
-	//查找自己的牌并赋值
-	cardConfigByIds := logic.GetUserOwnCards(userId)
-	trs.ComRoomSpace.AddUserOwnCards(userId, cardConfigByIds)
-
-	//第一次全部加载完成
-	if len(trs.LoadComps) == trs.RoomInfo.UserNumLimit {
-
-		trs.IsAllLoadComps = true
-		global.GVA_LOG.Infof("LoadCompleted 房间{%v},全部加载完成，开始发牌", trs.RoomInfo.RoomNo)
-
-		//全部加载改变状态 应该是 游戏中 -> 加载中；过度
-		trs.ComRoomSpace.GameStateTransition(EnGameStartIng, EnLoadExec)
-	}
-}
-
-// DoLikeCard : userId：点赞用户 likeUserId：被点赞用户 likeCard：被点赞的卡
-func (trs *RoomSpace) DoLikeCard(userId, likeUserId string, likeCard models.LikeCard, likeCards []*models.Card) {
-	//纪录被点赞的卡
-	//内存纪录
-	likeCard.UserID = userId
-
-	trs.ComRoomSpace.SetLikeCardsCard(&likeCard)
-	//数据库纪录 todo
-
-	trs.ComRoomSpace.SetLikeUserInfo(userId, &likeCard)
-
-	netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_likeCards), config.SlotServer)
-	protoNum := strconv.Itoa(int(pbs.Meb_likeCards))
-	msgData := models.LikeCardsMsg{
-		ProtoNum:   protoNum,
-		Timestamp:  time.Now().Unix(),
-		LikeUserId: likeUserId,
-		UserId:     userId,
-		Card:       likeCards,
-	}
-
-	//给客户消息
-	global.GVA_LOG.Infof("OperateCards 表情: %v", msgData)
-	responseHeadByte, _ := json.Marshal(msgData)
-	netMessageResp.Content = responseHeadByte
-	NatsSendAllUserMsg(trs, netMessageResp)
-
-	//如果都点赞了
-	if trs.ComRoomSpace.IsAllUserLikeCard() {
-		//全部点赞
-		if trs.RoomInfo.RoomTurnNum == trs.ComRoomSpace.GetTurn() {
-			//结束游戏 结束游戏需要计算统计数据
-			if !trs.ComRoomSpace.GameStateTransition(EnLikeCardIng, EnCalculateExec) {
-				global.GVA_LOG.Infof("从点赞结束的状态 向全部点赞完成的状态转变 失败 RoomNo:{%v}", trs.RoomInfo.RoomNo)
-			} else {
-				global.GVA_LOG.Infof("从点赞结束的状态 向全部点赞完成的状态转变 成功 RoomNo:{%v}", trs.RoomInfo.RoomNo)
-			}
-		} else {
-			//进入下一轮
-			if !trs.ComRoomSpace.GameStateTransition(EnLikeCardIng, EnNextTurnExec) {
-				global.GVA_LOG.Infof("从点赞结束的状态 向全部点赞完成的状态转变 失败 RoomNo:{%v}", trs.RoomInfo.RoomNo)
-			} else {
-				global.GVA_LOG.Infof("从点赞结束的状态 向全部点赞完成的状态转变 成功 RoomNo:{%v}", trs.RoomInfo.RoomNo)
-			}
-		}
-	}
-}
-
-// OutCart 出牌
-func (trs *RoomSpace) OutCart(reqCards, cards []*models.Card, userId string) ([]*models.Card, uint32) {
-	//请求的牌数量
-	var reqCardVerify map[int]int
-	reqCardVerify = make(map[int]int)
-
-	for k, _ := range reqCards {
-		reqCard := reqCards[k]
-		_, ok := reqCardVerify[reqCard.CardId]
-		if ok {
-			reqCardVerify[reqCard.CardId]++
-		} else {
-			reqCardVerify[reqCard.CardId] = 1
-		}
-	}
-
-	//本来手里的牌数量
-	var cardVerify map[int]int
-	cardVerify = make(map[int]int)
-
-	for k, _ := range cards {
-		card := cards[k]
-		_, ok := cardVerify[card.CardId]
-		if ok {
-			cardVerify[card.CardId]++
-		} else {
-			cardVerify[card.CardId] = 1
-		}
-	}
-
-	//比较是否一致
-	for cId, cartNum := range reqCardVerify {
-		num := cardVerify[cId]
-		if num < cartNum {
-			return cards, common.NotCanOutCards
-		}
-	}
-
-	//剩下的牌
-	var newCards []*models.Card
-	//要出的牌
-	var outCards []*models.Card
-
-	for idx, _ := range cards {
-		card := cards[idx]
-		isInHand := false
-
-		idNum, ok := reqCardVerify[card.CardId]
-		if ok && idNum > 0 {
-			//有相同的牌
-			isInHand = true
-			reqCardVerify[card.CardId]--
-		}
-
-		if isInHand {
-			outCards = append(outCards, card)
-		} else {
-			newCards = append(newCards, card)
-		}
-	}
-
-	protoNum := strconv.Itoa(int(pbs.Meb_outCards))
-	netMessageResp := helper.NewNetMessage("", "", int32(pbs.Meb_outCards), config.SlotServer)
-	//非出牌用户得到的消息
-	msgData := models.OperateCardsMsg{
-		ProtoNum:   protoNum,
-		Timestamp:  time.Now().Unix(),
-		UserId:     userId,
-		OutCardNum: len(outCards),
-		CardNum:    len(newCards),
-	}
-	responseHeadByte, _ := json.Marshal(msgData)
-	netMessageResp.Content = responseHeadByte
-	global.GVA_LOG.Infof("出牌的广播: %v", string(responseHeadByte))
-	//非出牌用户得到的消息
-	trs.ComRoomSpace.SendExcludeUserMsg(netMessageResp, userId)
-
-	//===
-
-	netMessageResp1 := helper.NewNetMessage("", "", int32(pbs.Meb_outCards), config.SlotServer)
-	//出牌用户得到的消息
-	aimMsgData := models.OperateCardsMsg{
-		ProtoNum:   protoNum,
-		Timestamp:  time.Now().Unix(),
-		UserId:     userId,
-		OutCardNum: len(outCards),
-		CardNum:    len(newCards),
-		Card:       newCards,
-	}
-	global.GVA_LOG.Infof("出牌的广播: %v", aimMsgData)
-	aimMsgDataByte, _ := json.Marshal(aimMsgData)
-	netMessageResp1.Content = aimMsgDataByte
-
-	//出牌用户得到的消息
-	NatsSendAimUserMsg(trs, netMessageResp1, userId)
-
-	//ReMakeCurrCard 重置当前手中的卡
-	trs.ComRoomSpace.ReMakeCurrCard(userId, newCards, outCards)
-
-	//都出过牌的时候
-	if trs.ComRoomSpace.IsAllUserOutCart() {
-		global.GVA_LOG.Infof("都出牌 进入点赞阶段 %v", trs.ComRoomSpace.GetGameState())
-		//trs.ComRoomSpace.ChangeGameState(EnLikePage)
-		// 这个应该是从出牌状态 到点赞页面状态 但是没有做随牌到出牌的状态改变 所以这里 状态直接设置为 去点赞
-		// 应该是 出牌状态（随牌状态） -> 点赞
-		trs.ComRoomSpace.GameStateTransition(RemakeCardIng, EnLikePageExec)
-	}
-
-	return newCards, common.OK
 }
 
 func (trs *RoomSpace) CloseRoom(roomNo string, typ int) {
