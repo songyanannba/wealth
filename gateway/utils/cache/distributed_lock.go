@@ -8,28 +8,6 @@ import (
 	"time"
 )
 
-//// TryLock 尝试获取分布式锁
-//func TryLock(key string, timeout time.Duration) error {
-//	val := fmt.Sprintf("uuid:%s", uuid.New().String())
-//	redisClient := global.GVA_REDIS
-//	cmd := redisClient.Set(context.Background(), key, val, timeout)
-//	if err := cmd.Err(); err != nil {
-//		return err
-//	}
-//	return nil
-//}
-//
-//// ReleaseLock 释放分布式锁
-//func ReleaseLock(key string) error {
-//	val := fmt.Sprintf("uuid:%s", uuid.New().String())
-//	redisClient := global.GVA_REDIS
-//	cmd := redisClient.Del(context.Background(), key)
-//	if err := cmd.Err(); err != nil {
-//		return err
-//	}
-//	return nil
-//}
-
 // RedisLock 是分布式锁的核心结构
 type RedisLock struct {
 	Client  *redis.Client // Redis 客户端
