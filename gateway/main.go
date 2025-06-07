@@ -9,7 +9,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
 func InitServer() {
@@ -28,7 +27,6 @@ func InitServer() {
 
 func CloseServer() {
 	core.CloseDB()
-	//grpcclient.Close()   // 确保在程序结束时关闭连接
 
 	//nats
 	//websocket.NastManager.Close()
@@ -49,7 +47,6 @@ func main() {
 	routers.Init(router)
 	routers.WebsocketInit()
 
-	time.Sleep(10 * time.Microsecond)
 	go websocket.StartWebSocket()
 
 	//go grpcserver.Init()
