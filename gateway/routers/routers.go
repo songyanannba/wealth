@@ -16,12 +16,6 @@ func WebsocketInit() {
 	websocket.RegisterProto(2, websocket.ProtoTest2Controller)
 	//websocket.Register("3", websocket.MTStatus)
 
-	//meme nats消息返回处理方法
-	memeBattleRouters.WayRouterInit()
-
-	//meme websocket 入口
-	//MemeBattle.WayRouterInit()
-
 	SlotRouter.SlotRouterInit()
 
 }

@@ -19,10 +19,6 @@ func InitServer() {
 	//nats消息中间件
 	websocket.NastManager.Start()
 
-	// 初始化 gRPC 客户端
-	//oreRpcUrl := global.GVA_VP.GetString("app.slotRpcUrl")
-	//grpcclient.InitMebClient(oreRpcUrl)
-
 	// 定时任务
 	task.Init()
 

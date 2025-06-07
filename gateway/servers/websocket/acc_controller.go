@@ -160,7 +160,7 @@ func HeartbeatController(client *Client, seq string, message []byte) (code uint3
 	}
 
 	if client.AppID == common.AppId10 {
-		MtHeartReq(client, "", message)
+		//MtHeartReq(client, "", message)
 	}
 
 	global.GVA_LOG.Infof("心跳接口:更新前 Addr:%v client.AppID %v, client.UserID %v currentTime:%v HeartbeatTime:%v", client.Addr, client.AppID, client.UserID, currentTime, helper.TimeIntToStr(int64(client.HeartbeatTime)))

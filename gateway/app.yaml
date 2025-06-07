@@ -35,19 +35,11 @@ db-list:
     log-mode: warn
     log-zap: false
 mysql:
-#  path: 47.97.182.65
-#  port: "3307"
-#  config: charset=utf8mb4&parseTime=True&loc=Asia%2FShanghai
-#  db-name: "nb_users"
-#  username: "root"
-#  password: "mysql_hiEnCx"
-  path: 127.0.0.1
   port: "3306"
   config: charset=utf8mb4&parseTime=True&loc=UTC
   db-name: "wealths"
   username: root
   password:
-#  password: "003416nba"
   prefix: ""
   singular: false
   engine: ""
@@ -56,15 +48,9 @@ mysql:
   log-mode: info
   log-zap: false
 redis:
-  #  卓硕游戏开发环境
-  addr: 47.97.182.65:6379
-  password: "songyanan@123"
-  DB: 0
-  poolSize: 30
-  minIdleConns: 30
-#  db: 0
-#  addr: 127.0.0.1:6379 #自己
-#  password: ""
+  db: 0
+  addr: 127.0.0.1:6379 #自己
+  password: ""
 cluster:
   gate-port: 34567
   #etcd-endpoints: 192.168.6.20:2379
