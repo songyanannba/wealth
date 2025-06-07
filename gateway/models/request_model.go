@@ -7,7 +7,6 @@ type Request struct {
 	Cmd       string      `json:"cmd"`                  // 请求命令字
 	ServiceId string      `json:"service_id,omitempty"` // 请求命令字
 	Data      interface{} `json:"data,omitempty"`       // 数据 json
-	//MsgData []byte      // 数据 json
 }
 
 // Login 登录请求数据
