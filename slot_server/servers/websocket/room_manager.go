@@ -96,7 +96,6 @@ type MatchIngRoom struct {
 
 	IsArithmeticIng bool
 
-	//匹配中的房间 key房间好 val:房间用户
 	//单排
 	MatchIngRoom1User []*MatchIngRoomInfo
 

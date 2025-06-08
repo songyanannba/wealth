@@ -17,7 +17,7 @@ func Test_GetCode2Session(t *testing.T) {
 func TestAppsV2Token(t *testing.T) {
 	// 初始化SDK client
 	opt := new(credential.Config).
-		SetClientKey("tt6dc61b7bf2cd0d0002"). // 改成自己的app_id
+		SetClientKey("tt6dc61b7bf2cd0d0002").                       // 改成自己的app_id
 		SetClientSecret("ca0092473225d541f494284f6b11a6ea45a7fd96") // 改成自己的secret
 	sdkClient, err := openApiSdkClient.NewClient(opt)
 	if err != nil {
@@ -51,7 +51,7 @@ func TestAppsJscode2session(t *testing.T) {
 	// 初始化SDK client
 
 	opt := new(credential.Config).
-		SetClientKey("tt6dc61b7bf2cd0d0002"). // 改成自己的app_id
+		SetClientKey("tt6dc61b7bf2cd0d0002").                       // 改成自己的app_id
 		SetClientSecret("ca0092473225d541f494284f6b11a6ea45a7fd96") // 改成自己的secret
 	sdkClient, err := openApiSdkClient.NewClient(opt)
 	if err != nil {

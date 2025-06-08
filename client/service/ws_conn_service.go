@@ -37,12 +37,12 @@ var WsClientService = wsClientService{
 
 func (ws *wsClientService) Start() {
 
-	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc5MDA1OTQsInN1YiI6IiIsInVzZXJfaWQiOiJiZDNmZmQ1Mi1kMjc3LTQ1NTAtODZjNy1hN2I1MDIxZWJmNTAifQ.P4lFr2WpnwChFCr63tAF5BrkFbv5gSsoKMTCa7C4NmE"
+	//tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk0NjExNjMsInN1YiI6IiIsInVzZXJfaWQiOiJiZDNmZmQ1Mi1kMjc3LTQ1NTAtODZjNy1hN2I1MDIxZWJmNTAifQ.qXMRxNi48pI9CK9_t2aSzB9vFW5QY6TC_UFZ-fxxFuA"
 
 	header := http.Header{}
 	header.Add("userId", "syn")
 	header.Add("auth", "syn")
-	header.Add("gw-token", tk)
+	//header.Add("gw-token", tk)
 
 	u := url.URL{
 		Scheme: "ws",
@@ -65,7 +65,8 @@ func (ws *wsClientService) Start() {
 	go ws.Write()
 	go ws.Read()
 
-	ws.Test123()
+	//ws.WSLogin()
+	//ws.Test123()
 	//time.Sleep(2 * time.Second)
 
 	//获取在线列表
@@ -160,6 +161,38 @@ func (ws *wsClientService) TestGame() {
 	//reqM, _ := proto.Marshal(req)
 
 	ws.context <- marshal
+	/*for {
+		time.Sleep(30 * time.Second)
+	}*/
+}
+
+func (ws *wsClientService) WSLogin() {
+
+	tk := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk0NjExNjMsInN1YiI6IiIsInVzZXJfaWQiOiJiZDNmZmQ1Mi1kMjc3LTQ1NTAtODZjNy1hN2I1MDIxZWJmNTAifQ.qXMRxNi48pI9CK9_t2aSzB9vFW5QY6TC_UFZ-fxxFuA"
+	req1 := &pbs.Login{
+		AppId: 10,
+		Token: tk,
+	}
+	req1M, _ := proto.Marshal(req1)
+	reqq := &pbs.NetMessage{
+		ReqHead: &pbs.ReqHead{
+			Uid:      "",
+			Token:    "",
+			Platform: "",
+		},
+		AckHead: &pbs.AckHead{
+			Uid:     "",
+			Code:    0,
+			Message: "",
+		},
+		ServiceId: "slot_server",
+		MsgId:     int32(pbs.ProtocNum_LoginReq),
+		Content:   req1M,
+	}
+
+	reqM, _ := proto.Marshal(reqq)
+
+	ws.context <- reqM
 	/*for {
 		time.Sleep(30 * time.Second)
 	}*/
