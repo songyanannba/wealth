@@ -224,7 +224,7 @@ func (trMgr *roomManager) MatchGroupStart(matchUserArr []*MatchGroupRoomInfo) {
 		//给用户创建房间 并发送游戏开始的广播
 		rNo := uuid.New().String()
 		rName := userInfoArr[0].Nickname + "'s" + " lobby"
-		memeRoom := table.NewAnimalPartyRoom(userInfoArr[0].UserID, userInfoArr[0].UserID, rNo, rName, "匹配房间", "", table.TavernRoomOpen, table.RoomTypeMatch, 0, 0, turnNum, matchUserLimit)
+		memeRoom := table.NewAnimalPartyRoom(userInfoArr[0].UserID, userInfoArr[0].UserID, rNo, rName, "匹配房间", "", table.TavernRoomOpen, table.RoomTypeAnimal, 0, 0, turnNum, matchUserLimit)
 		err := table.CreateMemeRoom(memeRoom)
 		if err != nil {
 			global.GVA_LOG.Error("MatchGroupStart:{%v},roomInfo:%v", zap.Error(err), zap.Any("tavernRoom", memeRoom.RoomNo))

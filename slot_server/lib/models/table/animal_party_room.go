@@ -75,8 +75,8 @@ const (
 type RoomType int8
 
 const (
-	RoomTypeYueZhan = 1 //好友约战
-	RoomTypeMatch   = 2 //匹配模式
+	RoomTypeAnimal = 2 //动物派对
+	RoomTypeSlot   = 3 //slot
 )
 
 type AnimalPartyRoom struct {
@@ -87,7 +87,7 @@ type AnimalPartyRoom struct {
 	Name         string     `json:"name" form:"name" gorm:"column:name;comment:名称;"`
 	Desc         string     `json:"desc" form:"desc" gorm:"column:desc;comment:描述;"`
 	IsOpen       int8       `json:"is_open" form:"is_open" gorm:"column:is_open;default:0;comment:房间状态:1=开放中,2=已满员,3=已解散,4=进行中,5=已结束,6=异常房间 8=清理匹配成功用户之前的房间;"`
-	RoomType     int8       `json:"room_type" form:"room_type" gorm:"column:room_type;default:0;comment:房间类型 1=动物派对（全局）;"`
+	RoomType     int8       `json:"room_type" form:"room_type" gorm:"column:room_type;default:0;comment:房间类型 1=动物派对（全局） 2 ;"`
 	RoomLevel    int8       `json:"room_level" form:"room_level" gorm:"column:room_level;default:0;comment:房间等级 0 初级 1 中级 2 高级;"`
 	RoomClass    int8       `json:"room_class" form:"room_class" gorm:"column:room_class;default:0;comment:0: 1:继续游戏;"`
 	UserNumLimit int        `json:"user_num_limit" form:"user_num_limit" gorm:"column:user_num_limit;default:0;comment:用户人数限制 2人场 3 人场 4人场;"`

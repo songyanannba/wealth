@@ -65,7 +65,7 @@ func (ws *wsClientService) Start() {
 	go ws.Write()
 	go ws.Read()
 
-	//ws.WSLogin()
+	ws.WSLogin()
 	//ws.Test123()
 	//time.Sleep(2 * time.Second)
 
@@ -271,7 +271,7 @@ func (ws *wsClientService) TestCurrAPInfo() {
 }
 
 func (ws *wsClientService) TestBetReq() {
-	time.Sleep(2 * time.Second)
+	time.Sleep(5 * time.Second)
 	req1 := &pbs.UserBetReq{
 		Bet:       1,
 		GameId:    1,
